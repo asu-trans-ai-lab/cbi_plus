@@ -24,8 +24,9 @@ lambda / N / Q arrival rate / cumulative count / queue length in the
                cumulative-curve (fluid queue) picture.
 QDF            queued demand factor = period volume / episode inflow demand.
 MDPM           the merged MD+PM episode label when one queue crosses 16:00.
-CPI/CBI        Congestion Performance/Bottleneck Identification — the
-               ranking deliverable (stage 6).
+CBI            Congestion Bottleneck Identification — the ranking
+               deliverable (stage 6). (You may see "CPI" in older notes and
+               transcripts: it is a historical typo for CBI. One tool, one name.)
 gamma          QVDF curvature of the fourth-order queue; in
                gamma = 64*mu*(L/u_c)*f_p*P^(s-4), L = link length [mi] and
                u_c = speed at capacity.

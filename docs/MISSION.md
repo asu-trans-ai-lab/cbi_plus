@@ -1,4 +1,4 @@
-# MISSION — what the CBI/CPI/QVDF platform is, and is not
+# MISSION — what the CBI/QVDF platform is, and is not
 
 *Send this to every student and collaborator before they write a line of code.*
 
@@ -62,8 +62,8 @@ theory, and supports engineering judgment.
    speed-profile MAE exceeds 10 mph is marked FAIL — never blended into the
    results. (`cbi_pipeline.benchmark_gates`.)
 
-6. **The CPI/CBI ranking is the deliverable.** If the tool is called a
-   CPI/CBI tool it must output the bottleneck score, ranking, top locations,
+6. **The CBI ranking is the deliverable.** If the tool is called a
+   CBI tool it must output the bottleneck score, ranking, top locations,
    active/passive labels, confidence, and comparison with the previous
    benchmark. No ranking table, no complete tool. (Stage 6 outputs.)
 

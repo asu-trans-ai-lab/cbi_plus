@@ -80,11 +80,11 @@ to read in which order, healthy magnitudes, per-period interpretation, pitfalls.
 | 4 μ | `stage4_mu_validation` + `stage4_verification` | μ per episode/link + step-by-step audit CSV/panels | discharge-window median, group shrinkage |
 | 5 QVDF | `stage5_qvdf` + `stage5_verification` + `stage5b_corridor_aggregate` | elasticities per (sensor, period) + exact round-trip audit + corridor law with bootstrap CI & prior shrinkage | IQR, feasibility ranges (C++ verbatim) |
 
-## Closeout: benchmarks, gates, and the CPI/CBI ranking
+## Closeout: benchmarks, gates, and the CBI ranking
 
 CBI+ is accepted only against evidence — see **[docs/CLOSEOUT.md](docs/CLOSEOUT.md)**:
 
-- **Stage 6 (CPI/CBI deliverable):** every run emits
+- **Stage 6 (CBI deliverable):** every run emits
   `stage6_cbi/benchmark_bottleneck_ranking.csv` — sensor-period bottleneck
   scores (frequency × duration × severity) with active / passive / spillback
   classes and explicit aggregation-level labels.

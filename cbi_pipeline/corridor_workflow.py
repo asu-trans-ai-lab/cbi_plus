@@ -240,7 +240,7 @@ def run_corridor(corridor: str,
     eps, rel, ep_summary = stage2_episodes.run_episodes(df_qc, default_v_c_mph=v_c_mph)
     stage2_episodes.write_stage2(eps, rel, ep_summary, out_dir / "stage2_episodes")
 
-    # Stage 6 — the CPI/CBI deliverable: bottleneck score & ranking (from the
+    # Stage 6 — the CBI deliverable: bottleneck score & ranking (from the
     # audited episodes; runs early so a partial run still yields the ranking)
     print(f"[{corridor}] Stage 6: CBI bottleneck score & ranking")
     from . import stage6_cbi_ranking

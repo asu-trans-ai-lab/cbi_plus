@@ -15,7 +15,7 @@ thresholds in `benchmarks/benchmark_validation_tolerance_template.csv` and
     stage5_verification/  + panels/         QVDF round-trip audit (R1-R5)
     stage5b_corridor/link_qvdf_corridor.csv corridor law w/ CI + shrinkage
     stage6_cbi/
-        benchmark_bottleneck_ranking.csv    THE CPI/CBI deliverable (ranked)
+        benchmark_bottleneck_ranking.csv    THE CBI deliverable (ranked)
         benchmark_CBI_corridor_summary.csv
     benchmark_gates/
         pass_fail_summary.csv               every gate x period: PASS/FAIL/REVIEW

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""stage6_cbi_ranking — the CPI/CBI deliverable: bottleneck score & ranking.
+"""stage6_cbi_ranking — the CBI deliverable: bottleneck score & ranking.
 
 The pipeline's earlier stages produce queue objects; a CBI (Congestion
 Bottleneck Identification) TOOL must end with a ranked answer to "which

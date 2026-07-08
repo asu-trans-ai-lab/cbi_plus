@@ -53,9 +53,29 @@ MISMATCH_TOKENS = [
     "MODEL_RIGHT_AVERAGE_WRONG_SHAPE", "MODEL_MATCHES_EPISODE",
 ]
 BENEFIT_TOKENS = [
-    "BENEFIT_DELAY_REDUCTION", "BENEFIT_RELIABILITY_GAIN",
-    "BENEFIT_RECOVERY_IMPROVEMENT", "BENEFIT_SAFETY_EXPOSURE_REDUCTION",
+    # Names deliberately avoid monetization-flavored words the 2026-07-08
+    # policy panel (FHWA / MPO / BCA personas) struck as overclaiming:
+    # duration change is a per-vehicle diagnostic, NOT vehicle-hours;
+    # stop-and-go exposure is a crash-risk CORRELATE, never a crash
+    # reduction; duration stability is NOT the federal LOTTR/TTTR measure.
+    "BENEFIT_DURATION_REDUCTION", "BENEFIT_DURATION_STABILITY_GAIN",
+    "BENEFIT_RECOVERY_IMPROVEMENT", "BENEFIT_STOP_AND_GO_EXPOSURE_REDUCED",
     "BENEFIT_BOTTLENECK_SHIFT", "DISBENEFIT_DURATION_INCREASE",
+]
+
+MONETIZATION_GUARDRAILS = [
+    "duration change is per-vehicle congested-minutes, NOT vehicle-hours; "
+    "VHD needs counted volume x lanes x segment length (never synthesized volume)",
+    "stop-and-go exposure is a crash-risk correlate; it must NOT be monetized "
+    "as crash reduction without a CMF/SPF safety model and crash data",
+    "duration stability is not LOTTR/TTTR/buffer index; it cannot feed a "
+    "reliability value-of-time without full travel-time distributions",
+    "duration, deficit area, and stability derive from the SAME speed-deficit "
+    "signal — never sum their monetized values (double counting)",
+    "before/after comparisons hold demand fixed; monetized savings must be "
+    "net of induced-demand rebound",
+    "severity is vehicle-speed based; a person-throughput view (occupancy-"
+    "weighted) may rank a transit/priority alternative differently",
 ]
 
 
@@ -180,6 +200,9 @@ def compile_tokens(df_qc: pd.DataFrame,
                 "missing_data_flags": flags,
             },
             "diagnosis": {"likely_cause": causes,
+                          "attribution": ("heuristic_pattern — weekend/outlier/"
+                                          "class rules; pending incident-TIM/"
+                                          "RCRS feed corroboration"),
                           "demand_supply_status": ("supply" if "CAUSE_CAPACITY_DROP" in causes
                                                    else "demand" if "CAUSE_DEMAND_SURGE" in causes
                                                    else "uncertain")},
@@ -187,8 +210,21 @@ def compile_tokens(df_qc: pd.DataFrame,
                           "scenario_comparison_target": True},
             "planner_message": _planner_message(
                 corridor, ep, t1_time, t2_time, dur_min, rec_min, vmin, cls, conf),
+            "public_message": _public_message(ep, t1_time, dur_min, vmin),
         })
     return tokens
+
+
+def _public_message(ep, t1, dur, vmin) -> str:
+    """Public-meeting-safe variant: no engineering nouns, no unit-opaque
+    metrics, no causal claims (MPO-planner review, 2026-07-08)."""
+    hrs, mins = int(dur // 60), int(dur % 60)
+    dur_txt = (f"about {hrs} hour{'s' if hrs != 1 else ''}"
+               + (f" {mins} minutes" if mins else "")) if hrs else f"about {mins} minutes"
+    return (f"On {ep.date}, traffic near this location slowed to roughly "
+            f"{vmin:.0f} mph starting around {pd.Timestamp(t1).strftime('%I:%M %p').lstrip('0')} "
+            f"and stayed congested for {dur_txt}. This measurement describes "
+            "the problem; possible fixes are evaluated separately.")
 
 
 def _planner_message(corridor, ep, t1, t2, dur, rec, vmin, cls, conf) -> str:
@@ -299,22 +335,24 @@ def benefit_tokens(before: list[dict], after: list[dict],
 
     def pct(x, y): return 100 * (y - x) / max(x, 1e-9)
     if a["dur"] < b["dur"] * 0.95:
-        toks.append("BENEFIT_DELAY_REDUCTION")
-        lines.append(f"median congestion duration {b['dur']:.0f} -> {a['dur']:.0f} min "
-                     f"({pct(b['dur'], a['dur']):+.0f}%) — user time savings")
+        toks.append("BENEFIT_DURATION_REDUCTION")
+        lines.append(f"median congested duration {b['dur']:.0f} -> {a['dur']:.0f} min "
+                     f"({pct(b['dur'], a['dur']):+.0f}%) — a per-vehicle diagnostic, "
+                     "NOT vehicle-hours of delay")
     if a["rec"] < b["rec"] * 0.95:
         toks.append("BENEFIT_RECOVERY_IMPROVEMENT")
         lines.append(f"median recovery {b['rec']:.0f} -> {a['rec']:.0f} min — "
                      "improved incident resilience")
     if a["deficit"] < b["deficit"] * 0.95:
-        toks.append("BENEFIT_SAFETY_EXPOSURE_REDUCTION")
+        toks.append("BENEFIT_STOP_AND_GO_EXPOSURE_REDUCED")
         lines.append(f"median speed-deficit area {b['deficit']:.0f} -> "
                      f"{a['deficit']:.0f} mph-h — less stop-and-go exposure "
-                     "(safety-exposure proxy)")
+                     "(a crash-risk correlate, NOT a crash reduction)")
     if a["dur_std"] < b["dur_std"] * 0.9:
-        toks.append("BENEFIT_RELIABILITY_GAIN")
+        toks.append("BENEFIT_DURATION_STABILITY_GAIN")
         lines.append(f"day-to-day duration spread {b['dur_std']:.0f} -> "
-                     f"{a['dur_std']:.0f} min — lower travel-time uncertainty")
+                     f"{a['dur_std']:.0f} min — a stability indicator "
+                     "(not the federal LOTTR/TTTR reliability measure)")
     if a["top"] is not None and b["top"] is not None and a["top"] != b["top"]:
         toks.append("BENEFIT_BOTTLENECK_SHIFT")
         lines.append(f"worst location moved {b['top']} -> {a['top']} — the project "
@@ -323,11 +361,17 @@ def benefit_tokens(before: list[dict], after: list[dict],
         toks.append("DISBENEFIT_DURATION_INCREASE")
         lines.append(f"median congestion duration INCREASED {b['dur']:.0f} -> "
                      f"{a['dur']:.0f} min")
-    msg = (f"{corridor}: the scenario does not only change average delay. "
-           + " ".join(lines) if lines else
-           f"{corridor}: no material change detected between scenarios.")
+    caveat = (" Caveats: comparison holds demand fixed (induced-demand rebound "
+              "not represented); the duration/exposure/stability measures share "
+              "one speed-deficit signal — do not sum monetized values; "
+              f"based on {b['n']} vs {a['n']} episodes without significance "
+              "testing — treat small differences as noise.")
+    msg = ((f"{corridor}: the scenario does not only change average delay. "
+            + " ".join(lines) + caveat) if lines else
+           f"{corridor}: no material change detected between scenarios." + caveat)
     return {"tokens": toks, "before": b, "after": a,
-            "planner_message": msg}
+            "planner_message": msg,
+            "monetization_guardrails": MONETIZATION_GUARDRAILS}
 
 
 # ---------------------------------------------------------------------------

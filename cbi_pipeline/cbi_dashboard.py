@@ -106,7 +106,21 @@ def build(corridor: str, run_dir: Path, df: pd.DataFrame, out_html: Path):
     row_of = {s: i for i, s in enumerate(order)}
     ro = df.groupby("sensor_uid")["road_order"].first()
     lanes = df.groupby("sensor_uid")["lanes"].first()
-    meta = [{"sensor": s.split("::")[-1], "mp": round(float(ro[s]), 2),
+    # On the INRIX path road_order is a TMC SEQUENCE, not a milepost —
+    # labeling it "MP" and differencing it for spillback miles was wrong
+    # (RITIS-engineer review, SIM-R5). Build cumulative mileposts from
+    # per-segment lengths instead.
+    src = str(df["source_format"].iloc[0]) if "source_format" in df.columns else ""
+    if src.startswith("inrix") and "length_mi" in df.columns:
+        seg_len = df.groupby("sensor_uid")["length_mi"].first()
+        mp_val, cum = {}, 0.0
+        for s in order:
+            mp_val[s] = round(cum, 2)
+            step = float(seg_len.get(s, np.nan))
+            cum += step if np.isfinite(step) else 0.0
+    else:
+        mp_val = {s: round(float(ro[s]), 2) for s in order}
+    meta = [{"sensor": s.split("::")[-1], "mp": mp_val[s],
              "lanes": int(lanes[s]) if np.isfinite(lanes.get(s, np.nan)) else None}
             for s in order]
 

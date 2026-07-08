@@ -91,20 +91,28 @@ mapping; the same convention as the paper↔pipeline QVDF symbol map in
   MODEL_WRONG_BOTTLENECK_LOCATION, MODEL_RIGHT_AVERAGE_WRONG_SHAPE`.
   The last one is the flagship: average travel time can look right while
   the congestion **shape** is wrong.
-- **E. Scenario benefit** (planning language):
-  `BENEFIT_DELAY_REDUCTION, BENEFIT_RELIABILITY_GAIN,
-  BENEFIT_RECOVERY_IMPROVEMENT, BENEFIT_SAFETY_EXPOSURE_REDUCTION,
+- **E. Scenario benefit** (planning language, deliberately non-monetized names):
+  `BENEFIT_DURATION_REDUCTION, BENEFIT_DURATION_STABILITY_GAIN,
+  BENEFIT_RECOVERY_IMPROVEMENT, BENEFIT_STOP_AND_GO_EXPOSURE_REDUCED,
   BENEFIT_BOTTLENECK_SHIFT, DISBENEFIT_DURATION_INCREASE`.
 
 ## Benefit translation table
 
-| technical change | planning/cost interpretation |
-|---|---|
-| congestion duration (T3−T1) reduced | user time savings |
-| recovery time (T3−T2) reduced | improved incident resilience |
-| speed-deficit area reduced | reduced congestion severity; stop-and-go exposure ↓ (safety proxy) |
-| duration day-to-day spread reduced | reliability gain |
-| worst location moved | bottleneck shift — check the new location |
+| technical change | planning interpretation | monetization status |
+|---|---|---|
+| congestion duration (T3−T1) reduced | shorter congested period per vehicle | **diagnostic only** — NOT vehicle-hours; VHD needs counted volume × lanes × length |
+| recovery time (T3−T2) reduced | improved incident resilience | qualitative |
+| speed-deficit area reduced | less stop-and-go exposure | **crash-risk correlate** — never monetize as crash reduction without CMF/SPF + crash data |
+| duration day-to-day spread reduced | duration-stability indicator | **not LOTTR/TTTR** — no reliability VOT without travel-time distributions |
+| worst location moved | bottleneck shift — check the new location | flag, not a benefit |
+
+**Monetization guardrails** (carried on every `benefit_tokens` result as
+`monetization_guardrails`): the three duration/exposure/stability measures
+share one speed-deficit signal — never sum their monetized values;
+before/after holds demand fixed (induced-demand rebound unrepresented);
+severity is vehicle-speed based — a person-throughput (occupancy-weighted)
+view may rank transit/priority alternatives differently; no significance
+testing on small samples.
 
 ## What the agent should say
 
@@ -131,6 +139,22 @@ error measures, and output artifacts (`cbi_tokens.jsonl`,
   confidence high, cause CAUSE_CAPACITY_DROP.
 - A model shifted +35 min: `MODEL_MISSES_ONSET` on 19/21 episodes,
   one `MODEL_RIGHT_AVERAGE_WRONG_SHAPE` — exactly the intended catch.
-- Build scenario (peak demand 1.15→1.06): `BENEFIT_DELAY_REDUCTION`,
-  `BENEFIT_SAFETY_EXPOSURE_REDUCTION`, `BENEFIT_RELIABILITY_GAIN`, with
-  the planner message naming each dimension.
+- Build scenario (peak demand 1.15→1.06): `BENEFIT_DURATION_REDUCTION`,
+  `BENEFIT_STOP_AND_GO_EXPOSURE_REDUCED`, `BENEFIT_DURATION_STABILITY_GAIN`,
+  with the planner message naming each dimension and its caveats.
+
+
+## Policy alignment status (2026-07-08 FHWA / MPO / BCA panel)
+
+Usable today: the tokens as *diagnostics* in a BCA appendix, TAC briefings,
+and calibration registers; the `public_message` variant for public-facing
+text; the ranking as *relative* prioritization (never "who gets the money"
+until cost + equity attach).
+
+Registered as open policy layers (ISSUE_REGISTER POL-1..POL-7): federal
+PM3 reliability (LOTTR/TTTR percentile travel-time ratios over the federal
+periods), person-throughput weighting, EJ/Title VI overlay, freight
+TTTR/VOT, emissions/CMAQ hooks, measured-volume VHD + VOT slot, and
+significance testing on before/after comparisons. Cause attribution is
+heuristic (weekend/outlier/class patterns) pending an incident-TIM feed —
+every token says so in `diagnosis.attribution`.

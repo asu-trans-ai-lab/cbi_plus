@@ -88,10 +88,14 @@ def run_ranking(episodes_df: pd.DataFrame,
                 corridor: str,
                 out_dir: Path | None = None,
                 road_order: dict | None = None,
+                volume_source: dict | None = None,
                 verbose: bool = True) -> pd.DataFrame:
     """Build the CBI score/ranking tables from stage-2 episodes (valid only).
 
-    out_dir=None runs purely in memory (no CSVs written)."""
+    out_dir=None runs purely in memory (no CSVs written).
+    volume_source: optional {sensor_uid: 'measured'|'synthetic'|'speed_only'}
+    provenance stamp — an operator must be able to tell a probe-derived rank
+    from a loop-measured one (RITIS-engineer review, SIM-X6/R-8)."""
     if out_dir is not None:
         out_dir = Path(out_dir)
         out_dir.mkdir(parents=True, exist_ok=True)
@@ -130,6 +134,18 @@ def run_ranking(episodes_df: pd.DataFrame,
         freq = len(g) / max(n_days, 1)
         dur_h = float(g["P_min"].median()) / 60.0
         cls = g["bottleneck_class"].mode().iloc[0]
+        # delay-weighted view: veh-hours is the currency operators budget by
+        # (RITIS-engineer review SIM-R3). demand rate during the episode
+        # (veh/h/ln) x the severity-weighted queue-hours gives a
+        # severity-weighted veh-h per lane per day. Provenance matters: on
+        # synthesized-volume corridors this is MODELED, hence the stamp.
+        if "demand_veh" in g.columns:
+            dem_rate = float((pd.to_numeric(g["demand_veh"], errors="coerce")
+                              / np.maximum(g["P_min"] / 60.0, 1e-6)).median())
+        else:
+            dem_rate = float("nan")
+        delay_proxy = (round(freq * dur_h * sev * dem_rate, 1)
+                       if np.isfinite(dem_rate) else np.nan)
         rows.append({
             "corridor": corridor, "sensor_uid": sid, "period": period,
             "road_order": road_order.get(sid),
@@ -139,11 +155,18 @@ def run_ranking(episodes_df: pd.DataFrame,
             "median_v_t2_mph": round(float(g["min_speed_mph"].median()), 1),
             "severity_1_minus_vt2_over_vc": round(sev, 3),
             "CBI_score": round(freq * dur_h * sev, 4),
+            "delay_proxy_veh_h_per_lane_day": delay_proxy,
+            "volume_source": (volume_source or {}).get(sid, "unknown"),
             "bottleneck_class": cls,
             "aggregation_level": "sensor_period_median_over_valid_episodes",
         })
     rank = pd.DataFrame(rows).sort_values("CBI_score", ascending=False).reset_index(drop=True)
     rank["rank_in_corridor"] = np.arange(1, len(rank) + 1)
+    # secondary operator view: rank by delay proxy where volume supports it
+    if rank["delay_proxy_veh_h_per_lane_day"].notna().any():
+        rank["rank_by_delay"] = (rank["delay_proxy_veh_h_per_lane_day"]
+                                 .rank(ascending=False, method="min")
+                                 .astype("Int64"))
     if out_dir is not None:
         rank.to_csv(out_dir / "benchmark_bottleneck_ranking.csv", index=False)
 

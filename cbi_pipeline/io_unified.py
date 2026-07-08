@@ -465,6 +465,10 @@ def build_corridor_panel(df: pd.DataFrame) -> dict:
         lanes=meta["lanes"].to_numpy(dtype=float),
         length_mi=meta["length_mi"].to_numpy(dtype=float),
         has_volume=bool(meta["has_volume"].iloc[0]),
+        # provenance: a panel consumer must be able to tell synthetic flow
+        # from counts (INRIX-engineer review, SIM-X6)
+        flow_synthetic=bool(df["flow_synthetic"].any())
+            if "flow_synthetic" in df.columns else False,
         corridor=str(meta["corridor"].iloc[0]) if len(meta) else None,
         source_format=str(meta["source_format"].iloc[0]) if len(meta) else None,
     )

@@ -103,3 +103,20 @@ Required coverage:
 
 Adding a new one: `docs/ADD_A_BENCHMARK.md` (7 steps; step 7 =
 `repro_gates --run` all-PASS).
+
+## 7. Dataset-metadata contract (the units sidecar)
+
+| Field | Requirement | Enforced by |
+|---|---|---|
+| dataset_meta.json | one per dataset folder; declares units machine-readably | `schemas/dataset_meta.schema.json` + `api.read_dataset_meta` |
+| units.speed | `mph` or `kmh` AS SHIPPED (loader converts) | `api.load_dataset` |
+| units.flow_scope | `per_lane` / `total_all_lanes` / `none` — THE trap that produced capacities off by the lane count | `api.load_dataset`, magnitude warnings in `diagnose` |
+| quality.imputation_flag_column | which column marks priors (is_observed, confidence_score) | loaders drop/flag before calibration |
+| quality.lane_tags_reliable | false => derive effective lanes from data (p99 flow / 1900) | loaders |
+| ordering.convention | how upstream->downstream is derived (milepost vs chain order; S/W corridors reverse) | loaders |
+| caveats | free-text warnings a user must see | shipped with the data |
+
+Born from the two critical simulated-participant incidents (km/h-as-mph;
+per-lane-vs-total; ISSUE_REGISTER SIM-M1 / SIM-T1): **units live with the
+data, not in tribal knowledge.** When you publish a dataset, ship its
+sidecar. 13 sidecars cover every in-repo dataset.

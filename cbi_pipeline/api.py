@@ -515,8 +515,17 @@ def diagnose(df: pd.DataFrame,
     # review finding 1, CONFIRMED: planted bottleneck flipped classes
     # under a sensor rename)
     ro = df_qc.groupby("sensor_uid")["road_order"].first().astype(int).to_dict()
+    # provenance stamp: measured counts vs S3-synthesized vs speed-only
+    vsrc = {}
+    for sid, g in df_qc.groupby("sensor_uid"):
+        if "flow_vph" not in g.columns or g["flow_vph"].isna().all():
+            vsrc[sid] = "speed_only"
+        elif "flow_synthetic" in g.columns and bool(g["flow_synthetic"].any()):
+            vsrc[sid] = "synthetic"
+        else:
+            vsrc[sid] = "measured"
     ranking = run_ranking(
-        episodes, corridor, road_order=ro,
+        episodes, corridor, road_order=ro, volume_source=vsrc,
         out_dir=(Path(out_dir) / "stage6_cbi") if out_dir is not None else None)
     if len(ranking):
         ranking = ranking.sort_values("CBI_score", ascending=False)

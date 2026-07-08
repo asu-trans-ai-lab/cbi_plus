@@ -158,6 +158,20 @@ and [reviews/SIMULATED_COMPETITION_USERS_2026-07-08.md](reviews/SIMULATED_COMPET
 | DES-2 | MED | cause tokens for weather/work-zone/lane-drop need external feeds (incident/RCRS ingestion) | OPEN |
 | DES-3 | MED | MODEL_WRONG_BOTTLENECK_LOCATION + queue-extent error need simulated spatial fields (DTALite bridge) | OPEN |
 
+**Wave 5 (policy panel: FHWA analyst / MPO planner / BCA economist — report:
+[reviews/SIMULATED_POLICY_PANEL_2026-07-08.md](reviews/SIMULATED_POLICY_PANEL_2026-07-08.md)):**
+
+| ID | sev | title | status |
+|---|---|---|---|
+| POL-FIX | HIGH | benefit tokens carried monetization-flavored names ("user time savings", "safety exposure", "reliability gain") that invite illegitimate dollarization | FIXED v2.6.0 — renamed (DURATION_REDUCTION / STOP_AND_GO_EXPOSURE_REDUCED / DURATION_STABILITY_GAIN), hard caveats inline, monetization_guardrails on every result, induced-demand + no-summing caveats in planner_message, heuristic-attribution flag on causes, public_message variant |
+| POL-1 | HIGH | federal PM3 reliability layer: LOTTR + truck TTTR as percentile TT ratios over federal periods | OPEN — computable from speed series + segment lengths |
+| POL-2 | HIGH | person-throughput (occupancy-weighted) severity — vehicle-speed metrics embed car-centric bias against transit/priority alternatives | OPEN |
+| POL-3 | HIGH | EJ/Title VI overlay (who bears the congestion) before any funding-priority framing | OPEN |
+| POL-4 | MED | freight dimension: truck volume/class, TTTR, freight VOT hook | OPEN |
+| POL-5 | MED | emissions/idling exposure token (CMAQ hook; not conformity-grade until an emissions model couples) | OPEN |
+| POL-6 | MED | honest VHD: counted volume × lanes × length, gated to measured-volume corridors, VOT slot | OPEN |
+| POL-7 | MED | significance/CI on before-after benefit comparisons; multi-period baselines | OPEN |
+
 ## 9. Enhancement backlog (not bugs — wanted capabilities)
 
 | ID | title | driver |

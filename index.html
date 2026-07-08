@@ -179,6 +179,21 @@ out["ranking"].head()                 <span># who deserves the money, and why</s
   <div class="rung"><b>5 · Diagnose</b><span>active vs passive, μ/C, ranking — and defend it</span><em>the career</em></div>
  </div>
 
+ <h2>The architecture — Reader → Planner → Writer</h2>
+ <p class="lede">How the pieces fit: CBI reads the world and files structured issues;
+  the Planner (human + AI) discusses and approves; Token2Net turns approved issues
+  into safe, validated network patches; simulation evaluates; the loop learns.</p>
+ <figure class="figwrap" style="margin-top:0">
+  <img src="figures/CBI_token2net.png"
+       alt="CBI + Token2Net paradigm: Reader, Understanding, Issue Graph, Discuss and Plan, Token2Net Writer, Simulate and Evaluate, with a learning and improvement loop">
+  <figcaption><b>Reader – Understand – Issue Graph – Discuss – Token – Patch – Simulate –
+  Evaluate – Improve.</b> The Reader never writes; the Writer never reads the world;
+  everything that crosses the boundary is a machine-readable issue object with evidence
+  and confidence. Details: <a href="docs/READER_PLANNER_WRITER.md">the architecture</a> ·
+  <a href="docs/CBI_TOKENS.md">CBI tokens</a> ·
+  <a href="docs/RAG_EVIDENCE_COMPILER.md">the RAG evidence compiler</a>.</figcaption>
+ </figure>
+
  <div class="anchor">
   <div class="big"><span>The engine is replaceable;</span> the scheme, contracts, gates,
    and reproducible process are the foundation.</div>

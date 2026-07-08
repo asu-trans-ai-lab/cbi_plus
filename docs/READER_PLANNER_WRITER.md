@@ -1,5 +1,7 @@
 # READER / PLANNER / WRITER — the three-layer architecture
 
+![CBI + Token2Net paradigm: Reader, Understanding, Issue Graph, Discuss & Plan, Token2Net Writer, Simulate & Evaluate, learning loop](../figures/CBI_token2net.png)
+
 **Design memo (2026-07-08).** CBI and Token2Net must never be mixed into
 one system, or the AI "improvises" and the system drifts out of control.
 They are two different compilers with a human gate between them:

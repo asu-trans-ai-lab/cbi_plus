@@ -18,7 +18,10 @@ from pathlib import Path
 
 SIZE_LIMIT_MB = 10.0
 RAW_HEADER_TOKENS = {"measurement_tstamp", "tmc_code"}
-ALLOWED_DATA_PREFIXES = ("benchmarks/",)   # public PeMS March-2018 cases
+ALLOWED_DATA_PREFIXES = ("benchmarks/",)   # public PeMS benchmark cases
+# teaching workbooks are curated pedagogy, not raw agency data — exempt from
+# the size gate (Fluid_Queue_Approximation v3.0 is 12.9 MB by design)
+SIZE_EXEMPT_PREFIXES = ("docs/teaching/",)
 
 
 def tracked() -> list[str]:
@@ -36,7 +39,8 @@ def main() -> None:
         if f.startswith(("outputs/", "additional/")):
             bad.append(f"{f}  (private area tracked)")
             continue
-        if p.exists() and p.stat().st_size > SIZE_LIMIT_MB * 1e6:
+        if (p.exists() and p.stat().st_size > SIZE_LIMIT_MB * 1e6
+                and not f.startswith(SIZE_EXEMPT_PREFIXES)):
             bad.append(f"{f}  ({p.stat().st_size/1e6:.0f} MB > {SIZE_LIMIT_MB:.0f} MB)")
             continue
         if p.suffix.lower() == ".csv" and p.exists() \

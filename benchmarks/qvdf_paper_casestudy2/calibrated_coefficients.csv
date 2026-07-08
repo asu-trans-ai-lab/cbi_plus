@@ -1,0 +1,2 @@
+corridor,source,n_days,capacity_vphpl,v_co_mph,n,f_d,f_p,s,P_fit_R2
+I-405 NB (paper case study 2),02-I405_Summary_4month.xlsx (paper repo),253,1662.0,52.0,1.0461,1.1238,0.2193,0.9389,0.977

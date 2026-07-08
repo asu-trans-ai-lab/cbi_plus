@@ -70,6 +70,18 @@ Table 8 (curvature γ at each weekday's mean D/C) reproduces within ~1–10% —
 quantity (γ = 64·μ·(L/u<sub>c</sub>)·f<sub>p</sub>·P<sup>s−4</sup>). Case study 2 of the paper (Figs 18–23,
 corridor-level, Cheng et&nbsp;al. 2022 data) is not yet included.</div>
 
+<h2>Case Study 2 — I-405 NB corridor (Figs 19–23) · reproduced</h2>
+<div class="note">Section 5.2's longitudinal single-bottleneck analysis (I-405 NB, 6-mile corridor, 4 months,
+253 per-day observations) is reproduced in <code>../qvdf_paper_casestudy2/</code> from the paper repo's own
+calibration workbook (<code>02-I405_Summary_4month.xlsx</code>): C=1,662 vphpl, n=1.0461, f_d=1.1238,
+f_p=0.2193, s=0.9389 — P-fit R²=0.977, self-consistency vs the workbook's estimates 0.0000 h.
+Note the data-vintage nuance: the paper text says Apr–Jul 2019; the workbook is day-indexed. A second script
+(<code>reproduce_casestudy2_current_data.py</code>) runs the same analysis on the current public
+TrafficFlowBench I-405N release for a present-day comparison.</div>
+<figure><img src="../qvdf_paper_casestudy2/figures/Fig19_20_P_vs_DC.png" loading="lazy" alt="Fig 19-20"><figcaption>Figs. 19–20 — observed &amp; estimated congestion duration P vs D/C; estimated vs observed P (R²=0.977).</figcaption></figure>
+<figure><img src="../qvdf_paper_casestudy2/figures/Fig21_22_speeds_vs_DC.png" loading="lazy" alt="Fig 21-22"><figcaption>Figs. 21–22 — lowest speed v<sub>t2</sub> and mean speed v̄ vs D/C.</figcaption></figure>
+<figure><img src="../qvdf_paper_casestudy2/figures/Fig23_capacity_discount.png" loading="lazy" alt="Fig 23"><figcaption>Fig. 23 — capacity discount factor μ/C vs congestion duration P.</figcaption></figure>
+
 <h2>Relation to the CBI+ pipeline</h2>
 <p>This reproduction is the <b>reference anchor</b> for the CBI+ benchmark gates: the 35 keyed statistics in
 <code>paper_reference_values.csv</code> are what <code>cbi_pipeline.benchmark_gates</code> treats as the

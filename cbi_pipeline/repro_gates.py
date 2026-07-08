@@ -47,6 +47,10 @@ REGISTRY = [
                  ("paq_fit_results.csv", "r2_quadratic", "median", 0.549, 0.10)],
          figures=["figures/paq_field_and_queue.png", "figures/paq_shape_fits.png"],
          note="trapezoid >= quadratic >> quartic/cubic ordering must hold (medians)"),
+    dict(name="engine_comparison", script=None,
+         checks=[("ai_arena_results.csv", "mae_congested_kmh", "min", 0.0, None)],
+         figures=["engine_comparison.png"],
+         note="AI arena artifacts present; regenerate via cbi_pipeline.ai_arena"),
     dict(name="cbi_arizona", script="reproduce_cbi_arizona.py",
          checks=[("agreement_stats.csv", "P_corr", "min", 0.30, None),
                  ("agreement_stats.csv", "vt2_corr", "min", 0.50, None)],
@@ -70,7 +74,7 @@ def run_all(rerun: bool = False) -> pd.DataFrame:
     rows = []
     for spec in REGISTRY:
         d = BM / spec["name"]
-        if rerun:
+        if rerun and spec.get("script"):
             print(f"[repro] running {spec['name']}/{spec['script']} ...")
             r = subprocess.run([sys.executable, spec["script"]], cwd=d,
                                capture_output=True, text=True)

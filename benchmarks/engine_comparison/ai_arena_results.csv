@@ -1,0 +1,7 @@
+source,mask_frac,mask_mode,engine,status,mae_all_kmh,rmse_all_kmh,mae_congested_kmh,n_cells,n_congested
+v4_I405N.json,0.3,blocks,persistence,ok,2.33,5.06,11.01,33312.0,1513.0
+v4_I405N.json,0.3,blocks,matrix_completion,ok,5.39,8.26,12.53,33312.0,1513.0
+v4_I405N.json,0.3,blocks,rpca_lowrank,ok,4.02,8.83,16.33,33312.0,1513.0
+v4_I405N.json,0.3,blocks,tensor_cube,ok,5.62,7.29,17.25,33312.0,1513.0
+v4_I405N.json,0.3,blocks,tod_profile,ok,4.23,8.77,19.32,33312.0,1513.0
+v4_I405N.json,0.3,blocks,pinn_tse,SKIPPED (torch coupling pending),,,,,

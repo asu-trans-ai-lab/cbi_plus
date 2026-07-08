@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>Engine comparison — AI families & queue shapes</title>
+<style> :root{--ink:#1d232b;--muted:#5a6472;--line:#e5e5e5;--card:#fff;--blue:#2563eb;--blue-d:#1b4bb3;
+ --green:#2f9e5e;--green-d:#1c6b3f;--dark:#1d232b;--accent:#58a6ff}
+ *{box-sizing:border-box} body{font:14.5px/1.6 system-ui,Segoe UI,Arial;margin:0;color:var(--ink);background:#fafafa}
+ header{background:var(--dark);color:#e6edf3;padding:20px 28px} header h1{margin:0;font-size:20px}
+ header h1 span{color:var(--accent)} header p{margin:8px 0 0;color:#9aa7bd;font-size:13.5px;max-width:940px}
+ main{max-width:1060px;margin:0 auto;padding:20px 28px 60px}
+ h2{font-size:16.5px;margin:26px 0 10px;border-bottom:1px solid var(--line);padding-bottom:6px}
+ table{border-collapse:collapse;width:100%;font-size:12.5px;background:var(--card);margin:8px 0}
+ th,td{border:1px solid var(--line);padding:5px 9px;text-align:right} th:first-child,td:first-child{text-align:left}
+ thead th{background:#f6f8fb;color:var(--muted);font-size:11.5px}
+ figure{margin:20px 0;background:var(--card);border:1px solid var(--line);border-radius:11px;padding:12px}
+ figure img{width:100%;display:block;border-radius:6px} figcaption{font-size:12.5px;color:var(--muted);margin-top:8px}
+ code{background:#eef;padding:1px 6px;border-radius:3px;font-size:12.5px}
+ .note{background:#eef4ff;border:1px solid #cfe0ff;border-left:4px solid var(--blue);border-radius:9px;padding:10px 14px;font-size:13px;margin:12px 0}
+ .scroll{overflow-x:auto} a{color:var(--blue-d)}</style></head><body>
+<header><h1><span>Engine comparison</span> — the families play against each other</h1>
+<p>Two arenas, one platform. <b>AI arena</b>: state-reconstruction families score on held-out masked blocks
+(the competition's S_state task). <b>Queue-shape arena</b>: analytic shape engines score per audited episode.
+Every engine is callable (docs/ENGINE_SHOWCASE.md); every number regenerates with one command.</p></header>
+<main>
+<div class="note"><b>Rerun:</b> <code>python -m cbi_pipeline.ai_arena --json &lt;compact.json&gt; --mode blocks --out benchmarks/engine_comparison</code>
+· <code>python -m cbi_pipeline.engine_arena &lt;run_dir&gt; --json &lt;compact.json&gt;</code></div>
+<h2>AI arena — masked-block reconstruction (I405N v4 sample, 30% masked, 2-h blocks)</h2>
+<div class="scroll"><table><thead><tr><th>source</th><th>mask_frac</th><th>mask_mode</th><th>engine</th><th>status</th><th>mae_all_kmh</th><th>rmse_all_kmh</th><th>mae_congested_kmh</th><th>n_cells</th><th>n_congested</th></tr></thead><tbody><tr><td>v4_I405N.json</td><td>0.3</td><td>blocks</td><td>persistence</td><td>ok</td><td>2.33</td><td>5.06</td><td>11.01</td><td>33312.0</td><td>1513.0</td></tr><tr><td>v4_I405N.json</td><td>0.3</td><td>blocks</td><td>matrix_completion</td><td>ok</td><td>5.39</td><td>8.26</td><td>12.53</td><td>33312.0</td><td>1513.0</td></tr><tr><td>v4_I405N.json</td><td>0.3</td><td>blocks</td><td>rpca_lowrank</td><td>ok</td><td>4.02</td><td>8.83</td><td>16.33</td><td>33312.0</td><td>1513.0</td></tr><tr><td>v4_I405N.json</td><td>0.3</td><td>blocks</td><td>tensor_cube</td><td>ok</td><td>5.62</td><td>7.29</td><td>17.25</td><td>33312.0</td><td>1513.0</td></tr><tr><td>v4_I405N.json</td><td>0.3</td><td>blocks</td><td>tod_profile</td><td>ok</td><td>4.23</td><td>8.77</td><td>19.32</td><td>33312.0</td><td>1513.0</td></tr><tr><td>v4_I405N.json</td><td>0.3</td><td>blocks</td><td>pinn_tse</td><td>SKIPPED (torch coupling pending)</td><td>nan</td><td>nan</td><td>nan</td><td>nan</td><td>nan</td></tr></tbody></table></div>
+<h2>Queue-shape arena — per-episode winners (I-210E, 450 episodes)</h2>
+<div class="scroll"><table><thead><tr><th>shape_engine</th><th>episodes_won</th></tr></thead><tbody><tr><td>trapezoid</td><td>301</td></tr><tr><td>newell_quadratic</td><td>122</td></tr><tr><td>paq_cubic</td><td>23</td></tr><tr><td>qvdf_quartic</td><td>4</td></tr></tbody></table></div>
+<h2>Figure</h2>
+<figure><img src="engine_comparison.png" loading="lazy"><figcaption>Left: AI families on masked blocks
+(lower MAE better; congested cells are what S_state weights 0.60). Right: queue-shape winners per episode.</figcaption></figure>
+<div class="note"><b>How to read the results (teaching points):</b>
+(1) <b>Masking geometry decides the AI winner</b> — with random single cells, interpolation is unbeatable
+(0.53 km/h); with realistic 2-h dark blocks its congested-cell error grows 7× (11.0 km/h) and completion
+families close in (matrix completion 12.5). (2) <b>Training span matters</b> — on a 7-day sample the
+completion/tensor families are rank-starved; rerun on the full month before drawing conclusions.
+(3) <b>No queue shape wins everywhere</b> — trapezoid takes oversaturated episodes (301/450), quadratic the
+mild ones (122). (4) PINN is registered and SKIPPED unless torch is present — coupling via the corridor
+contract is the staged next step (ENGINES.md).</div>
+<p style="color:var(--muted);font-size:12px"><a href="../index.html">← all benchmark reproductions</a></p>
+</main></body></html>

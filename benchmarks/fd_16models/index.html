@@ -1,0 +1,26 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>Traffic-Flow-Fundamental-Diagram repo (S3 + 13-model suite)</title>
+<style> :root{--ink:#1d232b;--muted:#5a6472;--line:#e5e5e5;--card:#fff;--blue:#2563eb;--blue-d:#1b4bb3;
+ --green:#2f9e5e;--green-d:#1c6b3f;--dark:#1d232b;--accent:#58a6ff}
+ *{box-sizing:border-box} body{font:14.5px/1.6 system-ui,Segoe UI,Arial;margin:0;color:var(--ink);background:#fafafa}
+ header{background:var(--dark);color:#e6edf3;padding:20px 28px} header h1{margin:0;font-size:20px}
+ header h1 span{color:var(--accent)} header p{margin:8px 0 0;color:#9aa7bd;font-size:13.5px;max-width:940px}
+ main{max-width:1060px;margin:0 auto;padding:20px 28px 60px}
+ h2{font-size:16.5px;margin:26px 0 10px;border-bottom:1px solid var(--line);padding-bottom:6px}
+ table{border-collapse:collapse;width:100%;font-size:12.5px;background:var(--card);margin:8px 0}
+ th,td{border:1px solid var(--line);padding:5px 9px;text-align:right} th:first-child,td:first-child{text-align:left}
+ thead th{background:#f6f8fb;color:var(--muted);font-size:11.5px}
+ figure{margin:20px 0;background:var(--card);border:1px solid var(--line);border-radius:11px;padding:12px}
+ figure img{width:100%;display:block;border-radius:6px} figcaption{font-size:12.5px;color:var(--muted);margin-top:8px}
+ code{background:#eef;padding:1px 6px;border-radius:3px;font-size:12.5px}
+ .note{background:#eef4ff;border:1px solid #cfe0ff;border-left:4px solid var(--blue);border-radius:9px;padding:10px 14px;font-size:13px;margin:12px 0}
+ .scroll{overflow-x:auto} a{color:var(--blue-d)}</style></head><body>
+<header><h1><span>Reproduction</span> — Traffic-Flow-Fundamental-Diagram repo (S3 + 13-model suite)</h1><p>The FD repo's own solver (<code>calibrate_fundamental_diagram.solve</code>, vendored verbatim) refit on the repo's own <code>input_data.csv</code> flow–speed–density scatter. Headline finding reproduced: <b>S3 gives the lowest flow RMSE (173.2)</b> of the fitted suite.</p></header>
+<main>
+<div class="note"><b>Rerun:</b> <code>python reproduce_fd16.py</code> — complete dataset in <code>data/</code>, no external paths.
+Verified by <code>python -m cbi_pipeline.repro_gates</code>.</div>
+<h2>Model parameters + RMSE (their solver, their data)</h2><div class='scroll'><table><thead><tr><th>model</th><th>rmse_flow</th><th>rmse_speed</th><th>parameters</th></tr></thead><tbody><tr><td>S3</td><td>173.2</td><td>5.74</td><td>[69.84, 37.852, 3.156]</td></tr><tr><td>Wang_5PL</td><td>174.8</td><td>5.73</td><td>[70.161, 7.052, 23.389, 5.758, 0.203]</td></tr><tr><td>MacNicholas</td><td>177.1</td><td>5.79</td><td>[70.336, 200.0, 2.652, 42.779]</td></tr><tr><td>Wang_4PL</td><td>180.9</td><td>5.87</td><td>[74.597, 10.0, 41.67, 13.559]</td></tr><tr><td>GHR_M1</td><td>195.3</td><td>5.96</td><td>[71.204, 41.556]</td></tr><tr><td>KK</td><td>200.0</td><td>6.07</td><td>[79.026, 60.0, 0.759, 0.309, 0.0]</td></tr><tr><td>Wang_3PL</td><td>200.0</td><td>6.07</td><td>[79.026, 45.559, 18.564]</td></tr><tr><td>NF</td><td>209.9</td><td>5.94</td><td>[70.564, 140.0, 3704.776]</td></tr><tr><td>Underwood</td><td>274.1</td><td>7.97</td><td>[80.0, 60.0]</td></tr><tr><td>Greenberg</td><td>294.8</td><td>14.88</td><td>[22.652, 180.0]</td></tr><tr><td>Greenshields</td><td>386.4</td><td>7.73</td><td>[73.381, 120.0]</td></tr><tr><td>GHR_M2</td><td>606.8</td><td>10.72</td><td>[65.349, 133.003, 1.484]</td></tr><tr><td>GHR_M3</td><td>1848.2</td><td>39.4</td><td>[70.0, 40.0, 2.0]</td></tr><tr><td>Jayakrishnan</td><td>nan</td><td>nan</td><td>FAILED: ValueError</td></tr></tbody></table></div>
+<h2>Figures</h2><figure><img src="figures/fd_model_comparison.png" loading="lazy"><figcaption>Flow–density and speed–density scatter with the fitted model suite (S3 bold) — the repo's comparison figure, regenerated.</figcaption></figure>
+<div class="note">Fidelity notes: 13 of 14 models fit; <b>Jayakrishnan fails inside the repo's own code</b> (bounds/x0 length mismatch — a genuine legacy bug, preserved not patched). The production pipeline uses S3 with Huber loss + bootstrap (<code>stage3_fd_robust</code>); this suite is the benchmark layer (<code>cbi_pipeline.fd_model_zoo</code>).</div>
+<p style="color:var(--muted);font-size:12px"><a href="../index.html">← all benchmark reproductions</a> · part of cbi_plus</p>
+</main></body></html>

@@ -20,8 +20,13 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-TFB_ROOT = Path("C:/source_codes/0_source_code_new/IEEE_Simulate_Players/"
-                "ASU_Internal_Version_DLSIM_IEEE/02_data_PeMS_LA")
+# Portable: point at your TrafficFlowBench 02_data_PeMS_LA copy via the
+# TFB_DATA_ROOT environment variable (falls back to Simon's local path).
+import os
+TFB_ROOT = Path(os.environ.get(
+    "TFB_DATA_ROOT",
+    "C:/source_codes/0_source_code_new/IEEE_Simulate_Players/"
+    "ASU_Internal_Version_DLSIM_IEEE/02_data_PeMS_LA"))
 OUT_ROOT = Path(__file__).resolve().parent / "outputs" / "trafficflowbench"
 
 

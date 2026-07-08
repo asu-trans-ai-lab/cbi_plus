@@ -1,0 +1,21 @@
+case_id,corridor,direction,facility_group,period,statistic_name,reference_source,tolerance,status_rule
+I10_QVDF,I-10,*,GP,AM/PM,speed_profile_MAE_mph,paper_or_previous_run,<=10 hard; <=5 preferred,FAIL if >10
+I10_QVDF,I-10,*,GP,AM/PM,congestion_duration_error_min,paper_or_previous_run,<=30 min or <=20%,FAIL if above both
+I10_QVDF,I-10,*,GP,AM/PM,T0_error_min,paper_or_previous_run,<=30,FAIL if >30
+I10_QVDF,I-10,*,GP,AM/PM,T3_error_min,paper_or_previous_run,<=30,FAIL if >30
+I10_QVDF,I-10,*,GP,AM/PM,QVDF_speed_MAE_mph,paper_or_previous_run,<=10 hard; <=5 preferred,FAIL if >10
+I405_PEMS,I-405,*,GP,AM/MD/PM/MDPM,observed_fraction,data_manifest,>=0.80 preferred; >=0.60 review,FAIL if <0.60
+I405_PEMS,I-405,*,GP,AM/MD/PM/MDPM,qkv_consistency_median_rel_error,PeMS_data,<=0.10,FAIL if >0.10
+I405_PEMS,I-405,*,GP,AM/MD/PM/MDPM,FD_R2,PeMS_data,>=0.70,FAIL if <0.70
+I405_PEMS,I-405,*,GP,AM/MD/PM/MDPM,capacity_vphpl,PeMS_data,1500-2300 normal,REVIEW/FAIL outside band
+I405_PEMS,I-405,*,GP,AM/MD/PM/MDPM,mu_over_C,PeMS_data,0.85-0.98 preferred; 0.80-1.05 review,FAIL outside review band
+I405_PEMS,I-405,*,GP,AM/MD/PM/MDPM,speed_profile_MAE_mph,previous_run,<=10 hard; <=5 preferred,FAIL if >10
+I395_NVTA,I-395,NB/SB,SOV/HOV,AM/PM,speed_profile_MAE_mph,previous_review_or_RITIS,<=10 hard; <=5 preferred,FAIL if >10
+I395_NVTA,I-395,NB/SB,SOV/HOV,AM/PM,congestion_duration_error_min,previous_review,<=30 min or <=20%,FAIL if above both
+I395_NVTA,I-395,NB/SB,SOV/HOV,AM/PM,bottleneck_top5_overlap,previous_review,>=4/5 preferred; >=3/5 review,FAIL if <3/5
+I395_NVTA,I-395,NB/SB,SOV/HOV,AM/PM,spearman_rank_corr,previous_review,>=0.70 preferred,REVIEW if <0.70
+ALL,*,*,*,AM/MD/PM/MDPM,weekday_filter_correctness,run_manifest,100%,FAIL if weekend included in average weekday
+ALL,*,*,*,AM/MD/PM/MDPM,direction_confidence,stage1_qc,>=0.70 preferred; >=0.50 minimum,FAIL if <0.50
+ALL,*,*,*,AM/MD/PM/MDPM,valid_episodes_per_sensor_period,stage2_episodes,>=5 minimum; >=10 preferred,INSUFFICIENT_DATA if <5
+ALL,*,*,*,AM/MD/PM/MDPM,boundary_truncation_share,stage2_episodes,<=20%,FAIL/REVIEW if >20 after MDPM merge
+ALL,*,*,*,AM/MD/PM/MDPM,QVDF_roundtrip_speed_MAE_mph,stage5_verification,<=10 hard; <=5 preferred,FAIL if >10

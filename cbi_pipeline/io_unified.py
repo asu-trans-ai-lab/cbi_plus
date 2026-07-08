@@ -183,14 +183,24 @@ def _attach_pems_metadata(df: pd.DataFrame, info_csv: Path = SENSOR_INFO_CSV) ->
 
 
 def load_pems(t_start: Optional[str] = None, t_end: Optional[str] = None,
-              path: Optional[Path] = None, representative: bool = True) -> pd.DataFrame:
-    """Load PeMS data into the common timeseries schema."""
+              path: Optional[Path] = None, representative: bool = True,
+              info_csv: Optional[Path] = None) -> pd.DataFrame:
+    """Load PeMS data into the common timeseries schema.
+
+    info_csv: sensor-information table to use instead of the package default.
+    When a dataset folder ships its own sensor_information.csv next to the
+    compact JSON (the benchmarks/ convention), it is auto-adopted."""
     if path is None:
         path = PEMS_JSON_REPRESENTATIVE if representative else PEMS_JSON_ALL
+    elif info_csv is None:
+        sib = Path(path).parent / "sensor_information.csv"
+        if sib.exists():
+            info_csv = sib
+            print(f"[load_pems] using dataset-local metadata: {sib}")
     df = _load_pems_compact_json(Path(path))
     if df.empty:
         return df
-    df = _attach_pems_metadata(df)
+    df = _attach_pems_metadata(df, info_csv=info_csv) if info_csv else _attach_pems_metadata(df)
     if t_start is not None:
         df = df[df["datetime"] >= pd.Timestamp(t_start)]
     if t_end is not None:

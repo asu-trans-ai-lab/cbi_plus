@@ -1,0 +1,34 @@
+{
+  "package": "cbi_pipeline_demo",
+  "prepared_by": "prepare_demo_datasets.py",
+  "prepared_at": "2026-05-11 18:49:07.264209",
+  "date_window": {
+    "start": "2018-03-01 00:00:00",
+    "end": "2018-03-31 23:59:00"
+  },
+  "datasets": [
+    {
+      "corridor": "I-17",
+      "n_tmcs": 256,
+      "t_start": "2025-03-24",
+      "t_end": "2025-03-30",
+      "source": "INRIX 1-min speed"
+    },
+    {
+      "corridor": "I-10",
+      "fwy": 10,
+      "n_sensors": 32,
+      "t_start": "2018-03-01 00:00:00",
+      "t_end": "2018-03-31 23:59:00",
+      "json_size_mb": 5.532494
+    },
+    {
+      "corridor": "I-405",
+      "fwy": 405,
+      "n_sensors": 29,
+      "t_start": "2018-03-01 00:00:00",
+      "t_end": "2018-03-31 23:59:00",
+      "json_size_mb": 5.009668
+    }
+  ]
+}

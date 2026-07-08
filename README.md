@@ -69,6 +69,25 @@ to read in which order, healthy magnitudes, per-period interpretation, pitfalls.
 | 4 μ | `stage4_mu_validation` + `stage4_verification` | μ per episode/link + step-by-step audit CSV/panels | discharge-window median, group shrinkage |
 | 5 QVDF | `stage5_qvdf` + `stage5_verification` + `stage5b_corridor_aggregate` | elasticities per (sensor, period) + exact round-trip audit + corridor law with bootstrap CI & prior shrinkage | IQR, feasibility ranges (C++ verbatim) |
 
+## Closeout: benchmarks, gates, and the CPI/CBI ranking
+
+CBI+ is accepted only against evidence — see **[docs/CLOSEOUT.md](docs/CLOSEOUT.md)**:
+
+- **Stage 6 (CPI/CBI deliverable):** every run emits
+  `stage6_cbi/benchmark_bottleneck_ranking.csv` — sensor-period bottleneck
+  scores (frequency × duration × severity) with active / passive / spillback
+  classes and explicit aggregation-level labels.
+- **Hard gates:** `python -m cbi_pipeline.benchmark_gates <run_dir>` writes
+  `pass_fail_summary.csv` + `benchmark_comparison_report.csv` (physics bands,
+  episode sufficiency, QVDF round-trip ≤ 10 mph MAE, ranking stability vs a
+  reference run). Thresholds: `benchmarks/benchmark_validation_tolerance_template.csv`.
+- **Benchmark cases in-repo:** `benchmarks/I-10` and `benchmarks/I-405`
+  (public Caltrans PeMS, March 2018, with their own sensor tables +
+  `MANIFEST.json`) reproduce with one command each; I-395 NVTA runs from the
+  private data path.
+- **Dataset discovery:** `python -m cbi_pipeline.discover <root>` inventories
+  every CBI-compatible dataset under a directory tree with readiness verdicts.
+
 ## Provenance & audits
 
 Ten issues were found and fixed during the 2026-07 TrafficFlowBench integration

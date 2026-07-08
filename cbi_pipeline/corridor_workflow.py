@@ -240,6 +240,20 @@ def run_corridor(corridor: str,
     eps, rel, ep_summary = stage2_episodes.run_episodes(df_qc, default_v_c_mph=v_c_mph)
     stage2_episodes.write_stage2(eps, rel, ep_summary, out_dir / "stage2_episodes")
 
+    # Stage 6 — the CPI/CBI deliverable: bottleneck score & ranking (from the
+    # audited episodes; runs early so a partial run still yields the ranking)
+    print(f"[{corridor}] Stage 6: CBI bottleneck score & ranking")
+    from . import stage6_cbi_ranking
+    _ro = None
+    if "road_order" in df_qc.columns:
+        _s = df_qc.groupby("sensor_uid")["road_order"].first().dropna()
+        if len(_s):        # sensors missing from the info table fall back to positional
+            _ro = (_s.rank(method="first").astype(int) - 1).to_dict()
+    try:
+        stage6_cbi_ranking.run_ranking(eps, corridor, out_dir / "stage6_cbi", road_order=_ro)
+    except Exception as _e:                                    # never kill the run for the ranking
+        print(f"   [stage6] ranking failed ({type(_e).__name__}: {_e}) — continuing")
+
     # Stage 3 — FD
     print(f"[{corridor}] Stage 3: FD ({'data-fit' if has_volume else 'CBI prior'})")
     fd = stage3_fd_robust.run_fd(df_qc, n_boot=n_boot)

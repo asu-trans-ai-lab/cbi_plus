@@ -13,6 +13,7 @@ authors = [{ name = "ASU Trans+AI Lab" }]
 dependencies = [
     "numpy",
     "pandas",
+    "scipy",
     "scikit-learn",
     "matplotlib",
     "pyarrow",

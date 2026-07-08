@@ -31,7 +31,7 @@ def main():
     summary = corridor_workflow.run_corridor(
         corridor="10-E",
         source="pems",
-        pems_path=PACKAGE_ROOT / "datasets" / "I-10" / "link_performance.json",
+        pems_path=PACKAGE_ROOT / "benchmarks" / "I-10" / "link_performance.json",
         pems_representative=False,             # the demo JSON IS the full set
         v_c_mph=45.0,                          # urban interstate v_c
         v_f_mph=65.0,

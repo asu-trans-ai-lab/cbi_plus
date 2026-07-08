@@ -35,7 +35,7 @@ def main():
     summary = corridor_workflow.run_corridor(
         corridor="405-S",
         source="pems",
-        pems_path=PACKAGE_ROOT / "datasets" / "I-405" / "link_performance.json",
+        pems_path=PACKAGE_ROOT / "benchmarks" / "I-405" / "link_performance.json",
         pems_representative=False,
         v_c_mph=45.0,
         v_f_mph=65.0,

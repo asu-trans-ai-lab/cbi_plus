@@ -1,0 +1,132 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CBI/QVDF — Mechanism-Based Training Platform for Modern Congestion Diagnosis</title>
+<meta name="description" content="Agentic AI for Translational AMS Modeling — first working instance. A scheme-driven, engine-agnostic, quality-gated platform that trains a new generation of traffic engineers: observe, diagnose, explain, validate, decide.">
+<style>
+ :root{--ink:#1d232b;--muted:#5a6472;--line:#e5e5e5;--card:#fff;--blue:#2563eb;--blue-d:#1b4bb3;
+ --green:#2f9e5e;--green-d:#1c6b3f;--amber:#c07a12;--red:#b3261e;--dark:#1d232b;--accent:#58a6ff}
+ *{box-sizing:border-box} body{font:15px/1.6 system-ui,Segoe UI,Arial;margin:0;color:var(--ink);background:#fafafa}
+ header{background:linear-gradient(160deg,#12161c, #1d232b 60%, #1b2b45);color:#e6edf3;padding:44px 30px 38px;text-align:center}
+ .kicker{color:var(--accent);font-size:13px;letter-spacing:.14em;text-transform:uppercase;font-weight:700}
+ header h1{margin:10px auto 0;font-size:32px;line-height:1.25;max-width:900px}
+ header .sub{margin:14px auto 0;color:#aeb9c9;font-size:16px;max-width:820px}
+ blockquote{margin:22px auto 0;max-width:760px;color:#cbd6e4;font-size:16.5px;font-style:italic;
+  border-left:none;padding:0 20px}
+ blockquote b{color:#fff;font-style:normal}
+ .btns{margin-top:26px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+ .btn{display:inline-block;padding:11px 22px;border-radius:9px;text-decoration:none;font-weight:600;font-size:14.5px}
+ .btn.p{background:var(--blue);color:#fff} .btn.p:hover{background:var(--blue-d)}
+ .btn.s{background:transparent;color:#cbd6e4;border:1px solid #3a4656} .btn.s:hover{border-color:#8b97a9;color:#fff}
+ main{max-width:1180px;margin:0 auto;padding:30px}
+ .figwrap{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;
+  box-shadow:0 2px 14px rgba(0,0,0,.06);margin:-60px auto 0;position:relative;max-width:1180px}
+ .figwrap img{width:100%;display:block;border-radius:8px}
+ .figwrap figcaption{font-size:13px;color:var(--muted);padding:12px 8px 2px;text-align:center}
+ h2{font-size:21px;margin:44px 0 6px;text-align:center}
+ p.lede{color:var(--muted);max-width:760px;margin:0 auto 20px;text-align:center}
+ .kpis{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin:26px 0 8px}
+ .kpi{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:14px 22px;text-align:center;min-width:130px}
+ .kpi b{display:block;font-size:26px;color:var(--blue-d)} .kpi span{font-size:12px;color:var(--muted)}
+ .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin:20px 0}
+ .card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:11px;padding:15px 18px}
+ .card.g{border-left-color:var(--green)} .card.a{border-left-color:var(--amber)}
+ .card b a{color:var(--blue-d);text-decoration:none;font-size:16px} .card b a:hover{text-decoration:underline}
+ .card .m{font-size:13px;color:var(--muted);margin-top:6px;line-height:1.6}
+ .ladder{display:flex;gap:0;justify-content:center;flex-wrap:wrap;margin:22px 0}
+ .rung{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:5px;
+  max-width:200px;text-align:center;position:relative}
+ .rung b{display:block;font-size:13.5px;color:var(--blue-d)} .rung span{font-size:11.5px;color:var(--muted)}
+ .rung em{display:block;font-size:10.5px;color:var(--green-d);font-style:normal;font-weight:700;margin-top:4px}
+ .anchor{background:var(--dark);color:#e6edf3;border-radius:14px;padding:28px 30px;text-align:center;margin:44px 0 10px}
+ .anchor .big{font-size:19px;font-weight:600;max-width:840px;margin:0 auto}
+ .anchor .big span{color:var(--accent)}
+ .anchor .chain{margin-top:14px;font-size:12.5px;color:#8b97a9;font-family:ui-monospace,Consolas,monospace}
+ .anchor .chain b{color:#cbd6e4}
+ footer{max-width:1180px;margin:0 auto;padding:18px 30px 40px;color:var(--muted);font-size:12.5px;text-align:center}
+ code{background:#eef;padding:1px 6px;border-radius:3px;font-size:13px}
+</style></head><body>
+
+<header>
+ <div class="kicker">Agentic AI for Translational AMS Modeling · first working instance</div>
+ <h1>CBI/QVDF — a mechanism-based training platform<br>for modern congestion diagnosis</h1>
+ <div class="sub">Real freeway data · Newell–Daganzo physics · explainable AI · benchmark gates.
+   Scheme-driven, engine-agnostic, quality-gated — and reproducible by one command.</div>
+ <blockquote>"This tool is not about learning how to run another traffic software package.
+   It is about learning how to <b>think</b> like a modern traffic engineer:
+   <b>observe, diagnose, explain, validate, and decide.</b>"</blockquote>
+ <div class="btns">
+  <a class="btn p" href="docs/INTRODUCTION.md">Start here — the Introduction</a>
+  <a class="btn s" href="benchmarks/index.html">Benchmark reproductions</a>
+  <a class="btn s" href="docs/ENGINE_SHOWCASE.md">The engines</a>
+  <a class="btn s" href="docs/GLOSSARY.md">Glossary (5 min)</a>
+ </div>
+</header>
+
+<main>
+ <figure class="figwrap">
+  <img src="figures/traffic_engineering_paradigm_shift.png"
+       alt="Traffic engineering paradigm shift: from plotting to explanation and decision-making">
+  <figcaption><b>The paradigm in one frame</b> — left: plot-driven traffic engineering (PHF, V/C, hourly
+  averages: it can report numbers but cannot explain or decide). Right: mechanism-based diagnosis —
+  5-minute dynamics, cumulative-curve queue physics (T0/T2/T3), μ/C capacity drop, QVDF reconstruction,
+  benchmark comparison — feeding real decisions. Every element on the right is runnable in this repository.</figcaption>
+ </figure>
+
+ <h2>The evidence, not the promise</h2>
+ <p class="lede">Every number below regenerates with <code>python -m cbi_pipeline.repro_gates</code>.</p>
+ <div class="kpis">
+  <div class="kpi"><b>25/25</b><span>reproduction gates PASS</span></div>
+  <div class="kpi"><b>5</b><span>published-work reproductions<br>(Tables exact)</span></div>
+  <div class="kpi"><b>12</b><span>engines registered<br>(one contract)</span></div>
+  <div class="kpi"><b>7</b><span>corridors diagnosed<br>+ dashboards</span></div>
+  <div class="kpi"><b>2</b><span>arenas — engines compete<br>per episode</span></div>
+  <div class="kpi"><b>6</b><span>contracts, machine-checked</span></div>
+ </div>
+
+ <h2>Enter through any door</h2>
+ <div class="grid">
+  <div class="card"><b><a href="docs/INTRODUCTION.md">The Introduction</a></b>
+   <div class="m">Who we train, what the old teaching misses, the LWR→Newell→Daganzo foundation, the mission.
+   Then <a href="docs/teaching/THEORY_FOUNDATIONS.md">why V/C is not congestion</a> and the
+   <a href="docs/GLOSSARY.md">two-dialect glossary</a>.</div></div>
+  <div class="card g"><b><a href="benchmarks/index.html">Benchmark reproductions</a></b>
+   <div class="m">The QVDF paper (both case studies, Tables 5/6/7 exact), the FD 16-model suite, PAQ corridor,
+   legacy CBI Arizona — each with complete datasets in-repo and keyed reference statistics.</div></div>
+  <div class="card g"><b><a href="benchmarks/engine_comparison/index.html">Engine comparison</a></b>
+   <div class="m">Queue-shape tournament (trapezoid 301/450 on I-210E) and the AI arena on masked-block state
+   reconstruction — masking geometry decides winners, honestly reported.</div></div>
+  <div class="card"><b><a href="benchmarks/flow_tensor_demo/index.html">Flow-Through-Tensor lab</a></b>
+   <div class="m">One corridor-week as a tensor: bottleneck fingerprints by linear algebra, price-of-rank,
+   OD-free conservation residuals — the AI↔physics bridge (<a href="docs/FLOW_TENSOR_MATH.md">math</a>).</div></div>
+  <div class="card a"><b><a href="docs/AMS_FRAMEWORK.md">The AMS framework</a></b>
+   <div class="m">Scheme-driven, engine-agnostic, quality-gated — TransModeler, SUMO, DTALite, DLSIM, Aimsun,
+   VISSIM all welcome through the same contracts (<a href="schemas/ams_scheme_example.yml">working scheme file</a>).</div></div>
+  <div class="card a"><b><a href="docs/teaching/README.md">Teaching workbooks &amp; audits</a></b>
+   <div class="m">Every pipeline stage by hand in Excel; simulated-student read-through reviews keep the
+   front door honest (<a href="docs/reviews/STUDENT_READTHROUGH_2026-07-08.md">latest audit</a>).</div></div>
+ </div>
+
+ <h2>Your first day</h2>
+ <div class="ladder">
+  <div class="rung"><b>0 · Health check</b><span><code>repro_gates</code> verifies every benchmark</span><em>~5 s</em></div>
+  <div class="rung"><b>1 · Read</b><span>Glossary → theory foundations → stage chain</span><em>30 min</em></div>
+  <div class="rung"><b>2 · By hand</b><span>one sensor, one day: find T0/T2/T3 in Excel</span><em>20 min</em></div>
+  <div class="rung"><b>3 · Hello world</b><span>reproduce the QVDF paper exactly, in-repo data</span><em>~2 min</em></div>
+  <div class="rung"><b>4 · Real corridor</b><span>full pipeline + dashboard on I-10</span><em>~2 min</em></div>
+  <div class="rung"><b>5 · Diagnose</b><span>active vs passive, μ/C, ranking — and defend it</span><em>the career</em></div>
+ </div>
+
+ <div class="anchor">
+  <div class="big"><span>The engine is replaceable;</span> the scheme, contracts, gates,
+   and reproducible process are the foundation.</div>
+  <div class="chain">regional model → subarea → dynamic assignment → trajectories →
+   <b>CBI diagnosis (this platform)</b> → policy evaluation → visualization &amp; review</div>
+ </div>
+</main>
+
+<footer>
+ CBI/QVDF · Agentic AI for Translational AMS Modeling · built on the LWR–Newell–Daganzo tradition
+ (<a href="docs/INTELLECTUAL_LINEAGE.md">lineage</a>) · mission: <a href="docs/MISSION.md">MISSION.md</a> ·
+ spec: <a href="docs/CONTRACTS.md">CONTRACTS.md</a> · lessons: <a href="docs/LESSONS_LEARNED.md">LESSONS_LEARNED.md</a>
+</footer>
+</body></html>

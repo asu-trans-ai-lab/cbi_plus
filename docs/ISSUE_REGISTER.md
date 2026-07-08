@@ -165,7 +165,7 @@ and [reviews/SIMULATED_COMPETITION_USERS_2026-07-08.md](reviews/SIMULATED_COMPET
 | ID | sev | title | status |
 |---|---|---|---|
 | POL-FIX | HIGH | benefit tokens carried monetization-flavored names ("user time savings", "safety exposure", "reliability gain") that invite illegitimate dollarization | FIXED v2.6.0 — renamed (DURATION_REDUCTION / STOP_AND_GO_EXPOSURE_REDUCED / DURATION_STABILITY_GAIN), hard caveats inline, monetization_guardrails on every result, induced-demand + no-summing caveats in planner_message, heuristic-attribution flag on causes, public_message variant |
-| POL-1 | HIGH | federal PM3 reliability layer: LOTTR + truck TTTR as percentile TT ratios over federal periods | OPEN — computable from speed series + segment lengths |
+| POL-1 | HIGH | federal PM3 reliability layer: LOTTR + truck TTTR as percentile TT ratios over federal periods | SHIPPED v2.8.0 — cbi_pipeline/pm3_reliability.py; 15-min epochs, `pm3_grade` window guard, `tttr_basis` proxy label, `pm3_issues` -> Issue Graph |
 | POL-2 | HIGH | person-throughput (occupancy-weighted) severity — vehicle-speed metrics embed car-centric bias against transit/priority alternatives | OPEN |
 | POL-3 | HIGH | EJ/Title VI overlay (who bears the congestion) before any funding-priority framing | OPEN |
 | POL-4 | MED | freight dimension: truck volume/class, TTTR, freight VOT hook | OPEN |

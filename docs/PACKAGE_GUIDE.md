@@ -105,6 +105,8 @@ raise loud warnings.
 | `fit_fd_huber / bootstrap_fd` | FD fitting — returns derived `capacity_vphpl`/`k_c_vpm`/`v_c_mph` too; `fd_model_zoo` is a *module* (registry via `fd_models()`) |
 | `fit_qvdf_P / fit_qvdf_v_t2 / fit_qvdf_v_avg / predict_qvdf` | QVDF pieces |
 | `classify_day / discharge_window` | the per-day queue primitives (T0/T2/T3, μ window) |
+| `compute_pm3(df)` / `pm3_issues(pm3)` | federal PM3 reliability: LOTTR + TTTR per sensor-period, with `pm3_grade` window guard and `tttr_basis` proxy label; unreliable segments become Issue Graph objects |
+| `build_issue_graph / planner_review / approved_issues` | Reader/Planner/Writer gate (docs/READER_PLANNER_WRITER.md) |
 | `verify_installation()` | data-free self-test |
 | `version()` | installed version |
 

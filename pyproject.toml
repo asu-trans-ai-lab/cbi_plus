@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cbi-plus"
-version = "2.7.0"
+version = "2.8.0"
 description = "CBI+ — Congestion Bottleneck Identification / FD / QVDF per-corridor calibration pipeline (queue objects T0/T2/T3, discharge rate mu, capacity drop, QVDF elasticities) for PeMS and INRIX TMC data"
 readme = "README.md"
 requires-python = ">=3.10"

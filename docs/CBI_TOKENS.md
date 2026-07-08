@@ -151,9 +151,20 @@ and calibration registers; the `public_message` variant for public-facing
 text; the ranking as *relative* prioritization (never "who gets the money"
 until cost + equity attach).
 
-Registered as open policy layers (ISSUE_REGISTER POL-1..POL-7): federal
-PM3 reliability (LOTTR/TTTR percentile travel-time ratios over the federal
-periods), person-throughput weighting, EJ/Title VI overlay, freight
+**PM3 reliability layer — SHIPPED (POL-1, v2.8.0)**: `api.compute_pm3(df)`
+returns LOTTR (80th/50th percentile travel time per federal period,
+reliable < 1.50) and TTTR (95th/50th over five periods) per sensor, from
+15-minute epochs. Two honesty flags ride on every result: `pm3_grade`
+("window_screening" unless the window is a full calendar year — short
+windows are for screening, never federal submission) and `tttr_basis`
+("all_vehicle_proxy" unless truck-only speeds are supplied). Unreliable
+segment-periods become Issue Graph objects via `api.pm3_issues` (with
+confidence discounted on screening windows). Teaching note: LOTTR measures
+*variability* — a corridor congested identically every day reads as
+"reliable"; that is PM3 working as designed, not a bug.
+
+Registered as open policy layers (ISSUE_REGISTER POL-2..POL-7):
+person-throughput weighting, EJ/Title VI overlay, freight
 TTTR/VOT, emissions/CMAQ hooks, measured-volume VHD + VOT slot, and
 significance testing on before/after comparisons. Cause attribution is
 heuristic (weekend/outlier/class patterns) pending an incident-TIM feed —

@@ -9,7 +9,7 @@ per 5-minute bin):
     datetime          datetime64
     speed_mph_clean   float  (QC output; `run_qc` produces it from speed_mph)
     qc_pass           int    1 = usable (run_qc produces it)
-    flow_vph          float  optional — total volume per hour (all lanes)
+    flow_vph          float  optional — veh/h PER LANE (never totals)
     corridor          str    optional
 
 Units are the package-wide conventions: speed mph, flow veh/h, density
@@ -45,7 +45,7 @@ from . import fd_model_zoo
 __all__ = [
     # loaders (PeMS compact JSON / INRIX RITIS exports / IEEE v4 states)
     "load_pems", "load_inrix", "load_inrix_folder", "load_sensor_timeseries",
-    "load_ieee_v4", "synthesize_volume_s3",
+    "load_ieee_v4", "load_dataset", "read_dataset_meta", "synthesize_volume_s3",
     # stage building blocks
     "run_qc", "run_episodes", "classify_day", "discharge_window",
     "fit_fd_huber", "bootstrap_fd", "run_fd",
@@ -196,24 +196,48 @@ def load_ieee_v4(states_csv, chain_csv=None, corridor: str = "IEEE_V4",
     (``benchmarks/ieee_v4_samples/*/train_detector_states_3days[.csv|.csv.gz]``)
     and the full release files with the same columns.
     """
+    import warnings
     raw = pd.read_csv(states_csv)
     required = {"station_id", "timestamp", "speed", "flow", "milepost", "is_observed"}
     missing = required - set(raw.columns)
     if missing:
         raise ValueError(f"not a v4 detector-states file — missing columns: {sorted(missing)}")
+    n_before = len(raw)
     raw = raw[raw["is_observed"] == 1]
+    if not len(raw):
+        raise ValueError(
+            f"every one of the {n_before} rows has is_observed == 0 (all "
+            "imputed) — there is nothing measured to calibrate on in this file.")
 
+    def _norm_id(s: pd.Series) -> pd.Series:
+        # ids must survive float-parsing (NaN in the column turns '101'
+        # into '101.0') and vendor prefixes — normalize both sides
+        out = s.astype(str).str.strip()
+        return out.str.replace(r"\.0$", "", regex=True)
+    raw = raw[raw["station_id"].notna()]
+
+    sid = _norm_id(raw["station_id"])
     if chain_csv is not None:
         chain = pd.read_csv(chain_csv)
         sid_col = ("station_id" if "station_id" in chain.columns
                    else chain.columns[0])
-        order = {str(s): i for i, s in enumerate(chain[sid_col].astype(str))}
+        order = {s: i for i, s in enumerate(_norm_id(chain[sid_col]))}
     else:
-        ranks = (raw[["station_id", "milepost"]].drop_duplicates()
-                 .sort_values("milepost"))
-        order = {str(s): i for i, s in enumerate(ranks["station_id"])}
+        ranks = (pd.DataFrame({"sid": sid, "milepost": raw["milepost"]})
+                 .drop_duplicates("sid").sort_values("milepost"))
+        order = {s: i for i, s in enumerate(ranks["sid"])}
 
-    sid = raw["station_id"].astype(str)
+    unmatched = sorted(set(sid.unique()) - set(order))
+    if unmatched:
+        if len(unmatched) == sid.nunique():
+            raise ValueError(
+                "no station id matched the ordering source — chain and "
+                f"states ids look incompatible (states e.g. {unmatched[:3]}, "
+                f"ordering keys e.g. {list(order)[:3]})")
+        warnings.warn(
+            f"{len(unmatched)} station id(s) missing from the ordering "
+            f"source get road_order=-1 (topology degraded): {unmatched[:5]}",
+            UserWarning, stacklevel=2)
     # effective lanes from the data itself (p99 flow / 1900 veh/h/ln)
     p99 = raw.groupby(sid)["flow"].transform(lambda s: s.quantile(0.99))
     ln = (p99 / 1900.0).round().clip(1, 8).fillna(lanes)
@@ -237,6 +261,69 @@ def fd_models() -> list:
     """Names accepted by :func:`fit_fd_huber` (case-insensitive)."""
     from .stage3_fd_robust import MODELS
     return sorted(MODELS)
+
+
+# ---------------------------------------------------------------------------
+# dataset_meta.json — the standard units/semantics sidecar
+# ---------------------------------------------------------------------------
+def read_dataset_meta(folder) -> dict:
+    """Read and sanity-check a dataset's ``dataset_meta.json`` sidecar.
+
+    The sidecar declares units and semantics machine-readably (speed mph vs
+    km/h, flow per-lane vs total, imputation flags, ordering conventions) so
+    loaders convert from DECLARED facts. Schema:
+    ``schemas/dataset_meta.schema.json``. Born from the km/h-as-mph and
+    per-lane-vs-total incidents (ISSUE_REGISTER SIM-M1 / SIM-T1).
+    """
+    import json
+    folder = Path(folder)
+    p = folder / "dataset_meta.json" if folder.is_dir() else folder
+    if not p.exists():
+        raise FileNotFoundError(
+            f"no dataset_meta.json in {folder} — every dataset needs the "
+            "units sidecar (see schemas/dataset_meta.schema.json)")
+    meta = json.loads(p.read_text(encoding="utf8"))
+    for req in ("meta_version", "name", "units", "loader", "files"):
+        if req not in meta:
+            raise ValueError(f"dataset_meta.json missing required key {req!r} ({p})")
+    if "flow_scope" not in meta["units"]:
+        raise ValueError(f"dataset_meta.json units must declare flow_scope ({p})")
+    meta["_folder"] = str(p.parent)
+    return meta
+
+
+def load_dataset(folder, **kwargs) -> pd.DataFrame:
+    """Load a dataset by its ``dataset_meta.json`` — units applied from the
+    declaration, never from tribal knowledge.
+
+    Dispatches on ``meta["loader"]``: ``ieee_v4`` | ``pems_compact_json`` |
+    ``inrix_folder`` | ``contract_csv`` (already in the package contract).
+    ``custom_script`` datasets (paper workbooks, engine inputs) raise with a
+    pointer to their reproduce script.
+    """
+    meta = read_dataset_meta(folder)
+    root = Path(meta["_folder"])
+    loader = meta["loader"]
+    files = meta.get("files", {})
+    if loader == "ieee_v4":
+        chain = files.get("chain")
+        return load_ieee_v4(root / files["states"],
+                            chain_csv=(root / chain) if chain else None,
+                            corridor=meta["name"], **kwargs)
+    if loader == "pems_compact_json":
+        return load_pems(path=root / files["states"], **kwargs)
+    if loader == "inrix_folder":
+        return load_inrix_folder(root, **kwargs)
+    if loader == "contract_csv":
+        df = pd.read_csv(root / files["states"], **kwargs)
+        if meta["units"].get("speed") == "kmh":
+            for c in ("speed_mph", "speed"):
+                if c in df.columns:
+                    df[c] = pd.to_numeric(df[c], errors="coerce") / 1.609
+        return df
+    raise ValueError(
+        f"dataset '{meta['name']}' uses loader='{loader}' — load it via its "
+        f"reproduce script (see {files.get('notes', 'the benchmark folder')})")
 
 
 # ---------------------------------------------------------------------------
@@ -298,11 +385,16 @@ def diagnose(df: pd.DataFrame,
     corridor = str(df["corridor"].iloc[0]) if len(df) else "CORRIDOR"
 
     # ---- units guards
-    if speed_units.lower() in ("kmh", "km/h", "kph") and "speed_mph" in df.columns:
-        df["speed_mph"] = pd.to_numeric(df["speed_mph"], errors="coerce") / 1.609
+    declared_kmh = speed_units.lower() in ("kmh", "km/h", "kph")
+    if declared_kmh:
+        # convert EVERY speed column present — pre-cleaned frames carry
+        # speed_mph_clean only (coder review finding 5, CONFIRMED)
+        for c in ("speed_mph", "speed_mph_clean"):
+            if c in df.columns:
+                df[c] = pd.to_numeric(df[c], errors="coerce") / 1.609
     spd_col = "speed_mph" if "speed_mph" in df.columns else "speed_mph_clean"
     med = float(pd.to_numeric(df[spd_col], errors="coerce").median())
-    if med > 90:
+    if med > 90 and not declared_kmh:
         warnings.warn(
             f"median {spd_col} = {med:.0f} — this looks like km/h, not mph. "
             "Pass speed_units='kmh' (or use load_ieee_v4); diagnosing km/h "
@@ -332,26 +424,58 @@ def diagnose(df: pd.DataFrame,
     episodes, reliability, ep_summary = run_episodes(
         df_qc, default_v_c_mph=v_c_mph, by_period=by_period)
 
-    # clock-time versions of the period-relative bin indices
+    # clock-time versions of the group-relative bin indices. The indices are
+    # POSITIONAL within each (sensor, date, period) group, so they must be
+    # mapped through the group's actual timestamps — arithmetic from the
+    # period start silently drifts across data gaps (coder review finding 3,
+    # CONFIRMED: a missing hour shifted every reported time by the gap).
     if len(episodes) and "t0_index" in episodes.columns:
-        from .schemas import PERIOD_SLICE_BOUNDS
-        p0h = episodes["period"].map(
-            lambda p: PERIOD_SLICE_BOUNDS.get(p, (0, 24))[0])
-        base = pd.to_datetime(episodes["date"]) + pd.to_timedelta(p0h, unit="h")
+        from .stage2_episodes import _period_for_timestamp
+        tmp = df_qc[["sensor_uid", "datetime"]].copy()
+        tmp["date"] = tmp["datetime"].dt.date.astype(str)
+        tmp["period"] = tmp["datetime"].map(_period_for_timestamp)
+        lut: dict = {}
+        for key, g in tmp.groupby(["sensor_uid", "date", "period"], sort=False):
+            lut[key] = np.sort(g["datetime"].to_numpy())
+
+        def _clock(row, which):
+            i = row[f"{which}_index"]
+            if pd.isna(i):
+                return pd.NaT
+            periods = ([row["period"]] if row["period"] not in ("MDPM", "all_day")
+                       else (["MD", "PM"] if row["period"] == "MDPM"
+                             else ["AM", "MD", "PM", "NT"]))
+            arrs = [lut.get((row["sensor_uid"], str(row["date"]), p))
+                    for p in periods]
+            arrs = [a for a in arrs if a is not None]
+            if not arrs:
+                return pd.NaT
+            arr = np.sort(np.concatenate(arrs))
+            i = int(i)
+            return pd.Timestamp(arr[i]) if 0 <= i < len(arr) else pd.NaT
+
         for c in ("t0", "t2", "t3"):
-            idx = pd.to_numeric(episodes[f"{c}_index"], errors="coerce")
-            episodes[f"{c}_time"] = base + pd.to_timedelta(idx * 5, unit="m")
+            episodes[f"{c}_time"] = episodes.apply(lambda r, c=c: _clock(r, c), axis=1)
 
     fd, fd_summary = None, None
     if "flow_vph" in df_qc.columns:
         try:
             fd = run_fd(df_qc, n_boot=n_boot)
-            fd_summary = pd.DataFrame([{
-                "sensor_uid": sid,
-                "capacity_vphpl": p["fd"]["capacity_vphpl"],
-                "v_f_mph": p["fd"]["free_flow_speed_kph"] / 1.609,
-                "r_squared": p["fd"]["r_squared"],
-            } for sid, p in fd.items()])
+            # one degenerate sensor must not discard everyone else's fits
+            # (coder review finding 4, CONFIRMED) — NaN-fill, don't crash
+            rows = []
+            for sid, p in fd.items():
+                fdd = p.get("fd") or {}
+                cap = fdd.get("capacity_vphpl")
+                vfk = fdd.get("free_flow_speed_kph")
+                rows.append({
+                    "sensor_uid": sid,
+                    "capacity_vphpl": float(cap) if cap is not None else np.nan,
+                    "v_f_mph": float(vfk) / 1.609 if vfk is not None else np.nan,
+                    "r_squared": (float(fdd["r_squared"])
+                                  if fdd.get("r_squared") is not None else np.nan),
+                })
+            fd_summary = pd.DataFrame(rows)
             # physics gate: never hand back impossible fits unflagged
             fd_summary["fit_ok"] = (
                 (fd_summary["r_squared"] > 0)
@@ -382,8 +506,13 @@ def diagnose(df: pd.DataFrame,
                           "qvdf set to None", UserWarning, stacklevel=2)
             qvdf = None
 
+    # topology MUST come from road_order — run_ranking's alphabetical
+    # fallback scrambles bottleneck classes on real station ids (coder
+    # review finding 1, CONFIRMED: planted bottleneck flipped classes
+    # under a sensor rename)
+    ro = df_qc.groupby("sensor_uid")["road_order"].first().astype(int).to_dict()
     ranking = run_ranking(
-        episodes, corridor,
+        episodes, corridor, road_order=ro,
         out_dir=(Path(out_dir) / "stage6_cbi") if out_dir is not None else None)
     if len(ranking):
         ranking = ranking.sort_values("CBI_score", ascending=False)

@@ -1,0 +1,34 @@
+{
+  "meta_version": 1,
+  "name": "fd_16models_input",
+  "title": "FD calibration benchmark input (flow-speed-density observations)",
+  "source": "legacy Traffic-Flow-FD repo (Georgia freeway detector data)",
+  "license": "public benchmark redistribution",
+  "cadence_minutes": 5,
+  "timezone": "local_naive",
+  "units": {
+    "speed": "mph",
+    "flow": "vph",
+    "flow_scope": "per_lane",
+    "density": "veh_per_mi_per_lane",
+    "distance": null
+  },
+  "loader": "contract_csv",
+  "files": {
+    "states": "input_data.csv"
+  },
+  "columns": {
+    "Flow": {
+      "unit": "veh/h/ln"
+    },
+    "Speed": {
+      "unit": "mph"
+    },
+    "Density": {
+      "unit": "veh/mi/ln"
+    }
+  },
+  "caveats": [
+    "columns are already per-lane; R2 model ranking is dominated by the free-flow cloud \u2014 judge capacity near the curve peak"
+  ]
+}

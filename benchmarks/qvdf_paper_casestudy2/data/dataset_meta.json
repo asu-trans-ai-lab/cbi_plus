@@ -1,0 +1,24 @@
+{
+  "meta_version": 1,
+  "name": "qvdf_paper_cs2_i405",
+  "title": "QVDF paper Case Study 2 \u2014 I-405 4-month summary workbook",
+  "source": "Zhou et al. 2022 reproduction data",
+  "license": "public benchmark redistribution",
+  "cadence_minutes": 15,
+  "timezone": "local_naive",
+  "units": {
+    "speed": "mph",
+    "flow": "vph",
+    "flow_scope": "per_lane",
+    "density": null,
+    "distance": "miles"
+  },
+  "loader": "custom_script",
+  "files": {
+    "summary": "02-I405_Summary_4month.xlsx",
+    "notes": "../reproduce_casestudy2.py"
+  },
+  "caveats": [
+    "single-corridor, in-sample fits (duration R2 = 0.977) \u2014 not a universal law"
+  ]
+}

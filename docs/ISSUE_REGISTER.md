@@ -124,6 +124,32 @@ and [reviews/SIMULATED_COMPETITION_USERS_2026-07-08.md](reviews/SIMULATED_COMPET
 | SIM-P7 | LOW | print-based stage chatter; non-ASCII console breakage | OPEN — logging migration |
 | SIM-P8 | LOW | no CI matrix / tests package in wheel | OPEN — infra |
 
+**Wave 3 (RITIS engineer / INRIX engineer / staff coder — full report:
+[reviews/SIMULATED_INDUSTRY_CODER_2026-07-08.md](reviews/SIMULATED_INDUSTRY_CODER_2026-07-08.md)):**
+
+| ID | sev | title | status |
+|---|---|---|---|
+| SIM-C1 | ★CRIT | `diagnose` never passed road_order to ranking — bottleneck classes on ALPHABETICAL sensor order | FIXED v2.4.0 |
+| SIM-X2 | ★CRIT | INRIX TMC map-version rows sextupled every reading on merge | FIXED v2.4.0 |
+| SIM-X3 | ★CRIT | INRIX resample densified empty bins (696k readings → 112M rows / 34 GB) | FIXED v2.4.0 |
+| SIM-X1 | HIGH | confidence_score/cvalue never read — historical fill ingested as measurement | FIXED v2.4.0 — min_confidence=30 default |
+| SIM-C2 | HIGH | speed-only frames crashed the panel (`KeyError flow_vph`) | FIXED v2.4.0 |
+| SIM-C3 | HIGH | `t*_time` drifted across data gaps (positional-index arithmetic) | FIXED v2.4.0 |
+| SIM-C4..C6 | MED | degenerate-sensor FD wipeout; kmh skipped on pre-cleaned; v4 id-mismatch silent -1 | FIXED v2.4.0 |
+| SIM-X4 | MED | vf pooled across TMCs/directions instead of reference_speed | FIXED v2.4.0 |
+| SIM-X9 | LOW | load_inrix_folder failed on the repo's own benchmark filename | FIXED v2.4.0 |
+| SIM-R1/R4/R10 | HIGH/MED | RITIS mischaracterization; colorblind ramp; missing no-endorsement caveats | FIXED v2.4.0 |
+| SIM-META | — | **dataset_meta.json standard**: per-dataset units/semantics sidecar (13 shipped) + `api.load_dataset` / `read_dataset_meta` + JSON Schema — structural fix for SIM-M1/SIM-T1 | SHIPPED v2.4.0 |
+| SIM-X5 | MED | inverse-S3 synthesis ill-posed at free flow (confident near-capacity flows) | OPEN |
+| SIM-X6 | MED | flow_synthetic / s3_prior_label provenance dropped by schema + panel; ranking lacks measured-vs-synthetic stamp (=R-8) | OPEN |
+| SIM-X7 | MED | INRIX directions interleave on one road_order axis | OPEN |
+| SIM-X8 | MED | corridor aggregation not length-weighted | OPEN |
+| SIM-R3 | MED | no delay/impacted-VMT currency in the operator ranking | OPEN |
+| SIM-R5 | MED | INRIX road_order labeled "MP"; spillback miles from sequence deltas | OPEN |
+| SIM-R6/R7/R9 | MED/LOW | AZ agreement drill-down; dashboard export/tooltips/map; reliability dimension | OPEN |
+| SIM-C8 | LOW | external Part1 detector import reachable from the wheel's sys.path | OPEN |
+| SIM-C9b | LOW | bootstrap capacity grid differs from fit_fd_huber's | OPEN |
+
 ## 9. Enhancement backlog (not bugs — wanted capabilities)
 
 | ID | title | driver |
@@ -136,3 +162,36 @@ and [reviews/SIMULATED_COMPETITION_USERS_2026-07-08.md](reviews/SIMULATED_COMPET
 | ENH-6 | CITATION.cff + LICENSE file + version/changelog surfaced on the front page | Delft-persona review |
 | ENH-7 | type hints + py.typed marker in the wheel | CS-persona review |
 | ENH-8 | NVTA / TFB corridor backlog runs | corridor roadmap |
+
+
+## 10. Misunderstanding gates / adoption risks
+
+Source: `cbi_plus_additional_misunderstanding_audit.md` (2026-07-08) — extends the register
+from software bugs to CONCEPTUAL MISUSE risks. Student edition: `MISUNDERSTANDING_GATES.md`.
+Positioning: CBI+ complements HCM; it does not replace it.
+
+| ID | Sev | Misunderstanding | Required guard | Status |
+|---|---|---|---|---|
+| MIS-1 | CRIT | observed flow treated as true demand | required `demand_source` field | open |
+| MIS-2 | CRIT | HCM capacity / FD C / discharge mu mixed | required `capacity_basis` field | open |
+| MIS-3 | HIGH | V/C treated as congestion | V/C warning banner in reports | open |
+| MIS-4 | HIGH | low speed treated as active bottleneck | active/passive/spillback/artifact label + confidence | open |
+| MIS-5 | HIGH | average weekday treated as physical episode | separate episode_day vs average_weekday_profile outputs | open |
+| MIS-6 | HIGH | one detector used for corridor causality | one-detector mode: timing only | open |
+| MIS-7 | HIGH | imputed data treated as measurement | observed/imputed share gate + duplicate-profile warning | open |
+| MIS-8 | HIGH | km/h fed as mph | unit sanity gate + explicit speed_units in loaders | open |
+| MIS-9 | MED | per-lane vs total flow mixed | required `flow_basis` field | open |
+| MIS-10 | MED | period windows treated as physical events | docs: periods = analysis windows, episodes = detected events | open |
+| MIS-11 | MED | capacity drop defined circularly from FD fit | report uncertainty + alternative C bases | open |
+| MIS-12 | MED | facility type ignored (merge/weave as basic) | `facility_type` enum + HCM crosswalk contract (contract 7) | open |
+| MIS-13 | MED | managed/HOV/HOT mixed with GP lanes | lane-group contract | open |
+| MIS-14 | MED | incidents/work zones mixed into recurring calibration | incident/work-zone flag + recurring/non-recurring split | open |
+| MIS-15 | MED | dashboard figures treated as validation | every panel shows gates + data quality + benchmark status | open |
+| MIS-16 | LOW | no historical benchmark comparison | benchmark_diff.csv + versioned baseline hash | open |
+| MIS-17 | LOW | raw KeyError instead of contract failure | preflight validator + repair recipe | open |
+| MIS-18 | LOW | log noise hides real warnings | structured logging + warning summary | open |
+
+New contract to add: **7. HCM / Facility Capacity Crosswalk** (facility_type, lane_group,
+segment_role, capacity_basis, capacity_vphpl, capacity_total_vph, discharge_mu_vphpl,
+mu_over_C, free_flow_speed_mph, analysis_period, resolution_minutes, hcm_compatible_summary).
+Package features queued: cbi.preflight(), cbi.hcm_crosswalk(), dashboard run/trust/decision cards.

@@ -75,11 +75,14 @@ statement:
 | FHWA / DOT / MPO agencies (FHWA CBI team, ADOT, MAG, NVTA, VDOT) | real problems, real data, real validation pressure | — |
 | Zephyr / GMNS open-source planning community | curriculum and tool diffusion | — |
 
-Note on RITIS/CATT: their probe-data bottleneck dashboards define bottlenecks
-by speed thresholds — genuinely valuable engineering tools, and exactly the
-point where this platform adds the next layer: **a speed-threshold bottleneck
-is not enough; we contribute mechanism-based active/passive diagnosis**
-(stage-6 classes, μ/C, wave direction).
+Note on RITIS/CATT: their probe-data bottleneck ranking is
+speed-threshold-*triggered* congestion-event clustering with bottleneck
+head/tail (queue-extent) tracking — genuinely valuable engineering tools
+that already capture spatial queue structure. What this platform adds is a
+further **mechanism layer on top of that kind of ranking**: μ/C capacity
+drop, discharge-rate validation, QVDF calibration, and the
+active/passive/spillback/incident classification with benchmark gates. A
+complement, not a correction.
 
 ### The real competition: three weak paradigms, not people
 

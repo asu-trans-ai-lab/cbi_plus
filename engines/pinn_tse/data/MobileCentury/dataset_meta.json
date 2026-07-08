@@ -1,0 +1,35 @@
+{
+  "meta_version": 1,
+  "name": "pinn_mobilecentury",
+  "title": "Mobile Century experiment (loops + GPS probes, I-880, 2008-02-08)",
+  "source": "UC Berkeley Mobile Century public release",
+  "license": "public research release",
+  "cadence_minutes": 5,
+  "timezone": "local_naive",
+  "units": {
+    "speed": "mph",
+    "flow": "vph",
+    "flow_scope": "total_all_lanes",
+    "density": null,
+    "distance": "miles"
+  },
+  "loader": "custom_script",
+  "files": {
+    "loops": "loop.csv",
+    "gps": "gps.csv",
+    "ramps": "ramp.csv",
+    "travel_time": "travel_time.csv"
+  },
+  "columns": {
+    "count": {
+      "unit": "veh per 300 s",
+      "description": "multiply by 12 for veh/h"
+    },
+    "Postmile (Abs)": {
+      "unit": "miles absolute postmile"
+    }
+  },
+  "caveats": [
+    "loop 'count' is per-5-minute vehicles, NOT veh/h"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "meta_version": 1,
+  "name": "qvdf_paper_i10",
+  "title": "QVDF paper Case Study 1 \u2014 I-10 corridor measurement tables",
+  "source": "Zhou et al. 2022 (Multimodal Transportation 1:100017) reproduction data",
+  "license": "public benchmark redistribution",
+  "cadence_minutes": 15,
+  "timezone": "local_naive",
+  "units": {
+    "speed": "mph",
+    "flow": "vph",
+    "flow_scope": "per_lane",
+    "density": "veh_per_mi_per_lane",
+    "distance": "miles"
+  },
+  "loader": "custom_script",
+  "files": {
+    "notes": "../reproduce_qvdf_paper.py",
+    "training": "fd_corridor_measurement_I10_training_set.csv"
+  },
+  "columns": {
+    "demand_over_capacity": {
+      "unit": "HOURS",
+      "description": "D/C in HOURS (the package-wide convention), not a plain ratio"
+    },
+    "ultimate_capacity": {
+      "unit": "veh/h/ln"
+    }
+  },
+  "caveats": [
+    "paper two-dialect symbols: f_d/n/f_p/s (paper) == Q_cd/Q_n/Q_cp/Q_s (pipeline)"
+  ]
+}

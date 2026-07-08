@@ -20,4 +20,4 @@ try:
     from importlib.metadata import version as _pkg_version
     __version__ = _pkg_version("cbi-plus")
 except Exception:                    # source checkout without install
-    __version__ = "2.3.0"
+    __version__ = "2.4.0"

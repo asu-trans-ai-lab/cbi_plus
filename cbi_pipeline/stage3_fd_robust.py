@@ -92,7 +92,8 @@ def split_regimes(df: pd.DataFrame,
                   v_c: float, k_c: float,
                   v_f: float) -> dict:
     """Return three masks over df: free_flow / near_capacity / congested."""
-    v = df["speed_mph"].to_numpy(dtype=float)
+    _spd = "speed_mph" if "speed_mph" in df.columns else "speed_mph_clean"
+    v = df[_spd].to_numpy(dtype=float)
     k = df["density_vpm"].to_numpy(dtype=float)
     mask_free = (v >= 0.95 * v_f) & (k < 0.6 * k_c)
     mask_near = (k >= 0.6 * k_c) & (k <= 1.2 * k_c)
@@ -108,17 +109,22 @@ def _residuals(params, model_fn, k_obs, q_obs):
     return q_pred - q_obs
 
 
+def _normalize_model_name(model_name: str) -> str:
+    """Case-insensitive model lookup with a helpful error."""
+    if model_name in MODELS:
+        return model_name
+    match = {m.lower(): m for m in MODELS}.get(str(model_name).lower())
+    if match is None:
+        raise KeyError(f"unknown FD model {model_name!r}; available: "
+                       f"{sorted(MODELS)}")
+    return match
+
+
 def fit_fd_huber(k: np.ndarray, q: np.ndarray, model_name: str,
                  huber_eps: float = 1.35) -> dict:
     """Fit one model with Huber loss. Returns params, R²/RMSE, and the
     derived curve quantities (capacity_vphpl, k_c_vpm, v_c_mph)."""
-    # case-insensitive model lookup with a helpful error
-    if model_name not in MODELS:
-        match = {m.lower(): m for m in MODELS}.get(str(model_name).lower())
-        if match is None:
-            raise KeyError(f"unknown FD model {model_name!r}; available: "
-                           f"{sorted(MODELS)}")
-        model_name = match
+    model_name = _normalize_model_name(model_name)
     spec = MODELS[model_name]
     mask = np.isfinite(k) & np.isfinite(q) & (k > 0) & (q >= 0)
     k_obs = k[mask]
@@ -170,6 +176,7 @@ def bootstrap_fd(k: np.ndarray, q: np.ndarray, model_name: str,
                  n_boot: int = 200, seed: int = 42,
                  huber_eps: float = 1.35) -> dict:
     """Naïve resample bootstrap → per-parameter 5/50/95 percentiles."""
+    model_name = _normalize_model_name(model_name)
     rng = np.random.default_rng(seed)
     mask = np.isfinite(k) & np.isfinite(q) & (k > 0) & (q >= 0)
     k_obs = k[mask]
@@ -266,7 +273,8 @@ def speed_only_fallback(df: pd.DataFrame,
     For INRIX rows (no volume): fit v(k) shape on a synthetic density grid
     seeded by speed quantiles; borrow capacity from a sibling PeMS link.
     """
-    v = df["speed_mph"].to_numpy(dtype=float)
+    _spd = "speed_mph" if "speed_mph" in df.columns else "speed_mph_clean"
+    v = df[_spd].to_numpy(dtype=float)
     v = v[np.isfinite(v)]
     if len(v) < 20:
         return dict(model="speed_only_borrow", params=None,

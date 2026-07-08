@@ -136,7 +136,7 @@ QVDF paper Case-Study-2 per-day observations (I-405 NB single bottleneck, 4 mont
 
 ## `cbi_arizona_inrix_readings`  (696,453 rows · parquet 2.8 MB · parquet tracked)
 
-Legacy CBI tool's Arizona sample: INRIX/RITIS probe speeds, 432 TMCs, Jan 2019, 5-min.
+Legacy CBI tool's Arizona sample: INRIX/RITIS probe speeds, 72 unique TMCs (the raw RITIS export carries ~6 map-version rows per TMC — deduplicate on tmc_code before merging) plus a handful of stray 2021 timestamps; the file is a re-aggregated export (fractional confidence_scores), not a raw vendor feed
 
 | column | dtype | example | note |
 |---|---|---|---|

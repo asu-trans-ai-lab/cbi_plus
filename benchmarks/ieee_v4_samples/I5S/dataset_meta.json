@@ -1,0 +1,50 @@
+{
+  "meta_version": 1,
+  "name": "ieee_v4_I5S",
+  "title": "IEEE TrafficFlowBench v4 sample \u2014 I5S (3 days)",
+  "source": "IEEE BigData Cup TrafficFlowBench v4 release (Caltrans PeMS derived)",
+  "license": "competition release sample; public-agency origin",
+  "cadence_minutes": 5,
+  "timezone": "local_naive (fake-UTC 'Z' suffix \u2014 strip, do not convert)",
+  "units": {
+    "speed": "kmh",
+    "flow": "vph",
+    "flow_scope": "total_all_lanes",
+    "density": "veh_per_km_all_lanes",
+    "distance": "miles"
+  },
+  "loader": "ieee_v4",
+  "files": {
+    "states": "train_detector_states_3days.csv.gz",
+    "chain": "detector_chain_fd.csv",
+    "network": "link.csv"
+  },
+  "columns": {
+    "speed": {
+      "unit": "km/h",
+      "description": "DIVIDE BY 1.609 before any mph-based analysis"
+    },
+    "flow": {
+      "unit": "veh/h total across lanes",
+      "description": "divide by effective lanes for the per-lane contract"
+    },
+    "is_observed": {
+      "unit": "0/1",
+      "description": "0 = imputed (a prior) \u2014 never calibrate on it"
+    }
+  },
+  "quality": {
+    "imputation_flag_column": "is_observed",
+    "imputation_rule": "drop rows with is_observed == 0 before calibration",
+    "lane_tags_reliable": false
+  },
+  "ordering": {
+    "convention": "milepost DECREASES downstream \u2014 use chain row order; states file is .csv.gz",
+    "direction": "S"
+  },
+  "caveats": [
+    "3-day sample: is_observed==0 never occurs here (full release has imputed cells)",
+    "QVDF calibration needs more days than the sample provides (n_fitted = 0 expected)",
+    "chain lane tags unreliable (lanes=1 tagged on a 12,000 veh/h station) \u2014 derive effective lanes from data"
+  ]
+}

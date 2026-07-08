@@ -1,0 +1,71 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/asu-trans-ai-lab/cbi_plus/schemas/dataset_meta.schema.json",
+  "title": "cbi_plus dataset metadata sidecar (dataset_meta.json)",
+  "description": "One dataset_meta.json per dataset folder. It declares units and semantics machine-readably so loaders convert from DECLARED facts, never from tribal knowledge. Born from two critical incidents: km/h ingested as mph (silent garbage rankings) and a per-lane vs total-flow contract contradiction (capacities off by the lane count). See docs/ISSUE_REGISTER.md SIM-M1 / SIM-T1.",
+  "type": "object",
+  "required": ["meta_version", "name", "source", "license", "cadence_minutes",
+               "timezone", "units", "loader", "files"],
+  "properties": {
+    "meta_version": {"const": 1},
+    "name": {"type": "string", "description": "short dataset id, e.g. ieee_v4_I405N"},
+    "title": {"type": "string"},
+    "source": {"type": "string", "description": "who produced the data (agency/vendor/release)"},
+    "license": {"type": "string", "description": "redistribution basis, e.g. 'public (Caltrans PeMS)'"},
+    "cadence_minutes": {"type": "number"},
+    "timezone": {
+      "type": "string",
+      "description": "'local_naive' (timestamps are local clock, no tz) | an IANA zone the timestamps are IN (must be converted to local naive before diagnose) | 'utc'"
+    },
+    "units": {
+      "type": "object",
+      "required": ["speed", "flow_scope"],
+      "properties": {
+        "speed": {"enum": ["mph", "kmh", null], "description": "unit of the speed column AS SHIPPED"},
+        "flow": {"enum": ["vph", null]},
+        "flow_scope": {"enum": ["per_lane", "total_all_lanes", "none"],
+                       "description": "THE trap: package contract is per_lane; loaders divide when total_all_lanes"},
+        "density": {"enum": ["veh_per_mi_per_lane", "veh_per_km_all_lanes", "derived_q_over_v", null]},
+        "distance": {"enum": ["miles", "km", null]}
+      }
+    },
+    "loader": {
+      "enum": ["ieee_v4", "pems_compact_json", "inrix_folder", "contract_csv", "custom_script"],
+      "description": "which cbi_pipeline loader consumes this dataset (custom_script = see files.notes / the benchmark's reproduce_*.py)"
+    },
+    "files": {
+      "type": "object",
+      "description": "role -> relative path (roles: states, chain, network, sensor_info, readings, notes...)",
+      "additionalProperties": {"type": "string"}
+    },
+    "columns": {
+      "type": "object",
+      "description": "per-column notes for anything non-obvious: {column: {unit, description}}",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {"unit": {"type": "string"}, "description": {"type": "string"}}
+      }
+    },
+    "quality": {
+      "type": "object",
+      "properties": {
+        "imputation_flag_column": {"type": ["string", "null"],
+          "description": "column marking imputed cells (e.g. is_observed); imputed cells must NEVER calibrate"},
+        "imputation_rule": {"type": "string"},
+        "confidence_columns": {"type": "array", "items": {"type": "string"},
+          "description": "e.g. INRIX confidence_score / cvalue — low-confidence rows are reference fill, not measurements"},
+        "lane_tags_reliable": {"type": "boolean",
+          "description": "false = derive effective lanes from data (p99 flow / 1900), never trust the tag"}
+      }
+    },
+    "ordering": {
+      "type": "object",
+      "properties": {
+        "convention": {"type": "string",
+          "description": "how upstream->downstream ordering is derived (e.g. 'milepost ascending', 'chain row order — milepost DECREASES downstream on S/W corridors')"},
+        "direction": {"type": "string"}
+      }
+    },
+    "caveats": {"type": "array", "items": {"type": "string"}}
+  }
+}

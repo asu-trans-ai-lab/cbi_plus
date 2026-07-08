@@ -1,0 +1,33 @@
+{
+  "meta_version": 1,
+  "name": "pems_i405_2018",
+  "title": "Caltrans PeMS I-405 corridor, March 2018 (compact JSON)",
+  "source": "Caltrans PeMS District 7",
+  "license": "public (Caltrans PeMS)",
+  "cadence_minutes": 5,
+  "timezone": "local_naive",
+  "units": {
+    "speed": "mph",
+    "flow": "vph",
+    "flow_scope": "per_lane",
+    "density": "derived_q_over_v",
+    "distance": "miles"
+  },
+  "loader": "pems_compact_json",
+  "files": {
+    "states": "link_performance.json",
+    "sensor_info": "sensor_information.csv"
+  },
+  "quality": {
+    "imputation_flag_column": null,
+    "imputation_rule": "PeMS % observed not carried in the compact file; treat low-variance flat series with suspicion",
+    "lane_tags_reliable": false
+  },
+  "ordering": {
+    "convention": "sensor_information.csv road_order (milepost-derived)",
+    "direction": "E/S per corridor"
+  },
+  "caveats": [
+    "flow stored per lane in the compact JSON (already the package contract)"
+  ]
+}

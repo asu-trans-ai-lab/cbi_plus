@@ -214,13 +214,21 @@ def load_pems(t_start: Optional[str] = None, t_end: Optional[str] = None,
 # ===========================================================================
 # INRIX TMC loader
 # ===========================================================================
-def _resample_inrix_5min(df1min: pd.DataFrame) -> pd.DataFrame:
-    """Resample 1-minute INRIX speeds to 5-minute median."""
+def _resample_inrix_5min(df1min: pd.DataFrame,
+                         min_minutes: int = 1) -> pd.DataFrame:
+    """Resample 1-minute INRIX speeds to 5-minute median.
+
+    Empty bins are DROPPED, not materialized — resample() otherwise densifies
+    each TMC's full first-to-last span (a few stray timestamps once inflated
+    696k readings into 18.7M all-NaN bins / 34 GB; INRIX-engineer review,
+    2026-07-08). ``n_minutes`` records how many 1-min readings support each
+    bin; bins with fewer than ``min_minutes`` are dropped."""
     df1min = df1min.set_index("datetime").sort_index()
-    out = (df1min.groupby("tmc_code")["speed"]
-           .resample("5min").median()
-           .reset_index()
-           .rename(columns={"speed": "speed_mph"}))
+    g = df1min.groupby("tmc_code")["speed"].resample("5min")
+    out = g.median().dropna().rename("speed_mph").reset_index()
+    n = g.count().rename("n_minutes").reset_index()
+    out = out.merge(n, on=["tmc_code", "datetime"], how="left")
+    out = out[out["n_minutes"] >= min_minutes].reset_index(drop=True)
     return out
 
 
@@ -233,8 +241,12 @@ def load_inrix(readings_csv: Path,
                s3_prior="cbi_default",
                s3_params: Optional[dict] = None,
                auto_calibrate_vf: bool = True,
-               rederive_kc_and_m: bool = False) -> pd.DataFrame:
-    """Load an INRIX export (Readings.csv + TMC_Identification.csv) into the common schema."""
+               rederive_kc_and_m: bool = False,
+               min_confidence: Optional[int] = 30) -> pd.DataFrame:
+    """Load an INRIX export (Readings.csv + TMC_Identification.csv) into the
+    common schema. ``min_confidence`` drops readings whose INRIX
+    confidence_score is below the threshold (30 = real-time probe only;
+    pass None to keep reference-fill rows, e.g. for legacy reproduction)."""
     readings_csv = Path(readings_csv)
     tmc_id_csv = Path(tmc_id_csv)
 
@@ -245,7 +257,20 @@ def load_inrix(readings_csv: Path,
         "miles": "length_mi",
         "direction": "direction",
     })
-    keep_cols = ["tmc_code", "road", "direction", "length_mi", "road_order"]
+    # RITIS ships one TMC_Identification row PER MAP VERSION — an unguarded
+    # merge sextupled every reading on the Arizona feed. Keep the newest
+    # version per tmc (active_start_date when present, else last row).
+    if meta["tmc_code"].duplicated().any():
+        n_dup = int(meta["tmc_code"].duplicated().sum())
+        sort_col = next((c for c in ("active_start_date", "active_start")
+                         if c in meta.columns), None)
+        if sort_col:
+            meta = meta.sort_values(sort_col)
+        meta = meta.drop_duplicates("tmc_code", keep="last")
+        print(f"[load_inrix] TMC_Identification carried {n_dup} duplicate "
+              "map-version rows — kept the newest per tmc")
+    keep_cols = ["tmc_code", "road", "direction", "length_mi", "road_order",
+                 "reference_speed"]
     meta = meta[[c for c in keep_cols if c in meta.columns]]
     if corridor_name is None:
         if "road" in meta.columns:
@@ -254,14 +279,29 @@ def load_inrix(readings_csv: Path,
             corridor_name = "INRIX"
     meta["corridor"] = corridor_name
 
-    # Speed readings — 1-min cadence
-    readings = pd.read_csv(readings_csv,
-                           usecols=["tmc_code", "measurement_tstamp", "speed"])
+    # Speed readings — 1-min cadence. Confidence semantics (INRIX):
+    # confidence_score 30 = real-time probe, 20/10 = blended/historical
+    # reference fill — the INRIX equivalent of is_observed=0. Ingesting
+    # fill as measurement manufactures episodes (INRIX-engineer review).
+    header = pd.read_csv(readings_csv, nrows=0).columns
+    want = ["tmc_code", "measurement_tstamp", "speed"]
+    conf_cols = [c for c in ("confidence_score", "cvalue") if c in header]
+    readings = pd.read_csv(readings_csv, usecols=want + conf_cols)
     readings["datetime"] = pd.to_datetime(readings["measurement_tstamp"],
                                           format="%Y-%m-%d %H:%M:%S",
                                           errors="coerce")
     readings = readings.dropna(subset=["datetime", "speed"])
     readings["speed"] = readings["speed"].astype(float)
+    if min_confidence is not None and "confidence_score" in conf_cols:
+        n0 = len(readings)
+        readings = readings[
+            pd.to_numeric(readings["confidence_score"], errors="coerce")
+            >= min_confidence]
+        dropped = n0 - len(readings)
+        if dropped:
+            print(f"[load_inrix] dropped {dropped:,} of {n0:,} readings with "
+                  f"confidence_score < {min_confidence} (historical/reference "
+                  "fill is a prior, not a measurement)")
 
     if t_start is not None:
         readings = readings[readings["datetime"] >= pd.Timestamp(t_start)]
@@ -300,7 +340,23 @@ def load_inrix(readings_csv: Path,
 
         synth_kwargs = {k: params[k] for k in
                         ("vf_mph", "k_critical_vpm", "s3_m", "lane_capacity_vphpl")}
-        out["flow_vph"] = synthesize_volume_s3(out["speed_mph"].to_numpy(), **synth_kwargs)
+        if "reference_speed" in out.columns and out["reference_speed"].notna().any():
+            # per-TMC free flow from INRIX's own reference_speed — a pooled
+            # corridor p95 flattens real per-segment differences that feed
+            # straight into the S3 synthesis (INRIX-engineer review)
+            flows = np.full(len(out), np.nan)
+            for _tmc, g in out.groupby("tmc_code", sort=False):
+                kw = dict(synth_kwargs)
+                ref = g["reference_speed"].dropna()
+                if len(ref):
+                    kw["vf_mph"] = float(np.clip(float(ref.iloc[0]) * 1.05, 50, 85))
+                flows[g.index.to_numpy()] = synthesize_volume_s3(
+                    g["speed_mph"].to_numpy(), **kw)
+            out["flow_vph"] = flows
+            print("[load_inrix] per-TMC vf from reference_speed "
+                  f"({out['reference_speed'].notna().sum():,} rows carry it)")
+        else:
+            out["flow_vph"] = synthesize_volume_s3(out["speed_mph"].to_numpy(), **synth_kwargs)
         out["density_vpm"] = synthesize_density_from_flow_speed(
             out["flow_vph"].to_numpy(), out["speed_mph"].to_numpy())
         out["flow_synthetic"] = True
@@ -331,10 +387,15 @@ def load_inrix_folder(folder: Path,
                       synthesize_flow: bool = True) -> pd.DataFrame:
     """Convenience: load an INRIX export folder (Readings.csv + TMC_Identification.csv)."""
     folder = Path(folder)
-    readings = folder / "Readings.csv"
+    # RITIS exports vary: Reading.csv, Readings.csv, gzipped or not
+    cand = (sorted(folder.glob("Reading*.csv")) + sorted(folder.glob("Reading*.csv.gz")))
     tmc_id = folder / "TMC_Identification.csv"
-    if not readings.exists() or not tmc_id.exists():
-        raise FileNotFoundError(f"Expected Readings.csv and TMC_Identification.csv in {folder}")
+    if not cand or not tmc_id.exists():
+        found = [p.name for p in folder.iterdir()] if folder.exists() else []
+        raise FileNotFoundError(
+            f"Expected Reading*.csv[.gz] and TMC_Identification.csv in {folder}; "
+            f"found: {found}")
+    readings = cand[0]
     return load_inrix(readings, tmc_id, t_start=t_start, t_end=t_end,
                       synthesize_flow=synthesize_flow,
                       s3_prior=s3_prior, s3_params=s3_params,
@@ -375,9 +436,14 @@ def build_corridor_panel(df: pd.DataFrame) -> dict:
                             values="speed_mph", aggfunc="first")
                 .reindex(columns=sensor_ids))
 
-    flow_pivot = (df.pivot_table(index="datetime", columns="sensor_uid",
-                                 values="flow_vph", aggfunc="first")
-                    .reindex(columns=sensor_ids))
+    # speed-only feeds (raw INRIX/TMC before synthesis) carry no flow_vph —
+    # the panel must not crash on the documented-optional column
+    if "flow_vph" in df.columns:
+        flow_pivot = (df.pivot_table(index="datetime", columns="sensor_uid",
+                                     values="flow_vph", aggfunc="first")
+                        .reindex(columns=sensor_ids))
+    else:
+        flow_pivot = pd.DataFrame(np.nan, index=pivot.index, columns=sensor_ids)
 
     meta = (df.groupby("sensor_uid")
               .agg(direction=("direction", "first"),

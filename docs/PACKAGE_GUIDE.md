@@ -49,6 +49,32 @@ flow **veh/h**, density **veh/mi/ln**, **D/C in HOURS** — never a plain
 ratio. Imputed cells (`is_observed == 0` in TFB/IEEE releases) must be
 dropped before calibration — imputation is a prior, not a measurement.
 
+## dataset_meta.json — the units sidecar (load any dataset safely)
+
+Every dataset folder in this repo carries a **`dataset_meta.json`**
+declaring its units and semantics machine-readably (schema:
+[`schemas/dataset_meta.schema.json`](../schemas/dataset_meta.schema.json)):
+speed mph vs km/h, flow per-lane vs total, imputation/confidence columns,
+ordering conventions, caveats. This is the structural fix for the two
+critical incidents (km/h-as-mph; per-lane-vs-total).
+
+```python
+meta = api.read_dataset_meta("benchmarks/ieee_v4_samples/I405S")  # validated dict
+df   = api.load_dataset("benchmarks/ieee_v4_samples/I405S")       # units applied
+out  = api.diagnose(df)
+```
+
+`load_dataset` dispatches on `meta["loader"]` (`ieee_v4`,
+`pems_compact_json`, `inrix_folder`, `contract_csv`); paper-workbook
+datasets declare `custom_script` and point to their reproduce script.
+**When you publish a new dataset, ship a sidecar with it** — copy a
+neighbor's file and edit the declarations.
+
+INRIX/RITIS specifics (see also `benchmarks/_datapack/DATA_FORMATS.md`):
+`confidence_score < 30` rows are reference fill, dropped by default
+(`load_inrix(..., min_confidence=None)` to keep them); TMC map-version
+duplicates are deduped; `reference_speed` drives per-TMC free flow.
+
 ## What `diagnose()` returns (the frame schemas)
 
 | key | type | key columns |

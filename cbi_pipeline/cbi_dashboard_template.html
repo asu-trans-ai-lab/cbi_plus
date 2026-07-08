@@ -36,7 +36,14 @@
 <main>
   <div class="kpi" id="kpi"></div>
   <div class="grid">
-    <div class="panel"><div class="head">Space-time contour <small>milepost × time · selected object framed</small></div>
+    <div class="panel"><div class="head">Space-time contour <small>milepost × time · selected object framed</small>
+      <small style="white-space:nowrap">speed:
+        <span style="background:#440154;color:#fff;padding:0 5px;border-radius:2px">&le;20</span>
+        <span style="background:#3b528b;color:#fff;padding:0 5px;border-radius:2px">30</span>
+        <span style="background:#21918c;color:#fff;padding:0 5px;border-radius:2px">40</span>
+        <span style="background:#5ec962;color:#123;padding:0 5px;border-radius:2px">50</span>
+        <span style="background:#fde725;color:#123;padding:0 5px;border-radius:2px">&ge;60 mph</span>
+        (colorblind-safe)</small></div>
       <div class="body"><canvas id="p_contour" height="330"></canvas>
         <div class="axis"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span></div></div></div>
     <div class="panel"><div class="head">Queue objects — this day <small>Gantt by milepost · PAQ relations</small></div>
@@ -64,8 +71,12 @@ const D=__DATA__;
 const $=id=>document.getElementById(id);
 const NX=D.sensors.length, NT=288;
 const hhmm=i=>String(Math.floor(i/12)).padStart(2,'0')+':'+String((i%12)*5).padStart(2,'0');
-function ramp(t){t=Math.max(0,Math.min(1,t));const S=[[166,13,10],[230,84,30],[245,206,52],[47,158,94]],
- s=t*3,i=Math.min(2,Math.floor(s)),f=s-i,a=S[i],b=S[i+1];return[0,1,2].map(k=>Math.round(a[k]+(b[k]-a[k])*f));}
+// colorblind-safe speed ramp (viridis-like: dark purple = slow -> yellow = free flow)
+// replaces the old red-green ramp, unreadable for protan/deutan operators
+function ramp(t){t=Math.max(0,Math.min(1,t));
+ const S=[[68,1,84],[59,82,139],[33,145,140],[94,201,98],[253,231,37]],
+ s=t*4,i=Math.min(3,Math.floor(s)),f=s-i,a=S[i],b=S[i+1];
+ return[0,1,2].map(k=>Math.round(a[k]+(b[k]-a[k])*f));}
 let date=D.dates[0], seg=0, obj=0;
 const epsOn=d=>D.episodes.filter(e=>e.date===d);
 

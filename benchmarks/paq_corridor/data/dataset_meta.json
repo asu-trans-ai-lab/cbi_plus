@@ -1,0 +1,29 @@
+{
+  "meta_version": 1,
+  "name": "paq_corridor",
+  "title": "PAQ 22-detector corridor (daily Flow/Occupancy/Speed workbooks + probe day)",
+  "source": "legacy PAQ repo field data",
+  "license": "public benchmark redistribution",
+  "cadence_minutes": 5,
+  "timezone": "local_naive",
+  "units": {
+    "speed": "mph",
+    "flow": "vph",
+    "flow_scope": "total_all_lanes",
+    "density": null,
+    "distance": "miles"
+  },
+  "loader": "custom_script",
+  "files": {
+    "notes": "../reproduce_paq.py",
+    "lanes": "Dataset 1/lanes.csv",
+    "distance": "Dataset 1/distance.csv"
+  },
+  "quality": {
+    "lane_tags_reliable": true
+  },
+  "caveats": [
+    "Excel workbooks: one file per day per variable; detector columns ordered by distance.csv",
+    "queue threshold used by the paper: 40 mph on aggregate speed"
+  ]
+}

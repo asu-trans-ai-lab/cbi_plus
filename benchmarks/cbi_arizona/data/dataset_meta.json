@@ -1,0 +1,51 @@
+{
+  "meta_version": 1,
+  "name": "cbi_arizona_inrix",
+  "title": "AZ I-17/I-10 INRIX TMC readings + TMC identification",
+  "source": "INRIX via RITIS export (ADOT)",
+  "license": "public benchmark reference \u2014 no INRIX/RITIS endorsement implied",
+  "cadence_minutes": 1,
+  "timezone": "local_naive",
+  "units": {
+    "speed": "mph",
+    "flow": null,
+    "flow_scope": "none",
+    "density": null,
+    "distance": "miles"
+  },
+  "loader": "inrix_folder",
+  "files": {
+    "readings": "Reading.csv.gz",
+    "tmc": "TMC_Identification.csv"
+  },
+  "columns": {
+    "speed": {
+      "unit": "mph"
+    },
+    "confidence_score": {
+      "unit": "10/20/30",
+      "description": "30 = real-time probe; 10 = historical/reference fill \u2014 treat like imputation"
+    },
+    "cvalue": {
+      "unit": "0-100",
+      "description": "probe density indicator; low cvalue = thin evidence"
+    }
+  },
+  "quality": {
+    "imputation_flag_column": "confidence_score",
+    "imputation_rule": "confidence_score < 30 is reference fill, not measurement (loader filter: OPEN item SIM-R2)",
+    "confidence_columns": [
+      "confidence_score",
+      "cvalue"
+    ],
+    "lane_tags_reliable": false
+  },
+  "ordering": {
+    "convention": "TMC_Identification road_order; TMC direction codes carry +/-/P/N internal links",
+    "direction": "N/S per TMC"
+  },
+  "caveats": [
+    "speed-only: volume is SYNTHESIZED via inverse-S3 prior \u2014 flow_synthetic=True downstream; capacities are modeled, not counted",
+    "1-min readings resampled to 5-min"
+  ]
+}

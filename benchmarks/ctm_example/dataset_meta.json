@@ -1,0 +1,26 @@
+{
+  "meta_version": 1,
+  "name": "ctm_example",
+  "title": "Cell Transmission Model example (demand/supply/link)",
+  "source": "CTM-Python engine example",
+  "license": "MIT (vendored engine)",
+  "cadence_minutes": null,
+  "timezone": "local_naive",
+  "units": {
+    "speed": "mph",
+    "flow": "vph",
+    "flow_scope": "total_all_lanes",
+    "density": null,
+    "distance": "miles"
+  },
+  "loader": "custom_script",
+  "files": {
+    "demand": "demand.csv",
+    "supply": "supply.csv",
+    "network": "link.csv",
+    "notes": "Cell_Transmission_Model.py"
+  },
+  "caveats": [
+    "simulation INPUT spec, not detector data; cell length and time step set by the script"
+  ]
+}

@@ -1,6 +1,6 @@
 # MISSION — what the CBI/QVDF platform is, and is not
 
-*Send this to every student and collaborator before they write a line of code.*
+*Send this to every student and collaborator before they write a line of code. The narrative version is [INTRODUCTION.md](INTRODUCTION.md) — the textbook/proposal front page.*
 
 This tool is **not** a data-processing script, and not a machine that runs
 PeMS/INRIX/NVTA data and prints piles of figures. It is a **next-generation

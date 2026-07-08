@@ -6,6 +6,13 @@ traffic-engineering pipeline:
 **C**ongestion **B**ottleneck **I**dentification → **F**undamental **D**iagram →
 discharge-rate **μ** validation → **QVDF** (Queue Volume-Delay Function) forward model
 
+> **This tool is not about learning how to run another traffic software
+> package. It is about learning how to think like a modern traffic engineer:
+> observe, diagnose, explain, validate, and decide.**
+
+**Start here: [docs/INTRODUCTION.md](docs/INTRODUCTION.md)** — who we train, what the
+old teaching misses, the LWR–Newell–Daganzo foundation, and the mission.
+
 Why this platform exists: **[docs/MISSION.md](docs/MISSION.md)** (the medical-school analogy and the seven operating principles) · theory foundations: **[docs/teaching/THEORY_FOUNDATIONS.md](docs/teaching/THEORY_FOUNDATIONS.md)** (why V/C is not congestion; LWR-Newell-Daganzo). New here? Read **[docs/GLOSSARY.md](docs/GLOSSARY.md)** first (5 minutes - every symbol, and the paper-to-pipeline name map).
 
 Given a corridor of detectors (speed + optional volume, 5-minute cadence), CBI+

@@ -44,6 +44,8 @@ from .cbi_tokens import (compile_tokens, compare_tokens, benefit_tokens,
 from .issue_graph import (build_issue_graph, mismatch_issues,
                           write_issue_graph, planner_review, approved_issues)
 from .pm3_reliability import compute_pm3, pm3_issues
+from .vhd import compute_vhd
+from .text_reader import extract_issues_from_texts, corroborate
 from .corridor_workflow import run_corridor
 from . import fd_model_zoo
 
@@ -64,6 +66,8 @@ __all__ = [
     "planner_review", "approved_issues",
     # federal PM3 reliability layer (POL-1): LOTTR + TTTR
     "compute_pm3", "pm3_issues",
+    # POL-6 honest VHD (measured volume only) + the text Reader
+    "compute_vhd", "extract_issues_from_texts", "corroborate",
     # one-call paths
     "run_corridor", "diagnose", "simulate_corridor", "verify_installation",
     "version",

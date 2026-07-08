@@ -208,5 +208,10 @@ FHWA-DOT community.
 13. UMD CATT Lab — RITIS. https://www.cattlab.umd.edu/ritis/
 14. UMD CATT Lab — Probe Data Analytics Suite.
     https://www.cattlab.umd.edu/probe-data-analytics-suite/
-15. Zhou, Cheng, Wu et al. (2022). Multimodal Transportation 1, 100017 —
+15. Modified volume-delay functions based on the fundamental diagram
+   (calibration frameworks for congested/uncongested regimes) and
+   residual-queue static assignment (arXiv:2501.06573) — the demand-side
+   literature converging toward queue-aware VDFs; QVDF is this platform's
+   field-calibrated instance.
+16. Zhou, Cheng, Wu et al. (2022). Multimodal Transportation 1, 100017 —
     reproduced at `benchmarks/qvdf_paper_i10/`.

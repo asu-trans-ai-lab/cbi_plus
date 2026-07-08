@@ -173,6 +173,16 @@ and [reviews/SIMULATED_COMPETITION_USERS_2026-07-08.md](reviews/SIMULATED_COMPET
 | POL-6 | MED | honest VHD: counted volume × lanes × length, gated to measured-volume corridors, VOT slot | OPEN |
 | POL-7 | MED | significance/CI on before-after benefit comparisons; multi-period baselines | OPEN |
 
+**Wave 6 (knowledge/RAG wave — owner-authorized Issue Graph expansion):**
+
+| ID | sev | title | status |
+|---|---|---|---|
+| POL-6 | MED | honest VHD: measured-volume gate, lanes x length, VOT slot, no-double-counting guardrail | SHIPPED v2.9.0 — cbi_pipeline/vhd.py (refuses synthesized volume by construction) |
+| TXT-1 | — | **Text Reader**: unstructured text (news/feeds/social/docs) -> Issue Graph objects; rule-based reference extractor (LLM front-end swappable, schema disposes); text confidence capped 0.85; `corroborate` fuses text with detector issues (typed boost; uncorroborated -> needs_detector_check) | SHIPPED v2.9.0 — cbi_pipeline/text_reader.py; verified on live web text (I-405 report corroborated by I-405N detector issue, conf 0.60->0.75) |
+| KNW-1..3 | — | demand-modeling knowledge adopted: QVDF-as-queue-aware-VDF bridge text; modified-VDF/residual-queue citations; I-405 widening as the induced-demand public example | DONE v2.9.0 |
+| KNW-4 | — | live dialogue with the "Ask Me About Travel Demand Modeling" GPT (Q3-Q5: trust evidence, reliability-vs-duration in funding, shared issue-object fields) | PENDING — Chrome extension not connected; script ready in reviews/EXTERNAL_GPT_DIALOG_2026-07-08.md |
+| KNW-5 | LOW | web-RAG knowledge notes with sources | SHIPPED v2.9.0 — docs/knowledge/WEB_RAG_BOTTLENECK_NOTES.md |
+
 ## 9. Enhancement backlog (not bugs — wanted capabilities)
 
 | ID | title | driver |

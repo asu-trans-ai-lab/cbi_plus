@@ -45,7 +45,13 @@ drop, discharge rate, QVDF parameters, and benchmark gates into one coherent
 diagnostic process. They should understand the difference between active
 bottlenecks and passive queues, between static V/C and dynamic D/C-hours,
 between plotting and explanation, and between black-box AI and explainable AI
-grounded in traffic-flow physics.
+grounded in traffic-flow physics. For the travel-demand-modeling community
+this bridge is concrete: the BPR volume-delay function breaks down by
+construction exactly where bottlenecks matter (v/c >= 1, queue spillback,
+within-period dynamics), and the field's own fixes — fundamental-diagram
+modified VDFs and residual-queue assignment — are converging on what QVDF
+already ships: field-calibrated D/C-to-duration and D/C-to-worst-speed laws,
+a queue-aware VDF with its parameters measured rather than assumed.
 
 The broader mission is to move traffic-engineering education from
 **plot-driven reporting** to **mechanism-based diagnosis and

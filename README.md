@@ -28,6 +28,7 @@ gates are internal reproduction checks, not external peer review):
 | reproduction gates PASS | published-work reproductions (Tables 5/6/7 exact) | engines, one contract | corridors diagnosed | arenas where engines compete | executed teaching notebooks |
 
 **Front doors:** 🌐 [website front page](index.html) ·
+🗣️ [CBI tokens — the planner-facing vocabulary](docs/CBI_TOKENS.md) ·
 📓 [teaching notebooks](notebooks/README.md) (start with
 [01 — no data needed](notebooks/01_getting_started.ipynb)) ·
 🔬 [benchmark reproductions](benchmarks/index.html) ·

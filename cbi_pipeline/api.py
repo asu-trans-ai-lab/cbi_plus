@@ -39,6 +39,8 @@ from .stage3_fd_robust import fit_fd_huber, bootstrap_fd, run_fd
 from .stage5_qvdf import (fit_qvdf_P, fit_qvdf_v_t2, fit_qvdf_v_avg,
                           run_qvdf, predict_qvdf)
 from .stage6_cbi_ranking import run_ranking
+from .cbi_tokens import (compile_tokens, compare_tokens, benefit_tokens,
+                         write_tokens)
 from .corridor_workflow import run_corridor
 from . import fd_model_zoo
 
@@ -51,6 +53,8 @@ __all__ = [
     "fit_fd_huber", "bootstrap_fd", "run_fd",
     "fit_qvdf_P", "fit_qvdf_v_t2", "fit_qvdf_v_avg", "run_qvdf", "predict_qvdf",
     "run_ranking", "fd_model_zoo", "fd_models",
+    # planner-facing token compiler (CBI state machine)
+    "compile_tokens", "compare_tokens", "benefit_tokens", "write_tokens",
     # one-call paths
     "run_corridor", "diagnose", "simulate_corridor", "verify_installation",
     "version",
@@ -516,9 +520,22 @@ def diagnose(df: pd.DataFrame,
         out_dir=(Path(out_dir) / "stage6_cbi") if out_dir is not None else None)
     if len(ranking):
         ranking = ranking.sort_values("CBI_score", ascending=False)
+
+    # planner-facing state tokens: every valid episode becomes a named,
+    # evidenced congestion state with a plain-English message
+    try:
+        tokens = compile_tokens(df_qc, episodes, corridor=corridor,
+                                ranking=ranking)
+    except Exception as exc:
+        warnings.warn(f"token compiler failed ({type(exc).__name__}: {exc}); "
+                      "tokens set to []", UserWarning, stacklevel=2)
+        tokens = []
+    if out_dir is not None and tokens:
+        write_tokens(tokens, Path(out_dir) / "cbi_tokens")
+
     return {"qc": df_qc, "episodes": episodes, "reliability": reliability,
             "fd": fd, "fd_summary": fd_summary, "qvdf": qvdf,
-            "ranking": ranking, "out_dir": out_dir,
+            "ranking": ranking, "tokens": tokens, "out_dir": out_dir,
             "summary": {"qc": qc_summary, "episodes": ep_summary}}
 
 

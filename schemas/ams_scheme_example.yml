@@ -65,6 +65,25 @@ quality_gates:                 # quality-gate contract (machine-checked)
     runner: cbi_pipeline.repro_gates
     expected_statistics: benchmarks/benchmark_expected_statistics.csv
 
+cbi_compiler:                  # planner-facing state tokens (docs/CBI_TOKENS.md)
+  enabled: true
+  thresholds:
+    speed_threshold_mph: v_cut_from_chain        # = v_c
+    free_flow_speed_mph: from_fd_fit
+    minimum_duration_min: 10
+  state_tokens:
+    detect: [T0_PRE_BREAKDOWN, T1_ONSET, T2_WORST_STATE, T3_RECOVERY,
+             T4_RESIDUAL_CLEARANCE, SPEED_DEFICIT_AREA]
+  comparison:                  # observed vs simulated -> mismatch tokens
+    observed_vs_simulated: [onset_time_error, recovery_time_error,
+                            duration_error, min_speed_error,
+                            speed_deficit_area_error]
+    tolerances: {onset_min: 15, duration_pct: 20, speed_mph: 7}
+  outputs: [cbi_tokens.jsonl, cbi_event_table.csv, cbi_calibration_memo.md]
+  language_rule: >
+    Tokens define the observed problem and the calibration/benefit target;
+    they never prove a project — only the No-Build/Build comparison does.
+
 visualization_outputs:
   dashboard: cbi_pipeline.cbi_dashboard          # -> outputs/dashboards/
   status_card: DEV_STATUS.html

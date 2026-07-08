@@ -150,6 +150,14 @@ and [reviews/SIMULATED_COMPETITION_USERS_2026-07-08.md](reviews/SIMULATED_COMPET
 | SIM-C8 | LOW | external Part1 detector import reachable from the wheel's sys.path | OPEN |
 | SIM-C9b | LOW | bootstrap capacity grid differs from fit_fd_huber's | OPEN |
 
+**Wave 4 (design adoption — owner memo 2026-07-08):**
+
+| ID | sev | title | status |
+|---|---|---|---|
+| DES-1 | — | **CBI token compiler**: planner-facing state machine (T0–T4, deficit area, confidence, cause diagnosis, planner_message), model-mismatch tokens incl. MODEL_RIGHT_AVERAGE_WRONG_SHAPE, scenario-benefit translation; scheme `cbi_compiler:` block; outputs cbi_tokens.jsonl / cbi_event_table.csv / cbi_calibration_memo.md | SHIPPED v2.5.0 — [CBI_TOKENS.md](CBI_TOKENS.md) |
+| DES-2 | MED | cause tokens for weather/work-zone/lane-drop need external feeds (incident/RCRS ingestion) | OPEN |
+| DES-3 | MED | MODEL_WRONG_BOTTLENECK_LOCATION + queue-extent error need simulated spatial fields (DTALite bridge) | OPEN |
+
 ## 9. Enhancement backlog (not bugs — wanted capabilities)
 
 | ID | title | driver |

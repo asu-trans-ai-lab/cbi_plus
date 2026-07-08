@@ -49,3 +49,8 @@ gamma          QVDF curvature of the fourth-order queue; in
 Everything in `docs/teaching/`, the paper reproductions, and the Excel
 workbooks speaks the left column; `stage5_*` code and its CSVs speak the
 right column. They are the same four numbers.
+
+
+Planner-facing dialect: every T0/T2/T3 quantity also exists as a
+named congestion-state token with evidence and plain-English meaning —
+see [CBI_TOKENS.md](CBI_TOKENS.md) (memo T1_ONSET == pipeline t0).

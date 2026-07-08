@@ -1,5 +1,27 @@
 # CBI+ — Congestion Bottleneck Identification / FD / QVDF calibration pipeline
 
+*Agentic AI for Translational AMS Modeling — first working instance.
+Scheme-driven · engine-agnostic · quality-gated.*
+
+![Traffic engineering paradigm shift: from plotting to explanation and decision-making](figures/traffic_engineering_paradigm_shift.png)
+
+**The paradigm in one frame** — left: plot-driven traffic engineering (PHF, V/C,
+hourly averages — reports numbers, cannot explain or decide). Right:
+mechanism-based diagnosis (5-minute dynamics, cumulative-curve queue physics
+T0/T2/T3, μ/C capacity drop, QVDF reconstruction, benchmark gates) feeding
+real decisions. **Every element on the right is runnable in this repository.**
+
+| 25/25 | 5 | 12 | 7 | 2 | 5 |
+|:-:|:-:|:-:|:-:|:-:|:-:|
+| reproduction gates PASS | published-work reproductions (tables exact) | engines, one contract | corridors diagnosed | arenas where engines compete | executed teaching notebooks |
+
+**Front doors:** 🌐 [website front page](index.html) ·
+📓 [teaching notebooks](notebooks/README.md) (start with
+[01 — no data needed](notebooks/01_getting_started.ipynb)) ·
+🔬 [benchmark reproductions](benchmarks/index.html) ·
+📦 [pip package guide](docs/PACKAGE_GUIDE.md) ·
+📖 [the Introduction](docs/INTRODUCTION.md)
+
 A general-purpose, per-corridor calibration toolkit for the four-layer
 traffic-engineering pipeline:
 
@@ -9,6 +31,15 @@ discharge-rate **μ** validation → **QVDF** (Queue Volume-Delay Function) forw
 > **This tool is not about learning how to run another traffic software
 > package. It is about learning how to think like a modern traffic engineer:
 > observe, diagnose, explain, validate, and decide.**
+
+```python
+pip install cbi-plus            # (or `pip install -e .` from this repo)
+
+from cbi_pipeline import api
+df = api.simulate_corridor(days=5)   # no data files needed — planted AM bottleneck
+out = api.diagnose(df)               # QC -> episodes -> FD -> QVDF -> CBI ranking
+out["ranking"].head()                # who deserves the money, and why
+```
 
 **Start here: [docs/INTRODUCTION.md](docs/INTRODUCTION.md)** — who we train, what the
 old teaching misses, the LWR–Newell–Daganzo foundation, and the mission.

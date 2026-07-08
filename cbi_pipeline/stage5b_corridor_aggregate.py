@@ -227,7 +227,10 @@ def write_stage5b(agg_df: pd.DataFrame, out_dir: Path,
 # ---------------------------------------------------------------------------
 def plot_corridor_ladder(agg_df: pd.DataFrame, save_path: Path) -> None:
     import matplotlib
-    matplotlib.use("Agg")
+    # figure emission must not clobber a notebook's interactive/inline backend
+    if not str(matplotlib.get_backend()).lower().startswith(
+            ("inline", "module://matplotlib_inline", "nbagg", "ipympl", "widget", "module://ipympl")):
+        matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
     if agg_df.empty:

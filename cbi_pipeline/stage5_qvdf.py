@@ -204,8 +204,12 @@ def fit_shape_model(v_t2: float, vf: float,
     """
     phi = SHAPE_LIBRARY[shape_name]
     tau = np.linspace(-1, 1, 201)
-    # np.trapezoid (numpy>=2.0) was np.trapz in numpy<2.0
-    _trapz = getattr(np, "trapezoid", getattr(np, "trapz"))
+    # np.trapezoid (numpy>=2.0) was np.trapz in numpy<2.0 — the fallback must
+    # be lazy: getattr's default argument is evaluated eagerly, so
+    # getattr(np, "trapezoid", getattr(np, "trapz")) raises on numpy>=2.4
+    _trapz = getattr(np, "trapezoid", None)
+    if _trapz is None:
+        _trapz = np.trapz
     phi_mean = float(_trapz(phi(tau), tau) / 2.0)
     v_avg_pred = float(v_t2 + (vf - v_t2) * phi_mean)
     v_min_pred = float(v_t2)         # by definition

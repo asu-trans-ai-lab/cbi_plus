@@ -4,12 +4,30 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cbi-plus"
-version = "2.1.0"
+version = "2.2.0"
 description = "CBI+ — Congestion Bottleneck Identification / FD / QVDF per-corridor calibration pipeline (queue objects T0/T2/T3, discharge rate mu, capacity drop, QVDF elasticities) for PeMS and INRIX TMC data"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [{ name = "ASU Trans+AI Lab" }]
+keywords = [
+    "traffic-engineering", "bottleneck", "congestion", "fundamental-diagram",
+    "QVDF", "queue", "kinematic-wave", "PeMS", "INRIX", "GMNS",
+    "transportation", "AMS",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Education",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Topic :: Education",
+]
 dependencies = [
     "numpy",
     "pandas",
@@ -19,8 +37,22 @@ dependencies = [
     "pyarrow",
 ]
 
+[project.optional-dependencies]
+notebooks = ["jupyter", "ipykernel"]
+
+[project.scripts]
+cbi-corridor = "cbi_pipeline.corridor_workflow:main"
+cbi-gates = "cbi_pipeline.benchmark_gates:main"
+cbi-repro = "cbi_pipeline.repro_gates:main"
+cbi-discover = "cbi_pipeline.discover:main"
+
 [project.urls]
+Homepage = "https://github.com/asu-trans-ai-lab/cbi_plus"
+Documentation = "https://github.com/asu-trans-ai-lab/cbi_plus/tree/master/docs"
 Companion-Visualization = "https://github.com/asu-trans-ai-lab/gui4gmns"
 
 [tool.setuptools]
 packages = ["cbi_pipeline"]
+
+[tool.setuptools.package-data]
+cbi_pipeline = ["cbi_dashboard_template.html"]

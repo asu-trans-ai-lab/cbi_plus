@@ -27,3 +27,8 @@ old_github_repo/
 
 # internal named team assignments — never publish
 docs/INTERNAL_TEAM_ROLES.md
+
+# packaging artifacts
+build/
+*.egg-info/
+dist/

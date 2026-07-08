@@ -44,6 +44,17 @@
  .anchor .chain b{color:#cbd6e4}
  footer{max-width:1180px;margin:0 auto;padding:18px 30px 40px;color:var(--muted);font-size:12.5px;text-align:center}
  code{background:#eef;padding:1px 6px;border-radius:3px;font-size:13px}
+ .getgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:14px;margin:20px 0}
+ .getcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+ .getcard .gt{font-weight:700;font-size:15px;margin-bottom:10px}
+ .getcard pre{background:var(--dark);color:#e6edf3;border-radius:9px;padding:13px 15px;font-size:12.5px;
+   line-height:1.6;overflow-x:auto;margin:0 0 10px}
+ .getcard pre span{color:#8b97a9}
+ .getcard .gm{font-size:12.5px;color:var(--muted);line-height:1.6}
+ .nblist{margin:0 0 10px;padding-left:20px;font-size:13.5px;line-height:2}
+ .nblist a{color:var(--blue-d);text-decoration:none;font-weight:600} .nblist a:hover{text-decoration:underline}
+ .nblist em{color:var(--green-d);font-style:normal;font-size:11.5px}
+ .grid.corr .card .m b{color:var(--green-d)}
 </style></head><body>
 
 <header>
@@ -55,7 +66,8 @@
    It is about learning how to <b>think</b> like a modern traffic engineer:
    <b>observe, diagnose, explain, validate, and decide.</b>"</blockquote>
  <div class="btns">
-  <a class="btn p" href="docs/INTRODUCTION.md">Start here — the Introduction</a>
+  <a class="btn p" href="notebooks/README.md">Open the notebooks — start in 5 min</a>
+  <a class="btn s" href="docs/INTRODUCTION.md">The Introduction</a>
   <a class="btn s" href="benchmarks/index.html">Benchmark reproductions</a>
   <a class="btn s" href="docs/ENGINE_SHOWCASE.md">The engines</a>
   <a class="btn s" href="docs/GLOSSARY.md">Glossary (5 min)</a>
@@ -81,6 +93,57 @@
   <div class="kpi"><b>7</b><span>corridors diagnosed<br>+ dashboards</span></div>
   <div class="kpi"><b>2</b><span>arenas — engines compete<br>per episode</span></div>
   <div class="kpi"><b>6</b><span>contracts, machine-checked</span></div>
+ </div>
+
+ <h2>Get the tool, run the first diagnosis in five minutes</h2>
+ <div class="getgrid">
+  <div class="getcard">
+   <div class="gt">📦 pip package — no data files needed to start</div>
+   <pre>pip install cbi-plus
+
+from cbi_pipeline import api
+df  = api.simulate_corridor(days=5)   <span># planted AM bottleneck</span>
+out = api.diagnose(df)                <span># QC → episodes → FD → QVDF → ranking</span>
+out["ranking"].head()                 <span># who deserves the money, and why</span></pre>
+   <div class="gm">Console tools ship with it: <code>cbi-corridor</code> · <code>cbi-gates</code> ·
+   <code>cbi-repro</code> · <code>cbi-discover</code> — see the
+   <a href="docs/PACKAGE_GUIDE.md">package guide</a>. Verified in a clean venv
+   against NumPy 2.4 / pandas 3.0 on five dataset families.</div>
+  </div>
+  <div class="getcard">
+   <div class="gt">📓 Executed teaching notebooks — read them on GitHub, no install</div>
+   <ol class="nblist">
+    <li><a href="notebooks/01_getting_started.ipynb">Getting started</a> — simulate, diagnose, read a ranking <em>(no data)</em></li>
+    <li><a href="notebooks/02_queue_anatomy_T0_T2_T3.ipynb">Queue anatomy</a> — T0/T2/T3, duration P, discharge rate μ</li>
+    <li><a href="notebooks/03_fundamental_diagram.ipynb">Fundamental diagram</a> — capacity is a fit, not a lane tag</li>
+    <li><a href="notebooks/04_qvdf_real_I10.ipynb">QVDF on real I-10</a> — two numbers reproduce the day</li>
+    <li><a href="notebooks/05_cbi_ranking_ieee_v4.ipynb">CBI ranking on IEEE v4</a> — the investment argument</li>
+   </ol>
+   <div class="gm">Every notebook runs on simulated or in-repo data and is re-executed
+   before each release — the outputs you see are real.</div>
+  </div>
+ </div>
+
+ <h2>Corridor dashboard — where the platform has already been</h2>
+ <p class="lede">Each card links to the full reproduction page with data, figures, and gates.</p>
+ <div class="grid corr">
+  <div class="card g"><b><a href="benchmarks/qvdf_paper_i10/index.html">I-10 E · Los Angeles</a></b>
+   <div class="m">Caltrans PeMS, Mar 2018. The QVDF paper reproduced end-to-end —
+   Figs 8–17, Tables 5–8 <b>exact</b>.</div></div>
+  <div class="card g"><b><a href="benchmarks/qvdf_paper_casestudy2/index.html">I-405 · corridor law</a></b>
+   <div class="m">4-month summary. Case Study 2, Figs 19–23; duration law R² = 0.977.</div></div>
+  <div class="card"><b><a href="benchmarks/engine_comparison/index.html">I-210 E · engine arenas</a></b>
+   <div class="m">TrafficFlowBench PeMS-LA. 450 episodes; trapezoid wins the queue-shape
+   tournament 301/450; AI arena on masked blocks.</div></div>
+  <div class="card"><b><a href="benchmarks/cbi_arizona/index.html">AZ I-17 / I-10 · INRIX</a></b>
+   <div class="m">Speed-only TMC path with inverse-S3 volume synthesis; legacy-vs-modern
+   CBI agreement r = 0.709 across tool generations.</div></div>
+  <div class="card a"><b><a href="benchmarks/ieee_v4_samples/README.md">IEEE v4 · I-405 N/S + I-5 N/S</a></b>
+   <div class="m">Competition release samples (km/h + is_observed mask handled).
+   Notebook 05 ranks I-405N's bottlenecks in one call.</div></div>
+  <div class="card a"><b><a href="notebooks/01_getting_started.ipynb">SIM-1E · built-in simulator</a></b>
+   <div class="m">The corridor that ships inside the package: planted bottleneck,
+   backward wave, capacity drop — your sandbox before real data.</div></div>
  </div>
 
  <h2>Enter through any door</h2>

@@ -49,7 +49,10 @@ import numpy as np
 import pandas as pd
 import matplotlib
 
-matplotlib.use("Agg")
+# figure emission must not clobber a notebook's interactive/inline backend
+if not str(matplotlib.get_backend()).lower().startswith(
+        ("inline", "module://matplotlib_inline", "nbagg", "ipympl", "widget", "module://ipympl")):
+    matplotlib.use("Agg")
 import matplotlib.pyplot as plt           # noqa: E402
 
 from .io_unified import synthesize_volume_s3

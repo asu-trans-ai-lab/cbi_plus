@@ -15,7 +15,7 @@ ls benchmarks/ieee_v4_samples/          # I405N I405S I5N I5S
 # full release (set IEEE_V4_ROOT), any window, straight into the pipeline:
 python ieee_v4_adapter.py I405N 2026-04-01 2026-04-28 --run
 ```
-The v4 `detector_chain_fd.csv` ships lanes/capacity/v_cut — the adapter uses
+The v4 `detector_chain_fd.csv` ships lanes/capacity/v_cut (= v_c, the congestion speed threshold) — the adapter uses
 them directly (no lane inference) and blanks `is_observed=False` cells
 (imputation is never treated as measurement).
 
@@ -78,6 +78,16 @@ from cbi_pipeline.tensor_tools import rpca, tensor_complete, low_rank_complete
 RPCA splits recurrent vs anomaly (the label-free abnormal-cell view); the 3-D
 cube beats per-lane completion by ~30% at low probe penetration.
 
+## 8. Flow-Through-Tensor — the math bridge (no dynamic OD)
+
+```bash
+python -m cbi_pipeline.flow_tensor --json <compact.json> --out benchmarks/flow_tensor_demo
+```
+HOSVD physical modes (spatial = bottleneck fingerprints, temporal = commute
+rhythms), Tucker price-of-rank (I405N: rank-(3,4,2) -> 2.7 km/h MAE), and the
+OD-free flow-through residual. Math: docs/FLOW_TENSOR_MATH.md. OD/path
+operators are forward-only — no dynamic OD estimation, by design.
+
 ## AI/ML family map — which AI applies to which dataset
 
 | Dataset (in-repo) | AI/ML families with working adapters |
@@ -88,7 +98,7 @@ cube beats per-lane completion by ~30% at low probe penetration.
 | Arizona INRIX (`cbi_arizona/`) | speed-only path (inverse-S3 synthesis); cross-generation scan comparison |
 | PAQ corridor (`paq_corridor/`) | shape families; physical queue extraction from speed fields |
 | MobileCentury (`engines/pinn_tse/`) | PINN TSE (gps+loop+ramp fusion) |
-| NGSIM (path in DATASETS.md) | 3-D cube tensor completion (space×time×lane) |
+| NGSIM (path in outputs/DATASETS.md - the private-area link registry) | 3-D cube tensor completion (space×time×lane) |
 
 All datasets: Parquet + samples + GeoJSON in `benchmarks/_datapack/`
 (`DATA_FORMATS.md` has every schema). Verify nothing broke:

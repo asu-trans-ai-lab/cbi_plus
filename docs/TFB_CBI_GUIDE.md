@@ -6,7 +6,7 @@ on the IEEE **TrafficFlowBench** PeMS-LA release, and — more importantly — h
 prior traffic-engineering background assumed for the interpretation sections.
 
 Companion artifacts:
-- **Teaching lab (visual):** `gui4gmns docs/trafficflowbench/cbi_lab/` — the same
+- **Teaching lab (visual):** `gui4gmns github_dev/docs/trafficflowbench/cbi_lab/` — the same
   run rendered as a 4-act interactive page (raw field → CBI → physical queue → law).
 - **Fixes log:** `FIXES_CBI_PLUS_2026-07-07.md` — 4 issues found & fixed during
   this integration; read it before trusting older outputs.
@@ -33,7 +33,7 @@ The competition mapping is direct: stage 2's episode objects are **Task 2's
 ## 2. Run it
 
 ```powershell
-# from clean_handoff_v2/codes/  (needs: pandas, pyarrow, sklearn, matplotlib)
+# from dev/ (this repo); REQUIRES the external TFB release: set TFB_DATA_ROOT first  (needs: pandas, pyarrow, sklearn, matplotlib)
 python tfb_adapter.py I-210E 2026-06-01 2026-06-28
 ```
 
@@ -41,7 +41,7 @@ The adapter bridges the benchmark's parquet (`release/I-<corr>/train_detector_st
 into the pipeline's compact JSON + sensor table, **deriving effective lanes from
 the data** (p99 flow / 2,000 vphpl — do *not* trust OSM lane tags, see Fixes #2),
 then runs all stages. ~10 min for 82 sensors × 28 days. Outputs land in
-`clean_handoff_v2/outputs/trafficflowbench/210-E/`.
+`outputs/trafficflowbench/210-E/` (note the corridor label becomes `210-E`).
 
 Any corridor/window works: `python tfb_adapter.py I-405N 2026-03-01 2026-03-28`.
 
@@ -62,12 +62,12 @@ another month; don't force it.
 One row per (sensor, date, period). Sanity checks that take 2 minutes:
 - **Counts by period**: PM ≥ AM ≥ MD valid episodes on most urban corridors.
 - **P by period**: AM median < PM median. If they're equal, suspect the scan.
-- **Edge truncation**: episodes with `t3_index == 47` (AM/PM) or `71` (MD) hit the
+- **Edge truncation**: periods are 48 five-min bins for AM/PM (indices 0-47) and 72 for MD; indices are PERIOD-relative, not midnight-relative (Pitfall 1). So episodes with `t3_index == 47` (AM/PM) or `71` (MD) hit the
   period boundary — their P is a *lower bound* (known limitation; see Fixes log).
 
 ### 3.3 `stage4_verification/stage4_verification.csv` — the μ audit
 Every valid episode, one row, steps A–G. The two-tier sanity rule before trusting μ:
-1. `mu_consistency` median < 0.10 (ours: **0.066** ✓)
+1. `mu_consistency` = |mu_obs - inverse-S3(mean discharge speed)| / mu_obs, the cross-check of measured against FD-implied discharge; median < 0.10 (ours: **0.066** ✓)
 2. Hand-inspect ≥ 5 panels in `stage4_verification/panels/` — do the T0/T2/T3
    verticals sit on the actual breakdown? Does the shaded discharge window cover
    the recovering tail (T2→T3)?
@@ -129,11 +129,11 @@ Two persistence tests worth teaching:
    D/C in the QVDF calibration is in *hours* (accumulated per-lane vehicles ÷
    hourly lane capacity). When a number looks off by ×1.6 or ×12, it's units.
 
-## 6. One-screen cheat sheet
+## 6. One-screen cheat sheet (now maintained as docs/GLOSSARY.md - read it FIRST)
 
 ```
 T0/T2/T3   onset / worst / clearance of a congestion episode (per period)
-P          congestion duration = T3 - T0                     [min]
+P          congestion duration = T3 - T0                     [hours]
 v_c        speed at capacity — the congested/uncongested threshold [mph]
 v_t2       lowest observed speed in the episode              [mph]
 μ          bottleneck discharge rate: median flow, T2→T3 window [veh/h/lane]

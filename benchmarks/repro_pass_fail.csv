@@ -17,6 +17,10 @@ paq_corridor,figure:paq_field_and_queue.png,present,present,PASS,
 paq_corridor,figure:paq_shape_fits.png,present,present,PASS,
 paq_corridor,r2_trapezoid,0.6035,0.603±10%,PASS,trapezoid >= quadratic >> quartic/cubic ordering must hold (medians)
 paq_corridor,r2_quadratic,0.549,0.549±10%,PASS,trapezoid >= quadratic >> quartic/cubic ordering must hold (medians)
+engine_comparison,figure:engine_comparison.png,present,present,PASS,
+engine_comparison,mae_congested_kmh>= 0.0,11.01,>=0.0,PASS,AI arena artifacts present; regenerate via cbi_pipeline.ai_arena
+flow_tensor_demo,figure:flow_tensor_modes.png,present,present,PASS,
+flow_tensor_demo,mae_kmh>= 0.0,1.73,>=0.0,PASS,FTT engine artifacts; regenerate via cbi_pipeline.flow_tensor
 cbi_arizona,figure:cbi_agreement.png,present,present,PASS,
 cbi_arizona,P_corr>= 0.3,0.39,>=0.3,PASS,legacy-vs-modern agreement floors (different scan rules; see page)
 cbi_arizona,vt2_corr>= 0.5,0.709,>=0.5,PASS,legacy-vs-modern agreement floors (different scan rules; see page)

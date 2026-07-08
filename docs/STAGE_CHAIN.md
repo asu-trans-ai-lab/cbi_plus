@@ -1,6 +1,6 @@
 # The CBI+ stage chain — data in, decision out (one page)
 
-Every corridor takes the same streamlined path. Each stage names its input,
+Every corridor takes the same streamlined path. (Reading note: stage 6 BRANCHES from stage 2 - it can run any time after episodes exist; stages 3-4-5 are the calibration chain. Excel sheet names in the TEACHING TWIN column are explained in docs/teaching/README.md.) Each stage names its input,
 its output artifact, its Excel teaching twin, and its historical ancestor
 (from the four public repos, now archived under `old_github_repo/`).
 
@@ -36,7 +36,7 @@ its output artifact, its Excel teaching twin, and its historical ancestor
                      │  MAE, ranking stability   │
                      └──────────┬───────────────┘
                      ┌─ deliver ▼────────────────┐  per-corridor dashboard (cbi_dashboard),
-                     │                           │  bottleneck ranking, DEV_STATUS card
+                     │                           │  bottleneck ranking, status card (workspace-level DEV_STATUS.html)
                      └───────────────────────────┘
 ```
 

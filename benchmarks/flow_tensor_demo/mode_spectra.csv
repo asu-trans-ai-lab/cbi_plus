@@ -1,0 +1,28 @@
+mode,k,sigma,cum_explained
+space (sensors),1,4414.1,0.7841
+space (sensors),2,1592.05,0.8861
+space (sensors),3,878.82,0.9172
+space (sensors),4,718.53,0.938
+space (sensors),5,530.25,0.9493
+space (sensors),6,432.89,0.9568
+space (sensors),7,408.83,0.9635
+space (sensors),8,342.2,0.9683
+space (sensors),9,334.19,0.9727
+space (sensors),10,316.92,0.9768
+time-of-day,1,4338.64,0.7575
+time-of-day,2,1669.57,0.8697
+time-of-day,3,982.84,0.9086
+time-of-day,4,836.87,0.9368
+time-of-day,5,623.35,0.9524
+time-of-day,6,446.97,0.9604
+time-of-day,7,397.86,0.9668
+time-of-day,8,378.91,0.9726
+time-of-day,9,307.47,0.9764
+time-of-day,10,260.67,0.9791
+days,1,4650.55,0.8704
+days,2,1139.76,0.9226
+days,3,890.77,0.9546
+days,4,617.74,0.9699
+days,5,528.26,0.9812
+days,6,508.66,0.9916
+days,7,457.87,1.0

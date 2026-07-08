@@ -24,7 +24,7 @@ Los Angeles District 7, the El Monte → Pomona segment. Posted 65 mph;
 ```python
 from cbi_pipeline import io_unified
 df = io_unified.load_pems(
-    path="datasets/I-10/link_performance.json",
+    path="benchmarks/I-10/link_performance.json",
     representative=False,         # this IS the full subset
 )
 # Filter to one direction

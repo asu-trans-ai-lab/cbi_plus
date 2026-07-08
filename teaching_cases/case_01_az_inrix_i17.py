@@ -34,7 +34,7 @@ def main():
     summary = corridor_workflow.run_corridor(
         corridor="I-17",
         source="inrix",
-        inrix_folder=PACKAGE_ROOT / "datasets" / "I-17",
+        inrix_folder=PACKAGE_ROOT / "additional" / "benchmark_datasets" / "datasets" / "I-17",
         s3_prior="az_tmc_i17",                # rural AZ prior (vf=75, kc=32, C=1900)
         auto_calibrate_vf=True,               # adjust vf from observed p95 speed
         rederive_kc_and_m=True,               # re-derive k_c and m from CBI closed-form

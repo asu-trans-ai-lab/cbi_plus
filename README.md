@@ -6,6 +6,8 @@ traffic-engineering pipeline:
 **C**ongestion **B**ottleneck **I**dentification → **F**undamental **D**iagram →
 discharge-rate **μ** validation → **QVDF** (Queue Volume-Delay Function) forward model
 
+New here? Read **[docs/GLOSSARY.md](docs/GLOSSARY.md)** first (5 minutes - every symbol, and the paper-to-pipeline name map).
+
 Given a corridor of detectors (speed + optional volume, 5-minute cadence), CBI+
 answers, per detector × day × period (AM / MD / PM):
 
@@ -24,15 +26,22 @@ Handles both **PeMS** (speed + measured volume → real S3 FD fit) and **INRIX T
 ## Install / run
 
 ```bash
-pip install pandas numpy scikit-learn matplotlib pyarrow
+pip install -e .        # installs cbi_pipeline + all dependencies (incl. scipy)
+
+# Your first 30 minutes (every step runs on IN-REPO data):
+python -m cbi_pipeline.repro_gates                 # 0. is my clone healthy? (~5 s)
+# 1. read docs/GLOSSARY.md (5 min) then docs/STAGE_CHAIN.md (the one-page map)
+# 2. the hello world (reproduces the QVDF paper exactly, ~2 min, in-repo data):
+#      cd benchmarks/qvdf_paper_i10 && python reproduce_qvdf_paper.py
+# 3. full pipeline on in-repo I-10:  python teaching_cases/case_02_ca_pems_i10.py
 
 # CA PeMS corridor (measured volume)
-python -m cbi_pipeline.corridor_workflow --corridor 5-N --source pems
+python -m cbi_pipeline.corridor_workflow --corridor 10-E --source pems --pems-path benchmarks/I-10/link_performance.json
 
 # AZ INRIX TMC corridor (speed-only, CBI inverse-S3 synthesis)
 python -m cbi_pipeline.corridor_workflow \
     --corridor I-17 --source inrix \
-    --inrix-folder <path>/I-17 \
+    --inrix-folder additional/benchmark_datasets/datasets/I-17 \
     --s3-prior az_tmc_i17 --rederive-kc-and-m
 ```
 
@@ -45,6 +54,8 @@ per-episode verification `panels/`, and `quality_gates.json` (PASS/FAIL).
 PeMS-LA release (parquet detector states + GMNS network):
 
 ```bash
+# REQUIRES the external TrafficFlowBench release (not in this repo):
+#   set TFB_DATA_ROOT=<path to 02_data_PeMS_LA> - nothing else here needs it
 python tfb_adapter.py I-210E 2026-06-01 2026-06-28
 python tfb_teaching_extract.py     # emit the CBI-Lab teaching payload (data.json)
 ```

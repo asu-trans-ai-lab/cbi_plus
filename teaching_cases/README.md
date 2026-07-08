@@ -13,7 +13,7 @@ cbi_pipeline workflow on real data.
 ## Run all four (recommended order)
 
 ```powershell
-# from cbi_pipeline_package/
+# from dev/ (this repo), after: pip install -e .
 python teaching_cases/case_01_az_inrix_i17.py
 python teaching_cases/case_02_ca_pems_i10.py
 python teaching_cases/case_03_ca_pems_i405.py

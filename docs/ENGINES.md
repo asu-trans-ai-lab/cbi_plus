@@ -1,5 +1,7 @@
 # ENGINES.md — every engine and repo in the CBI+ ecosystem
 
+> **The engine is replaceable; the scheme, contracts, gates, and reproducible process are the foundation.** ([AMS_FRAMEWORK.md](AMS_FRAMEWORK.md))
+
 The complete registry ("we use so many engines together — don't let them get
 lost"). One row per engine: where it lives NOW, its native data format (kept
 as-is — integration is stage-by-stage, format conversion only when a coupling

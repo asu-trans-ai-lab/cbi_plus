@@ -55,6 +55,18 @@ start? Why does it grow? Which bottleneck is active? What is the discharge
 rate? How reliable is the data? Does the model reproduce the benchmark? What
 decision does this support?"
 
+This teaching platform is also the first working instance of a broader
+framework: **Agentic AI for Translational AMS Modeling** — a scheme-driven,
+engine-agnostic, and quality-gated approach to analysis, modeling, and
+simulation ([AMS_FRAMEWORK.md](AMS_FRAMEWORK.md)). In the full AMS chain —
+regional planning model → subarea/corridor extraction → dynamic assignment →
+trajectory and event outputs → **CBI validation and diagnosis (this
+platform)** → policy evaluation → visualization and review — every stage
+speaks through explicit contracts and machine-checked gates, and any engine
+(TransModeler, SUMO, DTALite, DLSIM, Aimsun, VISSIM, …) can participate.
+The engine is replaceable; the scheme, contracts, gates, and reproducible
+process are the foundation.
+
 This paradigm shift is essential for digital twins, AI-enabled traffic
 management, infrastructure planning, bottleneck mitigation, and
 transportation-system resilience. Without traffic-flow theory, AI becomes a
@@ -79,6 +91,7 @@ support**.
 | **What is missing in students?** | Congestion mechanism, critical thinking, physical diagnosis |
 | **What is the tool?** | CBI/QVDF as a training + validation + engineering platform ([MISSION.md](MISSION.md), [CONTRACTS.md](CONTRACTS.md)) |
 | **What is the mission?** | From plotting/reporting to explanation/diagnosis/decision-making |
+| **What is the bigger picture?** | The first instance of Agentic AI for Translational AMS Modeling ([AMS_FRAMEWORK.md](AMS_FRAMEWORK.md), scheme example: [../schemas/ams_scheme_example.yml](../schemas/ams_scheme_example.yml)) |
 
 ## Alternative titles (pick per venue)
 

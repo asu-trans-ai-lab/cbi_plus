@@ -1,0 +1,85 @@
+# ams_scheme_example.yml — a working AMS scheme file (docs/AMS_FRAMEWORK.md,
+# Principle 1: scheme-first, not tool-first).
+#
+# This example declares a corridor-diagnosis run that THIS repo can execute
+# today end-to-end. Any engine that honors the contracts can replace any
+# stage. The scheme is the workflow's single source of truth: assumptions,
+# gates, and review comments live HERE, not in emails.
+
+scheme_version: 0.1
+use_case: corridor_congestion_diagnosis        # regional_to_subarea | dta | policy_eval ...
+title: "I-405N v4 sample — CBI/QVDF diagnosis with quality gates"
+
+network:                       # GMNS network contract
+  format: gmns
+  source: benchmarks/ieee_v4_samples/I405N/link.csv
+  detector_chain: benchmarks/ieee_v4_samples/I405N/detector_chain_fd.csv
+  direction: N
+  ordering: milepost_ascending_upstream_to_downstream
+
+demand:                        # OD/demand contract — FORWARD-ONLY here
+  mode: observed_states_only   # no dynamic OD estimation in this use case
+  od_table: null               # if given: projected for informational residual only
+
+observations:                  # observation contract
+  states: benchmarks/ieee_v4_samples/I405N/train_detector_states_3days.csv
+  cadence_min: 5
+  units: {speed: kmh_at_source_mph_internal, flow: total_vph_stored_per_lane}
+  imputation_rule: is_observed_false_cells_blanked   # imputed never calibrates
+
+periods:                       # period contract
+  AM: [6, 10]
+  MD: [10, 16]
+  PM: [16, 20]
+  merge_rule: MDPM_when_queue_crosses_1600
+
+behavioral_assumptions:
+  fd_model: S3                 # alternatives auditable via fd_model_zoo
+  v_c_source: shipped_chain_fd_v_cut
+  day_filter: weekday
+
+kernels:                       # engine-agnostic execution plan
+  diagnosis: cbi_pipeline.corridor_workflow      # stages 1-6
+  forward_referee: engines/ctm_python            # optional cross-check
+  state_reconstruction_arena: cbi_pipeline.ai_arena
+  # swap-in candidates honoring the contracts: DTALite | DLSIM | SUMO |
+  # TransModeler | Aimsun | VISSIM (via GMNS + trajectory contracts)
+
+trajectory_export:             # trajectory/event contract
+  required: false              # this use case is detector-based
+  format_when_used: gmns_agent_trajectory_csv
+
+calibration_targets:
+  qvdf_symbols: {paper: [f_d, n, f_p, s], pipeline: [Q_cd, Q_n, Q_cp, Q_s]}
+  roundtrip_exactness: {P_err_pct: 0.0, vt2_err_pct: 0.0}
+
+quality_gates:                 # quality-gate contract (machine-checked)
+  runner: cbi_pipeline.benchmark_gates
+  hard:
+    qvdf_speed_mae_mph: {max: 10}
+    v_t2_below_v_c: required
+  bands:
+    mu_over_C: {preferred: [0.85, 0.98], review: [0.80, 1.05]}
+    capacity_vphpl: {normal: [1500, 2300]}
+  reproduction:
+    runner: cbi_pipeline.repro_gates
+    expected_statistics: benchmarks/benchmark_expected_statistics.csv
+
+visualization_outputs:
+  dashboard: cbi_pipeline.cbi_dashboard          # -> outputs/dashboards/
+  status_card: DEV_STATUS.html
+
+review:                        # expert comments become gates, not emails
+  registers:
+    fixes_log: docs/FIXES_CBI_PLUS_2026-07-07.md
+    adoption_trace: docs/ADOPTION_TRACE.md
+    read_through_audits: docs/reviews/
+  open_comments: []            # append {who, date, comment, linked_gate}
+
+reproducible_artifacts:        # the deliverable is a process, not a PDF
+  - scheme file (this file)
+  - run folder (outputs/ieee_v4/405-N)
+  - quality gates (quality_gates.json, pass_fail_summary.csv)
+  - CBI scorecard (stage6_cbi/benchmark_bottleneck_ranking.csv)
+  - dashboard (outputs/dashboards/*.html)
+  - comparison memo (benchmark_comparison_report.csv)

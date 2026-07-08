@@ -174,6 +174,24 @@ tool; QVDF forms mirror the DTALite C++ `scan_congestion_duration` /
 `calculate_travel_time_based_on_QVDF` flow verbatim, including feasibility
 ranges. Companion visual layer: [gui4gmns](https://github.com/asu-trans-ai-lab/gui4gmns).
 
+## Community positioning
+
+> We are all friends in the broader traffic-engineering, AI, and
+> data-science community. Different groups bring different perspectives:
+> theory, operations, dashboards, machine learning, simulation, agency
+> practice, and open-source engineering. Our goal is to learn from those
+> perspectives and make the tool more reliable, explainable, and useful.
+>
+> We are not competing against individual scholars, labs, or tools. We are
+> trying to improve a shared workflow: from static plotting to
+> mechanism-based, data-driven, benchmark-validated traffic engineering.
+
+How we practice this: simulated-participant audits run against every
+release ([docs/AI_PARTICIPANT_PROTOCOL.md](docs/AI_PARTICIPANT_PROTOCOL.md));
+every finding lands in the public
+[issue register](docs/ISSUE_REGISTER.md) with run/issue logs in
+[docs/reviews/](docs/reviews/).
+
 ## License, citation, scope
 
 MIT — see [LICENSE](LICENSE). Cite via [CITATION.cff](CITATION.cff) (the

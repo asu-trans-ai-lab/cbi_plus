@@ -1,0 +1,2 @@
+issue_id,date,participant_persona,package_version,os,python_version,case_id,engine,command,expected_result,actual_result,category,severity,reproducible,traceback_or_screenshot,proposed_fix,owner,status,linked_pr,verification_case,notes
+ISSUE-001,2026-07-08,AI/ML participant,0.1.0,Windows 11,3.11,I-405,data adapter,cbi reproduce --case I405,pass/fail summary created,missing observed_flag error unclear,data-contract,high,yes,logs/issue001.txt,add clear schema error and docs,TBD,open,,I405 hello case,template row

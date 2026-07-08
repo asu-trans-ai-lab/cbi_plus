@@ -1,0 +1,2 @@
+run_id,date,participant_persona,stage,package_version,case_id,dataset_source,command,runtime_sec,outputs_created,pass_fail,main_difficulty,concept_confusion,feature_request,follow_up_issue_id
+RUN-001,2026-07-08,first-year MS student,Stage 3 benchmark reproduction,0.1.0,I-10,bundled benchmark,cbi reproduce --case I10,120,summary.csv; figures/; pass_fail_summary.csv,PASS,D/C-hours interpretation,V/C vs D/C-hours,add tutorial note in dashboard,

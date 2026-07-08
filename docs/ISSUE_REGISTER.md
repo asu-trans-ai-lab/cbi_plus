@@ -9,7 +9,10 @@ action: findings become register rows, not emails.
 
 **How to file:** add a row with the next ID in the right area, link the
 source (review doc, ticket, gate failure), and never delete rows — flip
-status instead.
+status instead. The operating standard for simulated-participant waves is
+[AI_PARTICIPANT_PROTOCOL.md](AI_PARTICIPANT_PROTOCOL.md); live run/issue
+logs: [reviews/ai_participant_run_log.csv](reviews/ai_participant_run_log.csv),
+[reviews/ai_participant_issue_log.csv](reviews/ai_participant_issue_log.csv).
 
 ---
 

@@ -4,7 +4,7 @@ title: "cbi_plus: a mechanism-based congestion diagnosis and training platform (
 type: software
 authors:
   - name: "ASU Trans+AI Lab, Arizona State University"
-version: 2.10.0
+version: 2.11.0
 date-released: 2026-07-08
 license: MIT
 repository-code: "https://github.com/asu-trans-ai-lab/cbi_plus"

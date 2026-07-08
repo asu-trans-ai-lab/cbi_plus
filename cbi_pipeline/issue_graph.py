@@ -185,10 +185,25 @@ def planner_review(graph: dict, decisions: dict, reviewer: str) -> dict:
 
 
 def approved_issues(graph: dict) -> list[dict]:
-    """What a Writer is allowed to see: approved issues only, prose stripped."""
+    """What a Writer is allowed to see: approved issues only, prose stripped.
+
+    Enforces the Reader firewall (READER_PLANNER_WRITER.md rule 3): refuses
+    any graph not emitted by a transportation_reader, and any 'approved'
+    issue lacking a named reviewer. (Independent review, Jinxi Wu 2026-07-08,
+    finding #1 — the doc promised this check but only the Writer-side repo
+    enforced it; now both sides do.)
+    """
+    if graph.get("reader_role") != "transportation_reader":
+        raise ValueError(
+            "refusing issue graph: not emitted by a transportation_reader "
+            "(a Writer must never act on unattributed observations)")
     out = []
     for iss in graph["issues"]:
         if iss.get("status") == "approved":
+            if not (iss.get("review") or {}).get("reviewer"):
+                raise ValueError(f"{iss.get('issue_id')}: approved without a "
+                                 "named reviewer — refusing (approval is a "
+                                 "signed act)")
             w = {k: v for k, v in iss.items() if k != "rendering"}
             out.append(w)
     return out

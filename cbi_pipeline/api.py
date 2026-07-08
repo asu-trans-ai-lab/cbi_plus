@@ -55,7 +55,7 @@ from . import fd_model_zoo
 __all__ = [
     # loaders (PeMS compact JSON / INRIX RITIS exports / IEEE v4 states)
     "load_pems", "load_inrix", "load_inrix_folder", "load_sensor_timeseries",
-    "load_ieee_v4", "load_dataset", "read_dataset_meta", "synthesize_volume_s3",
+    "load_ieee_v4", "load_parquet", "load_dataset", "read_dataset_meta", "synthesize_volume_s3",
     # stage building blocks
     "run_qc", "run_episodes", "classify_day", "discharge_window",
     "fit_fd_huber", "bootstrap_fd", "run_fd",
@@ -287,6 +287,88 @@ def fd_models() -> list:
 
 
 # ---------------------------------------------------------------------------
+# Parquet detector-states loader (independent review, Jinxi Wu 2026-07-08,
+# findings #2/#3): a first-class parquet path into diagnose, no TFB dir shape
+# required. Mirrors load_ieee_v4 — a column map instead of a fixed schema.
+# ---------------------------------------------------------------------------
+def load_parquet(states_parquet, corridor: str = "PARQUET",
+                 columns: dict | None = None,
+                 speed_units: str = "mph",
+                 flow_scope: str = "per_lane",
+                 lanes: int = 3, length_mi: float = 0.5,
+                 min_observed_frac: float = 0.60) -> pd.DataFrame:
+    """Load a parquet detector-states file into the package contract.
+
+    ``columns`` maps YOUR parquet column names to the canonical roles;
+    defaults match the IEEE TrafficFlowBench PeMS-LA release::
+
+        {"sensor_uid": "station_id", "datetime": "timestamp",
+         "speed": "speed", "flow": "flow", "milepost": "milepost",
+         "is_observed": "is_observed"}
+
+    Handles the two traps every parquet feed hits (same logic the
+    TFB adapter has, now behind the public API):
+      - ``is_observed``: stations observed < ``min_observed_frac`` are
+        dropped; imputed cells on the rest are blanked (a prior never
+        calibrates);
+      - units: ``speed_units='kmh'`` -> mph; ``flow_scope='total_all_lanes'``
+        -> per-lane via data-derived effective lanes (p99 flow / 1900).
+    """
+    import numpy as _np
+    m = {"sensor_uid": "station_id", "datetime": "timestamp",
+         "speed": "speed", "flow": "flow", "milepost": "milepost",
+         "is_observed": "is_observed", **(columns or {})}
+    raw = pd.read_parquet(states_parquet)
+    if m["sensor_uid"] not in raw.columns:
+        raise ValueError(
+            f"column {m['sensor_uid']!r} not in parquet (have "
+            f"{list(raw.columns)[:8]}...); pass columns={{'sensor_uid': ...}}")
+
+    # is_observed handling
+    oc = m["is_observed"]
+    if oc in raw.columns:
+        obs = raw.groupby(m["sensor_uid"])[oc].mean()
+        keep = obs[obs >= min_observed_frac].index
+        raw = raw[raw[m["sensor_uid"]].isin(keep)].copy()
+        mask = ~raw[oc].astype(bool)
+        for c in (m["speed"], m["flow"]):
+            if c in raw.columns:
+                raw.loc[mask, c] = _np.nan
+
+    sid = raw[m["sensor_uid"]].astype(str)
+    dt = pd.to_datetime(raw[m["datetime"]].astype(str).str.replace("Z", "", regex=False))
+    speed = pd.to_numeric(raw[m["speed"]], errors="coerce")
+    if speed_units.lower() in ("kmh", "km/h", "kph"):
+        speed = speed / 1.609
+    df = pd.DataFrame({
+        "sensor_uid": sid, "corridor": corridor, "datetime": dt,
+        "speed_mph": speed,
+        "source_format": "parquet", "length_mi": length_mi,
+        "has_volume": m["flow"] in raw.columns,
+    })
+    if m["milepost"] in raw.columns:
+        ranks = (pd.DataFrame({"sid": sid, "mp": raw[m["milepost"]]})
+                 .drop_duplicates("sid").sort_values("mp"))
+        order = {s: i for i, s in enumerate(ranks["sid"])}
+        df["road_order"] = sid.map(order).fillna(0).astype(int)
+    else:
+        df["road_order"] = sid.map({s: i for i, s in enumerate(sorted(sid.unique()))})
+    if m["flow"] in raw.columns:
+        flow = pd.to_numeric(raw[m["flow"]], errors="coerce")
+        if flow_scope == "total_all_lanes":
+            p99 = raw.groupby(sid)[m["flow"]].transform(lambda s: s.quantile(0.99))
+            ln = (p99 / 1900.0).round().clip(1, 8).fillna(lanes)
+            df["flow_vph"] = flow / ln
+            df["lanes"] = ln
+        else:
+            df["flow_vph"] = flow
+            df["lanes"] = lanes
+    else:
+        df["lanes"] = lanes
+    return df.dropna(subset=["speed_mph"]).reset_index(drop=True)
+
+
+# ---------------------------------------------------------------------------
 # dataset_meta.json — the standard units/semantics sidecar
 # ---------------------------------------------------------------------------
 def read_dataset_meta(folder) -> dict:
@@ -337,6 +419,14 @@ def load_dataset(folder, **kwargs) -> pd.DataFrame:
         return load_pems(path=root / files["states"], **kwargs)
     if loader == "inrix_folder":
         return load_inrix_folder(root, **kwargs)
+    if loader in ("parquet", "parquet_detector_states"):
+        u = meta["units"]
+        return load_parquet(
+            root / files["states"], corridor=meta["name"],
+            columns=meta.get("columns_map"),
+            speed_units=("kmh" if u.get("speed") == "kmh" else "mph"),
+            flow_scope=("total_all_lanes" if u.get("flow_scope") == "total_all_lanes"
+                        else "per_lane"), **kwargs)
     if loader == "contract_csv":
         df = pd.read_csv(root / files["states"], **kwargs)
         if meta["units"].get("speed") == "kmh":

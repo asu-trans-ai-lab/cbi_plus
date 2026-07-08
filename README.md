@@ -28,6 +28,8 @@ gates are internal reproduction checks, not external peer review):
 | reproduction gates PASS | published-work reproductions (Tables 5/6/7 exact) | engines, one contract | corridors diagnosed | arenas where engines compete | executed teaching notebooks |
 
 **Front doors:** 🌐 [website front page](index.html) ·
+📇 [onboard a corridor / add a dataset (incl. parquet)](docs/PLAYBOOK_ONBOARD_CORRIDOR_AND_DATASET.md) ·
+🔤 [add vocabulary (tokens/issue types)](docs/ADD_VOCABULARY.md) ·
 🗣️ [CBI tokens — the planner-facing vocabulary](docs/CBI_TOKENS.md) ·
 📓 [teaching notebooks](notebooks/README.md) (start with
 [01 — no data needed](notebooks/01_getting_started.ipynb)) ·
@@ -85,7 +87,9 @@ pip install -e .        # installs cbi_pipeline + all dependencies (incl. scipy)
 python -m cbi_pipeline.repro_gates                 # 0. is my clone healthy? (~5 s)
 # 1. read docs/GLOSSARY.md (5 min) then docs/STAGE_CHAIN.md (the one-page map)
 # 2. the hello world (reproduces the QVDF paper exactly, ~2 min, in-repo data):
-#      cd benchmarks/qvdf_paper_i10 && python reproduce_qvdf_paper.py
+#      cd benchmarks/qvdf_paper_i10 && python reproduce_qvdf_paper.py   # I-10 (Case Study 1)
+#    or the I-405 flagship (Case Study 2):
+#      cd benchmarks/qvdf_paper_casestudy2 && python reproduce_casestudy2.py
 # 3. full pipeline on in-repo I-10:  python teaching_cases/case_02_ca_pems_i10.py
 
 # CA PeMS corridor (measured volume)

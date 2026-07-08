@@ -30,7 +30,7 @@
       }
     },
     "loader": {
-      "enum": ["ieee_v4", "pems_compact_json", "inrix_folder", "contract_csv", "custom_script"],
+      "enum": ["ieee_v4", "pems_compact_json", "inrix_folder", "parquet", "parquet_detector_states", "contract_csv", "custom_script"],
       "description": "which cbi_pipeline loader consumes this dataset (custom_script = see files.notes / the benchmark's reproduce_*.py)"
     },
     "files": {

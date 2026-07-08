@@ -206,6 +206,24 @@ and [reviews/SIMULATED_COMPETITION_USERS_2026-07-08.md](reviews/SIMULATED_COMPET
 | RAG-C2 | — | I-10 & I-405 RAG runs (in-repo PeMS detectors): web claims CORROBORATED by detector diagnosis -> conf 0.93-0.95, `needs_planner_review`; demonstrates the full text->data->planner loop and the 0.95 benchmark+detector ceiling | DONE — docs/knowledge/I10_I405_RAG_CORROBORATION.md + fused issue graphs |
 | RAG-C3 | MED | acquire I-66 detector/probe data (VDOT/INRIX) to lift its issues from needs_detector_check | OPEN — data acquisition |
 
+**Wave 9 (independent verification — Jinxi Wu, ASU, first-time review; report:
+[reviews/INDEPENDENT_REVIEW_JINXI_WU_2026-07-08.md](reviews/INDEPENDENT_REVIEW_JINXI_WU_2026-07-08.md)):**
+
+| ID | sev | title | status |
+|---|---|---|---|
+| JW-1 | HIGH | `approved_issues` did not enforce the reader_role firewall the docs promised (accepted tampered reader_role) | FIXED v2.11.0 — refuses non-reader graphs + unsigned approvals |
+| JW-2 | HIGH | parquet only via tfb_adapter.py (script-only, TFB-dir-bound); no api loader | FIXED v2.11.0 — `api.load_parquet` (column map, is_observed, units) |
+| JW-3 | HIGH | dataset_meta enum had no parquet loader option | FIXED v2.11.0 — enum + `load_dataset` dispatch to parquet |
+| JW-4 | HIGH | no vocabulary-extension playbook | FIXED v2.11.0 — docs/ADD_VOCABULARY.md |
+| JW-5 | MED | PINN reported SKIPPED "if torch importable" but skipped regardless | FIXED v2.11.0 — docstring/status corrected |
+| JW-7 | MED | I-405 study folder name doesn't say I-405 | FIXED v2.11.0 — README + onboarding playbook name both |
+| JW-8 | MED | cwd/PYTHONPATH friction for own scripts | FIXED v2.11.0 — playbook step 0 (pip install -e .) |
+| JW-9 | MED | parquet round-trip drops df.attrs provenance silently | FIXED v2.11.0 — CONTRACTS caveat + playbook note |
+| JW-6 | MED | engines CLI-only; no api.run_ai_arena wrapper | OPEN |
+| JW-10 | LOW | standardize expected-gate-outcomes block per benchmark README | OPEN |
+| JW-11 | LOW | verify_installation benign "FD fits fail" warning reads scary | PARTIAL — annotated; full downgrade OPEN |
+| JW-12 | LOW | T0-T4 dialect double-mapping trip hazard in CSV cross-ref | OPEN |
+
 ## 9. Enhancement backlog (not bugs — wanted capabilities)
 
 | ID | title | driver |

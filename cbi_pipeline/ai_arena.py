@@ -11,8 +11,12 @@ every tester can run it):
     matrix_completion  Soft-Impute low-rank (tensor_tools.low_rank_complete)
     tensor_cube        3-D completion sensor x tod x day (tensor_tools.tensor_complete)
     rpca_lowrank       RPCA L-component as the recurrent reconstruction
-    pinn_tse           REGISTERED, optional (torch; engines/pinn_tse) — runs
-                       only if torch is importable, else reported as SKIPPED
+    pinn_tse           REGISTERED but NOT YET COUPLED to the corridor
+                       contract — always reported SKIPPED regardless of
+                       whether torch imports (the vendored MobileCentury
+                       PINN has its own I/O; wiring is stage-1 pending).
+                       (Independent review, Jinxi Wu 2026-07-08, finding #5:
+                       the old docstring implied torch presence enabled it.)
 
 Usage:
     python -m cbi_pipeline.ai_arena --json <compact.json> [--mask 0.3] [--seed 7]
@@ -130,7 +134,8 @@ def run(blob_path: Path, mask_frac: float = 0.3, seed: int = 7,
     rows = []
     for name, recon in engines(cube_tr, train_mask).items():
         if recon is None:
-            rows.append(dict(engine=name, status="SKIPPED (torch coupling pending)"))
+            rows.append(dict(engine=name,
+                             status="SKIPPED (coupling pending, regardless of torch)"))
             continue
         rows.append(dict(engine=name, status="ok",
                          **score(recon, cube, holdout)))

@@ -120,3 +120,5 @@ Born from the two critical simulated-participant incidents (km/h-as-mph;
 per-lane-vs-total; ISSUE_REGISTER SIM-M1 / SIM-T1): **units live with the
 data, not in tribal knowledge.** When you publish a dataset, ship its
 sidecar. 13 sidecars cover every in-repo dataset.
+
+> **Parquet provenance caveat** (independent review, Jinxi Wu 2026-07-08): a diagnosed frame's `df.attrs` (e.g. the synthesized-volume prior) do NOT survive a parquet round-trip. The `s3_prior_label` / `flow_synthetic` COLUMNS do — rely on those, not on `attrs`.

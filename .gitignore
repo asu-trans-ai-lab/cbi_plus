@@ -20,3 +20,6 @@ additional/
 # EXCEPTION: benchmark evidence figures are the deliverable — keep them tracked
 !benchmarks/**/*.png
 !docs/figures/*.png
+
+# legacy-repo archive: reference only, never ship (46MB Reading.csv etc.)
+old_github_repo/

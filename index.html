@@ -85,10 +85,10 @@
  </figure>
 
  <h2>The evidence, not the promise</h2>
- <p class="lede">Every number below regenerates with <code>python -m cbi_pipeline.repro_gates</code>.</p>
+ <p class="lede">Every number below regenerates with <code>python -m cbi_pipeline.repro_gates</code>. These are internal reproduction gates — checks that this repo reproduces published and reference results — not external peer review.</p>
  <div class="kpis">
   <div class="kpi"><b>25/25</b><span>reproduction gates PASS</span></div>
-  <div class="kpi"><b>5</b><span>published-work reproductions<br>(Tables exact)</span></div>
+  <div class="kpi"><b>5</b><span>published-work reproductions<br>(Tables 5/6/7 exact)</span></div>
   <div class="kpi"><b>12</b><span>engines registered<br>(one contract)</span></div>
   <div class="kpi"><b>7</b><span>corridors diagnosed<br>+ dashboards</span></div>
   <div class="kpi"><b>2</b><span>arenas — engines compete<br>per episode</span></div>
@@ -116,11 +116,10 @@ out["ranking"].head()                 <span># who deserves the money, and why</s
     <li><a href="notebooks/01_getting_started.ipynb">Getting started</a> — simulate, diagnose, read a ranking <em>(no data)</em></li>
     <li><a href="notebooks/02_queue_anatomy_T0_T2_T3.ipynb">Queue anatomy</a> — T0/T2/T3, duration P, discharge rate μ</li>
     <li><a href="notebooks/03_fundamental_diagram.ipynb">Fundamental diagram</a> — capacity is a fit, not a lane tag</li>
-    <li><a href="notebooks/04_qvdf_real_I10.ipynb">QVDF on real I-10</a> — two numbers reproduce the day</li>
+    <li><a href="notebooks/04_qvdf_real_I10.ipynb">QVDF on real I-10</a> — calibrated power laws in D/C reproduce the day</li>
     <li><a href="notebooks/05_cbi_ranking_ieee_v4.ipynb">CBI ranking on IEEE v4</a> — the investment argument</li>
    </ol>
-   <div class="gm">Every notebook runs on simulated or in-repo data and is re-executed
-   before each release — the outputs you see are real.</div>
+   <div class="gm">Every notebook runs on simulated or in-repo data and is re-executed before each release — the outputs you see are real. Open <code>.ipynb</code> files in Jupyter or VS Code (a plain browser shows raw JSON) — first time? see the <a href="docs/SETUP_FOR_BEGINNERS.md">beginner setup</a>.</div>
   </div>
  </div>
 
@@ -129,9 +128,9 @@ out["ranking"].head()                 <span># who deserves the money, and why</s
  <div class="grid corr">
   <div class="card g"><b><a href="benchmarks/qvdf_paper_i10/index.html">I-10 E · Los Angeles</a></b>
    <div class="m">Caltrans PeMS, Mar 2018. The QVDF paper reproduced end-to-end —
-   Figs 8–17, Tables 5–8 <b>exact</b>.</div></div>
+   Figs 8–17 reproduced; Tables 5/6/7 <b>exact</b>, Table 8 within tolerance.</div></div>
   <div class="card g"><b><a href="benchmarks/qvdf_paper_casestudy2/index.html">I-405 · corridor law</a></b>
-   <div class="m">4-month summary. Case Study 2, Figs 19–23; duration law R² = 0.977.</div></div>
+   <div class="m">4-month summary. Case Study 2, Figs 19–23; duration fit R² = 0.977 (single-corridor, in-sample).</div></div>
   <div class="card"><b><a href="benchmarks/engine_comparison/index.html">I-210 E · engine arenas</a></b>
    <div class="m">TrafficFlowBench PeMS-LA. 450 episodes; trapezoid wins the queue-shape
    tournament 301/450; AI arena on masked blocks.</div></div>
@@ -188,6 +187,7 @@ out["ranking"].head()                 <span># who deserves the money, and why</s
 </main>
 
 <footer>
+ <b>ASU Trans+AI Lab, Arizona State University</b> · v2.3.0 · <a href="LICENSE">MIT license</a> · cite via <a href="CITATION.cff">CITATION.cff</a> (Zhou et al. 2022, <i>Multimodal Transportation</i> 1:100017) · scope: US freeway corridors, US-customary units (mph; conversions stated at every loader)<br>
  CBI/QVDF · Agentic AI for Translational AMS Modeling · built on the LWR–Newell–Daganzo tradition
  (<a href="docs/INTELLECTUAL_LINEAGE.md">lineage</a>) · mission: <a href="docs/MISSION.md">MISSION.md</a> ·
  spec: <a href="docs/CONTRACTS.md">CONTRACTS.md</a> · lessons: <a href="docs/LESSONS_LEARNED.md">LESSONS_LEARNED.md</a>

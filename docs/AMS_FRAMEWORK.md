@@ -159,6 +159,13 @@ regional planning model
             → visualization & review     (gui4gmns, dashboards, DEV_STATUS)
 ```
 
+Scope statement (so the chain is honest): CBI/QVDF is a **one-pass
+diagnostic** — it consumes observed states or assignment output and does
+not close a demand–supply equilibrium loop (no route/departure-time
+response feeds back through it). Equilibration lives in the assignment
+stage; multi-engine assignment integration is roadmap, not yet
+demonstrated end-to-end in this repo.
+
 CBI/QVDF is the validation-and-diagnosis stage, already fully scheme-driven
 (six contracts), engine-agnostic (12-engine registry, two arenas), and
 quality-gated (25/25 reproduction gates). The same pattern now scales up the

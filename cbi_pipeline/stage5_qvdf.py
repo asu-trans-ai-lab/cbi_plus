@@ -279,7 +279,12 @@ def fit_qvdf_per_sensor_period(episodes_enriched: pd.DataFrame,
             "alpha": v_t2_fit["alpha"], "beta": v_t2_fit["beta"], "v_t2_r2": v_t2_fit["r2"],
             "f_p": v_avg_fit["f_p"], "s_exp": v_avg_fit["s"], "v_avg_r2": v_avg_fit["r2"],
         })
-    return pd.DataFrame(rows)
+    cols = ["sensor_uid", "period", "n_days", "vf_mph", "f_d", "n_exp", "P_r2",
+            "alpha", "beta", "v_t2_r2", "f_p", "s_exp", "v_avg_r2"]
+    # short windows (e.g. 3-day samples) can leave every group below
+    # min_points_for_fit — the empty frame must still carry its schema so
+    # downstream set_index/merge degrade gracefully instead of KeyError
+    return pd.DataFrame(rows, columns=cols)
 
 
 # ---------------------------------------------------------------------------

@@ -1,7 +1,16 @@
 # CBI+ — Congestion Bottleneck Identification / FD / QVDF calibration pipeline
 
+**In plain words: this tool diagnoses WHY a freeway is congested — which
+bottleneck causes it, when it starts, how long it lasts — instead of just
+plotting that it is.** (AMS = Analysis, Modeling & Simulation of traffic.)
+
 *Agentic AI for Translational AMS Modeling — first working instance.
 Scheme-driven · engine-agnostic · quality-gated.*
+
+**New here?** Two five-minute reads before anything else:
+[docs/GLOSSARY.md](docs/GLOSSARY.md) (every symbol, plain English) and
+[docs/SETUP_FOR_BEGINNERS.md](docs/SETUP_FOR_BEGINNERS.md) (where to type
+the commands, how to open a notebook).
 
 ![Traffic engineering paradigm shift: from plotting to explanation and decision-making](figures/traffic_engineering_paradigm_shift.png)
 
@@ -11,9 +20,12 @@ mechanism-based diagnosis (5-minute dynamics, cumulative-curve queue physics
 T0/T2/T3, μ/C capacity drop, QVDF reconstruction, benchmark gates) feeding
 real decisions. **Every element on the right is runnable in this repository.**
 
+**What this repo has already proven** (all regenerate with one command; the
+gates are internal reproduction checks, not external peer review):
+
 | 25/25 | 5 | 12 | 7 | 2 | 5 |
 |:-:|:-:|:-:|:-:|:-:|:-:|
-| reproduction gates PASS | published-work reproductions (tables exact) | engines, one contract | corridors diagnosed | arenas where engines compete | executed teaching notebooks |
+| reproduction gates PASS | published-work reproductions (Tables 5/6/7 exact) | engines, one contract | corridors diagnosed | arenas where engines compete | executed teaching notebooks |
 
 **Front doors:** 🌐 [website front page](index.html) ·
 📓 [teaching notebooks](notebooks/README.md) (start with
@@ -33,7 +45,9 @@ discharge-rate **μ** validation → **QVDF** (Queue Volume-Delay Function) forw
 > observe, diagnose, explain, validate, and decide.**
 
 ```python
-pip install cbi-plus            # (or `pip install -e .` from this repo)
+# Type these in a terminal: Command Prompt on Windows, Terminal on Mac.
+# Never used one? -> docs/SETUP_FOR_BEGINNERS.md
+pip install cbi-plus            # (or `pip install -e .` from this repo folder)
 
 from cbi_pipeline import api
 df = api.simulate_corridor(days=5)   # no data files needed — planted AM bottleneck
@@ -159,3 +173,13 @@ Successor to `clean_handoff_v1/v2` (Abbasi & Zhou, ASU) and the original CBI
 tool; QVDF forms mirror the DTALite C++ `scan_congestion_duration` /
 `calculate_travel_time_based_on_QVDF` flow verbatim, including feasibility
 ranges. Companion visual layer: [gui4gmns](https://github.com/asu-trans-ai-lab/gui4gmns).
+
+## License, citation, scope
+
+MIT — see [LICENSE](LICENSE). Cite via [CITATION.cff](CITATION.cff) (the
+QVDF methods paper: Zhou et al. 2022, *Multimodal Transportation*
+1:100017). Maintained by the ASU Trans+AI Lab. Current scope: US freeway
+corridors (PeMS / INRIX / IEEE TrafficFlowBench data); units are US
+customary (mph, veh/mi) with conversions stated at every loader — apply
+judgment before generalizing elsewhere. Issue history and enhancement
+backlog: [docs/ISSUE_REGISTER.md](docs/ISSUE_REGISTER.md).

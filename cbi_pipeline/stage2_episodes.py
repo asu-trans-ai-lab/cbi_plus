@@ -48,8 +48,8 @@ def _import_student_detector():
         # Local fallback (mirrors Part1 line 372) — used if the student's file moves.
         # PROVENANCE: say so once — a silent detector swap is an audit hazard.
         if not _DETECTOR_ANNOUNCED:
-            print("   [stage2] detector: built-in fallback (Part1_fd_calibration.py "
-                  "not found) — NaN-gap guard + 2-bin persistence active")
+            print("   [stage2] detector: packaged detector "
+                  "(NaN-gap guard + 2-bin persistence active)")
             _DETECTOR_ANNOUNCED = True
         return _fallback_detector
     if not _DETECTOR_ANNOUNCED:

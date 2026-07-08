@@ -110,7 +110,15 @@ def _residuals(params, model_fn, k_obs, q_obs):
 
 def fit_fd_huber(k: np.ndarray, q: np.ndarray, model_name: str,
                  huber_eps: float = 1.35) -> dict:
-    """Fit one model with Huber loss. Returns params, residuals, R²."""
+    """Fit one model with Huber loss. Returns params, R²/RMSE, and the
+    derived curve quantities (capacity_vphpl, k_c_vpm, v_c_mph)."""
+    # case-insensitive model lookup with a helpful error
+    if model_name not in MODELS:
+        match = {m.lower(): m for m in MODELS}.get(str(model_name).lower())
+        if match is None:
+            raise KeyError(f"unknown FD model {model_name!r}; available: "
+                           f"{sorted(MODELS)}")
+        model_name = match
     spec = MODELS[model_name]
     mask = np.isfinite(k) & np.isfinite(q) & (k > 0) & (q >= 0)
     k_obs = k[mask]
@@ -141,9 +149,20 @@ def fit_fd_huber(k: np.ndarray, q: np.ndarray, model_name: str,
         except Exception:
             params, r2, rmse = None, float("nan"), float("nan")
 
+    # derived curve quantities — capacity is the CURVE's peak, so hand the
+    # caller the peak instead of making everyone re-derive it (found by the
+    # 2026-07-08 packaged smoke matrix: every consumer rebuilt the grid)
+    cap = k_c = v_c = float("nan")
+    if params is not None:
+        kk = np.linspace(max(1e-3, np.nanmin(k_obs)), max(np.nanmax(k_obs), 140.0), 800)
+        _, qq = spec["fn"](kk, *params)
+        i = int(np.nanargmax(qq))
+        cap, k_c = float(qq[i]), float(kk[i])
+        v_c = cap / k_c if k_c > 0 else float("nan")
     return dict(model=model_name, params=params,
                 param_names=spec["params"],
                 r_squared=float(r2), rmse=float(rmse),
+                capacity_vphpl=cap, k_c_vpm=k_c, v_c_mph=v_c,
                 n_obs=int(mask.sum()))
 
 

@@ -12,7 +12,12 @@ C              capacity: max sustainable per-lane flow            [veh/h/lane]
 mu             discharge rate: median flow while the queue drains (T2->T3)
 mu/C           the CAPACITY DROP: an active bottleneck serves below its own
                capacity, typically 0.85-0.95.
-D              inflow demand accumulated over the episode         [veh/lane]
+D              accumulated flow over the episode, used as a DEMAND    [veh/lane]
+               PROXY. Honest caveat: a bottleneck detector measures
+               departures (throughput ~= mu), not arrivals — true
+               oversaturated demand is unobservable at the bottleneck
+               itself (it needs an upstream arrival curve). Treat D
+               and D/C as model-derived, not measured.
 D/C            demand-to-capacity ratio. UNITS ARE HOURS (per-lane vehicles
                divided by per-lane hourly capacity) — that is why a "ratio"
                of 4.9 is normal: it means ~4.9 hours of work at capacity.

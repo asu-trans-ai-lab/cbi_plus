@@ -16,4 +16,8 @@ model and round-by-round audit. diagnostics.py owns every figure.
 run_pipeline.py and corridor_workflow.py are the CLI entry points.
 """
 
-__version__ = "0.1.0"
+try:
+    from importlib.metadata import version as _pkg_version
+    __version__ = _pkg_version("cbi-plus")
+except Exception:                    # source checkout without install
+    __version__ = "2.3.0"

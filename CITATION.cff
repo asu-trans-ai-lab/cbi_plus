@@ -1,0 +1,38 @@
+cff-version: 1.2.0
+message: "If you use cbi_plus in research or teaching, please cite it as below."
+title: "cbi_plus: a mechanism-based congestion diagnosis and training platform (CBI/FD/QVDF)"
+type: software
+authors:
+  - name: "ASU Trans+AI Lab, Arizona State University"
+version: 2.3.0
+date-released: 2026-07-08
+license: MIT
+repository-code: "https://github.com/asu-trans-ai-lab/cbi_plus"
+keywords:
+  - traffic engineering
+  - congestion bottleneck identification
+  - fundamental diagram
+  - queue volume-delay function
+  - kinematic wave theory
+preferred-citation:
+  type: article
+  title: "A meso-to-macro cross-resolution performance approach for connecting polynomial arrival queue model to volume-delay function with inflow demand-to-capacity ratio"
+  journal: "Multimodal Transportation"
+  volume: 1
+  year: 2022
+  doi: "10.1016/j.multra.2022.100017"
+  authors:
+    - family-names: "Zhou"
+      given-names: "Xuesong (Simon)"
+    - family-names: "Cheng"
+      given-names: "Qixiu"
+    - family-names: "Wu"
+      given-names: "Xin"
+    - family-names: "Li"
+      given-names: "Peiheng"
+    - family-names: "Belezamo"
+      given-names: "Baloka"
+    - family-names: "Lu"
+      given-names: "Jiawei"
+    - family-names: "Abbasi"
+      given-names: "Mohammad"

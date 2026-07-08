@@ -10,9 +10,10 @@ pip install -e .                # or from a repo checkout
 python -c "from cbi_pipeline import api; api.verify_installation()"
 ```
 
-`verify_installation()` needs **no data files**: it simulates a corridor
+`verify_installation()` is an install/CI **smoke test** (not scientific evidence) and needs **no data files**: it simulates corridors across three seeds
 with one AM active bottleneck, runs the full QC → episodes → FD → QVDF →
-CBI-ranking chain, and checks that the planted bottleneck is ranked #1.
+CBI-ranking chain, and checks that the planted bottleneck is ranked #1 in
+every seed.
 
 ## The 60-second tour
 
@@ -38,7 +39,8 @@ sensor per 5-minute bin:
 | `sensor_uid` | str | yes | detector / TMC id |
 | `datetime` | datetime64 | yes | naive local time, 5-min cadence |
 | `speed_mph` | float | yes | mph (convert km/h feeds: ÷1.609) |
-| `flow_vph` | float | no | total veh/h all lanes; speed-only feeds may synthesize via `api.synthesize_volume_s3` |
+| `flow_vph` | float | no | **PER LANE** veh/h/ln (physically <= ~2600; p95 above 3200 triggers a warning — you passed totals) |
+| `density_vpm` | float | no | per-lane veh/mi/ln; **derived as flow/speed automatically** when absent (FD stage needs it) |
 | `road_order` | int | yes | upstream → downstream ordering (spatial QC + wave checks) |
 | `corridor`, `direction`, `lanes`, `length_mi`, `has_volume`, `source_format` | — | recommended | carried into outputs |
 
@@ -47,16 +49,34 @@ flow **veh/h**, density **veh/mi/ln**, **D/C in HOURS** — never a plain
 ratio. Imputed cells (`is_observed == 0` in TFB/IEEE releases) must be
 dropped before calibration — imputation is a prior, not a measurement.
 
+## What `diagnose()` returns (the frame schemas)
+
+| key | type | key columns |
+|---|---|---|
+| `qc` | DataFrame | input + `speed_mph_clean`, `qc_pass` |
+| `episodes` | DataFrame | `sensor_uid, date, period, t0_index/t2_index/t3_index` (period-relative 5-min bins) + `t0_time/t2_time/t3_time` (clock), `P_min`, `min_speed_mph` (= v_t2), `regime`, `is_valid_for_mu` |
+| `fd_summary` | DataFrame or None | `sensor_uid, capacity_vphpl, v_f_mph, r_squared, fit_ok` (physics flag — check it!) |
+| `qvdf` | dict or None | `params` (per sensor-period elasticities), `predictions`, `n_fitted` (0 when the window is too short, e.g. 3-day samples) |
+| `ranking` | DataFrame | `corridor, sensor_uid, period, CBI_score, bottleneck_class, rank_in_corridor` |
+
+Input rules enforced up front: missing required columns raise ONE error
+listing them all; recommended columns get defaults; tz-aware datetimes are
+rejected (AM/MD/PM are local clock windows); `speed_units="kmh"` converts
+km/h feeds; suspicious magnitudes (km/h-as-mph, total-as-per-lane flow)
+raise loud warnings.
+
 ## Public API surface (`cbi_pipeline.api`)
 
 | call | what it does |
 |---|---|
-| `simulate_corridor(...)` | synthetic corridor with a planted AM bottleneck (teaching / CI / install check) |
+| `simulate_corridor(...)` | synthetic corridor with a planted AM bottleneck — queue balance, capacity drop, conservation-correct downstream metering (teaching / CI / install check) |
 | `diagnose(df, ...)` | one-call QC → episodes → FD → QVDF → CBI ranking on an in-memory frame |
 | `run_corridor(...)` | the full disk-writing workflow (stages 1–6, figures, gates) |
 | `load_pems / load_inrix / load_inrix_folder / load_sensor_timeseries` | feed loaders |
+| `load_ieee_v4(states_csv, chain_csv=None)` | IEEE v4 loader: km/h→mph, total→per-lane flow (data-derived effective lanes), `is_observed` filter, chain-order road_order (S/W corridors!) |
+| `fd_models()` | model names accepted by `fit_fd_huber` (lookup is case-insensitive) |
 | `run_qc / run_episodes / run_fd / run_qvdf / run_ranking` | individual stages |
-| `fit_fd_huber / bootstrap_fd / fd_model_zoo` | FD fitting (model names are case-sensitive: `"S3"`) |
+| `fit_fd_huber / bootstrap_fd` | FD fitting — returns derived `capacity_vphpl`/`k_c_vpm`/`v_c_mph` too; `fd_model_zoo` is a *module* (registry via `fd_models()`) |
 | `fit_qvdf_P / fit_qvdf_v_t2 / fit_qvdf_v_avg / predict_qvdf` | QVDF pieces |
 | `classify_day / discharge_window` | the per-day queue primitives (T0/T2/T3, μ window) |
 | `verify_installation()` | data-free self-test |
@@ -76,6 +96,7 @@ checkout; the other three work anywhere.
 
 ## Verified install matrix (2026-07-08)
 
+Windows note: create the venv at a SHORT path (MAX_PATH breaks deep installs).
 Wheel built with `python -m build`, installed into a **clean venv**
 (Python 3.11, pandas 3.0.3, NumPy 2.4 — newer than the dev machine):
 

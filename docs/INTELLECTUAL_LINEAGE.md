@@ -56,7 +56,7 @@ statement:
 | **Gordon Newell** | cumulative curves, simplified kinematic wave theory, queue timing (the direct ancestor of T0/T2/T3/P/μ) | [Newell 1993, *A simplified theory of kinematic waves, Part I*](https://www.sciencedirect.com/science/article/abs/pii/019126159390038C) |
 | **Carlos Daganzo** (UC Berkeley, Professor of the Graduate School) | CTM, sending/receiving flow, network queue propagation — the engine in `engines/ctm_python` | [Berkeley CEE profile](https://ce.berkeley.edu/people/faculty/daganzo) · [CTM Part II](https://www.sciencedirect.com/science/article/pii/019126159400022R) |
 | **Michael Cassidy** (UC Berkeley) | the experimental bottleneck / freeway-operations tradition — the empirical discipline behind our episode audits | [Berkeley ITS profile](https://its.berkeley.edu/people/michael-cassidy) |
-| **Moshe Ben-Akiva** (MIT) | DTA, demand–supply interaction, real-time simulation (DynaMIT tradition) — the demand-side line our forward-only OD stance respects | [MIT CEE profile](https://cee.mit.edu/people_individual/moshe-e-ben-akiva/) |
+| **Moshe Ben-Akiva** (MIT) | DTA, demand-supply interaction, real-time simulation (DynaMIT tradition). Honest scope: CBI is single-location and OD-free by design — it does NOT estimate or update OD; "forward-only" simply means it consumes assignment output without feeding back | [MIT CEE profile](https://cee.mit.edu/people_individual/moshe-e-ben-akiva/) |
 | **Hani Mahmassani** (Northwestern, *in memoriam*, d. July 2025) | DTA, network dynamics, real-time traffic management — cite as intellectual legacy | [Northwestern memorial](https://www.mccormick.northwestern.edu/news/articles/2025/07/professor-hani-mahmassani-passes-away/) |
 | **Jorge Laval** (Georgia Tech) | the traffic-flow-theory + complex-systems + ML bridge — the closest living kin to "AI constrained by traffic-flow physics" | [Georgia Tech profile](https://ce.gatech.edu/directory/person/jorge-laval) |
 
@@ -64,7 +64,7 @@ statement:
 
 ## 3. Allies, and what we actually compete with
 
-### Potential allies (never framed as rivals)
+### Communities whose work we build on (cited as influences — no partnership or endorsement implied)
 
 | Community | Why they are allies | Link |
 |---|---|---|
@@ -190,8 +190,20 @@ FHWA-DOT community.
    https://cee.mit.edu/people_individual/moshe-e-ben-akiva/
 8. Northwestern McCormick — Professor Hani Mahmassani Passes Away (July 2025).
    https://www.mccormick.northwestern.edu/news/articles/2025/07/professor-hani-mahmassani-passes-away/
-9. UMD CATT Lab — RITIS. https://www.cattlab.umd.edu/ritis/
-10. UMD CATT Lab — Probe Data Analytics Suite.
+9. Ben-Akiva, M., Bierlaire, M., Koutsopoulos, H., Mishalani, R. (1998).
+   DynaMIT: a simulation-based system for traffic prediction. DACCORD
+   Short-Term Forecasting Workshop, Delft.
+10. Mahmassani, H.S. (2001). Dynamic network traffic assignment and
+   simulation methodology for advanced system management applications.
+   *Networks and Spatial Economics* 1, 267-292. (DYNASMART tradition)
+11. Cassidy, M.J., Bertini, R.L. (1999). Some traffic features at freeway
+   bottlenecks. *Transportation Research Part B* 33(1), 25-42.
+   (empirical capacity drop ~= 8-15%)
+12. Vickrey, W.S. (1969). Congestion theory and transport investment.
+   *American Economic Review* 59(2), 251-260. (bottleneck economics of
+   demand exceeding supply; see also Arnott, de Palma & Lindsey 1993)
+13. UMD CATT Lab — RITIS. https://www.cattlab.umd.edu/ritis/
+14. UMD CATT Lab — Probe Data Analytics Suite.
     https://www.cattlab.umd.edu/probe-data-analytics-suite/
-11. Zhou, Cheng, Wu et al. (2022). Multimodal Transportation 1, 100017 —
+15. Zhou, Cheng, Wu et al. (2022). Multimodal Transportation 1, 100017 —
     reproduced at `benchmarks/qvdf_paper_i10/`.

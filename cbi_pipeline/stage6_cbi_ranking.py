@@ -86,11 +86,15 @@ def _classify_episodes(eps: pd.DataFrame, order: dict) -> pd.Series:
 # --------------------------------------------------------------------------- main
 def run_ranking(episodes_df: pd.DataFrame,
                 corridor: str,
-                out_dir: Path,
-                road_order: dict | None = None) -> pd.DataFrame:
-    """Build the CBI score/ranking tables from stage-2 episodes (valid only)."""
-    out_dir = Path(out_dir)
-    out_dir.mkdir(parents=True, exist_ok=True)
+                out_dir: Path | None = None,
+                road_order: dict | None = None,
+                verbose: bool = True) -> pd.DataFrame:
+    """Build the CBI score/ranking tables from stage-2 episodes (valid only).
+
+    out_dir=None runs purely in memory (no CSVs written)."""
+    if out_dir is not None:
+        out_dir = Path(out_dir)
+        out_dir.mkdir(parents=True, exist_ok=True)
 
     eps = episodes_df[episodes_df["is_valid_for_mu"]].copy()
     if eps.empty:
@@ -140,7 +144,8 @@ def run_ranking(episodes_df: pd.DataFrame,
         })
     rank = pd.DataFrame(rows).sort_values("CBI_score", ascending=False).reset_index(drop=True)
     rank["rank_in_corridor"] = np.arange(1, len(rank) + 1)
-    rank.to_csv(out_dir / "benchmark_bottleneck_ranking.csv", index=False)
+    if out_dir is not None:
+        rank.to_csv(out_dir / "benchmark_bottleneck_ranking.csv", index=False)
 
     summ = (rank.groupby(["corridor", "period"])
                 .agg(n_ranked_sensor_periods=("CBI_score", "size"),
@@ -157,12 +162,14 @@ def run_ranking(episodes_df: pd.DataFrame,
                                  lambda s: int((s == "incident_related").sum())))
                 .reset_index())
     summ["aggregation_level"] = "corridor_period_sum_over_sensor_periods"
-    summ.to_csv(out_dir / "benchmark_CBI_corridor_summary.csv", index=False)
+    if out_dir is not None:
+        summ.to_csv(out_dir / "benchmark_CBI_corridor_summary.csv", index=False)
 
-    top = rank.head(5)[["rank_in_corridor", "sensor_uid", "period",
-                        "CBI_score", "bottleneck_class"]]
-    print(f"   [stage6] CBI ranking: {len(rank)} sensor-periods; top-5:")
-    for r in top.itertuples(index=False):
-        print(f"      #{r.rank_in_corridor:<2} {r.sensor_uid:<22} {r.period:<5} "
-              f"score={r.CBI_score:<8} {r.bottleneck_class}")
+    if verbose:
+        top = rank.head(5)[["rank_in_corridor", "sensor_uid", "period",
+                            "CBI_score", "bottleneck_class"]]
+        print(f"   [stage6] CBI ranking: {len(rank)} sensor-periods; top-5:")
+        for r in top.itertuples(index=False):
+            print(f"      #{r.rank_in_corridor:<2} {r.sensor_uid:<22} {r.period:<5} "
+                  f"score={r.CBI_score:<8} {r.bottleneck_class}")
     return rank

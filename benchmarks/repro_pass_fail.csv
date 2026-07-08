@@ -1,0 +1,22 @@
+benchmark,gate,value,expected,verdict,note
+qvdf_paper_i10,figure:Fig10_step1_DC_vs_P.png,present,present,PASS,
+qvdf_paper_i10,figure:Fig8_FD_volume_speed.png,present,present,PASS,
+qvdf_paper_i10,figure:Fig14_td_speed_Monday.png,present,present,PASS,
+qvdf_paper_i10,f_d,1.4307,1.4307±1%,PASS,
+qvdf_paper_i10,n,1.0566,1.0566±1%,PASS,
+qvdf_paper_i10,s,2.0995,2.0995±1%,PASS,
+qvdf_paper_casestudy2,figure:Fig19_20_P_vs_DC.png,present,present,PASS,
+qvdf_paper_casestudy2,figure:Fig23_capacity_discount.png,present,present,PASS,
+qvdf_paper_casestudy2,n,1.0461,1.0461±0%,PASS,
+qvdf_paper_casestudy2,f_d,1.1238,1.1238±0%,PASS,
+qvdf_paper_casestudy2,P_fit_R2,0.977,0.977±2%,PASS,
+fd_16models,figure:fd_model_comparison.png,present,present,PASS,
+fd_16models,rmse_flow,173.2,173.2±3%,PASS,S3 must remain the best-or-tied flow RMSE of the fitted suite
+fd_16models,rmse_flow,386.4,386.4±5%,PASS,S3 must remain the best-or-tied flow RMSE of the fitted suite
+paq_corridor,figure:paq_field_and_queue.png,present,present,PASS,
+paq_corridor,figure:paq_shape_fits.png,present,present,PASS,
+paq_corridor,r2_trapezoid,0.6035,0.603±10%,PASS,trapezoid >= quadratic >> quartic/cubic ordering must hold (medians)
+paq_corridor,r2_quadratic,0.549,0.549±10%,PASS,trapezoid >= quadratic >> quartic/cubic ordering must hold (medians)
+cbi_arizona,figure:cbi_agreement.png,present,present,PASS,
+cbi_arizona,P_corr>= 0.3,0.39,>=0.3,PASS,legacy-vs-modern agreement floors (different scan rules; see page)
+cbi_arizona,vt2_corr>= 0.5,0.709,>=0.5,PASS,legacy-vs-modern agreement floors (different scan rules; see page)

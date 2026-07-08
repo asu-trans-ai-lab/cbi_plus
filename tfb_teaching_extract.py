@@ -95,6 +95,90 @@ def qvdf_for(v5: pd.DataFrame, day: str, sensor_uid: str, period: str) -> dict |
             for k in keys if k in r.index}
 
 
+def rpca_view(sensors: list, teach_days: tuple) -> dict:
+    """RPCA over the whole window: Y[(sensor x tod) x day] = L (recurrent) + S (anomaly).
+
+    Returns the S (non-recurring anomaly, mph) field for each teaching day plus the
+    observability summary — the COMPUTED recurring/incident split (tensor_tools)."""
+    sys.path.insert(0, str(CODES))
+    from cbi_pipeline.tensor_tools import rpca, price_of_rank
+
+    blob = json.loads(ADAPTER_JSON.read_text())
+    t0 = pd.Timestamp(next(iter(blob.values()))["t0"])
+    n_days = blob[sensors[0]]["n"] // 288
+    dates = [(t0 + pd.Timedelta(days=d)).strftime("%Y-%m-%d") for d in range(n_days)]
+
+    # cube [sensor, tod, day] in mph; NaN -> per-(sensor,tod) mean across days
+    cube = np.full((len(sensors), 288, n_days), np.nan)
+    for i, s in enumerate(sensors):
+        arr = np.array([np.nan if v is None else v / 1.609 for v in blob[s]["s"]], dtype=float)
+        cube[i] = arr[:n_days * 288].reshape(n_days, 288).T
+    tod_mean = np.nanmean(cube, axis=2, keepdims=True)
+    cube = np.where(np.isnan(cube), tod_mean, cube)
+    cube = np.nan_to_num(cube, nan=float(np.nanmean(cube)))
+
+    # RPCA on the RESIDUAL vs a DAY-TYPE median baseline (weekday median for
+    # weekdays, weekend median for weekends — never mix day types, and a median
+    # is robust to the event days). Raw speed is useless here (free-flow constant
+    # dominates); a mixed-day mean mis-scores every heavy weekday. lam is 4x the
+    # PCP default so S keeps only the big sparse deviations (density ~2%).
+    dows = np.array([pd.Timestamp(d).dayofweek for d in dates])
+    wk = dows < 5
+    base = np.full_like(cube, np.nan)
+    if wk.any():
+        base[:, :, wk] = np.nanmedian(cube[:, :, wk], axis=2, keepdims=True)
+    if (~wk).any():
+        base[:, :, ~wk] = np.nanmedian(cube[:, :, ~wk], axis=2, keepdims=True)
+    resid = np.nan_to_num(cube - base, nan=0.0)
+    Y = resid.reshape(len(sensors) * 288, n_days)
+    L, S, info = rpca(Y, lam=4.0 / np.sqrt(Y.shape[0]))
+    _, pr = price_of_rank(Y)
+
+    out = {"info": {**{k: round(v, 3) if isinstance(v, float) else v for k, v in info.items()},
+                    **pr},
+           "anomaly_by_day": [
+               {"date": dates[d],
+                "energy": int(np.abs(np.minimum(S[:, d], 0)).sum()),   # speed DEFICIT only
+                "dow": int(pd.Timestamp(dates[d]).dayofweek)}
+               for d in range(n_days)],
+           "S_fields": {}}
+    for day in teach_days:
+        if day in dates:
+            d = dates.index(day)
+            Sf = S[:, d].reshape(len(sensors), 288)
+            out["S_fields"][day] = [[int(round(v)) for v in row] for row in Sf]
+    return out
+
+
+def abnormal_fields(sensors: list, teach_days: tuple) -> dict:
+    """Official abnormal-cell labels (nr_confidence) from the release parquet, per
+    teaching day, as sensor x 288 int(conf*100). The AUTHORITATIVE non-recurring
+    evidence; the RPCA S field is the label-free method demo alongside it."""
+    pq = Path("C:/source_codes/0_source_code_new/IEEE_Simulate_Players/"
+              "ASU_Internal_Version_DLSIM_IEEE/02_data_PeMS_LA/release/I-210E/"
+              "abnormal_cells.parquet")
+    if not pq.exists():
+        return {}
+    df = pd.read_parquet(pq, columns=["date", "timestamp", "station_id", "nr_confidence"])
+    out = {}
+    sid_row = {int(s): i for i, s in enumerate(sensors)}
+    for day in teach_days:
+        sub = df[df["date"] == day]
+        if sub.empty:
+            continue
+        F = np.zeros((len(sensors), 288), dtype=int)
+        ts = pd.to_datetime(sub["timestamp"].str.replace("Z", ""))
+        tod = (ts.dt.hour * 12 + ts.dt.minute // 5).to_numpy()
+        st = sub["station_id"].to_numpy()
+        nc = (sub["nr_confidence"].to_numpy() * 100).round().astype(int)
+        for s_, t_, c_ in zip(st, tod, nc):
+            r = sid_row.get(int(s_))
+            if r is not None and 0 <= t_ < 288:
+                F[r, t_] = c_
+        out[day] = F.tolist()
+    return out
+
+
 def main():
     out_path = Path(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_OUT
     sensors, meta, days = load_fields()
@@ -136,6 +220,8 @@ def main():
                 for d in (DAY_RECURRING, DAY_EVENT)
             },
         },
+        "rpca": rpca_view(sensors, (DAY_RECURRING, DAY_EVENT)),
+        "abnormal": abnormal_fields(sensors, (DAY_RECURRING, DAY_EVENT)),
         "corridor_qvdf": agg.to_dict("records") if not agg.empty else [],
         "gates": {k: (v.get("status") if isinstance(v, dict) else v)
                   for k, v in gates.items()},

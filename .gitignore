@@ -16,3 +16,7 @@ Thumbs.db
 
 # review-materials drop (raw previous versions, 131MB INRIX I-17 etc.) — reference only
 additional/
+
+# EXCEPTION: benchmark evidence figures are the deliverable — keep them tracked
+!benchmarks/**/*.png
+!docs/figures/*.png

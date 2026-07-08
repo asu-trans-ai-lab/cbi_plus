@@ -24,3 +24,6 @@ additional/
 
 # legacy-repo archive: reference only, never ship (46MB Reading.csv etc.)
 old_github_repo/
+
+# internal named team assignments — never publish
+docs/INTERNAL_TEAM_ROLES.md

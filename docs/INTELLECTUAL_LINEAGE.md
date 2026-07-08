@@ -2,7 +2,7 @@
 
 *Background companion to [INTRODUCTION.md](INTRODUCTION.md) and
 [MISSION.md](MISSION.md): the theory lineage with references, the allies map,
-and the authorship/division-of-labor principle. Internal document.*
+and the authorship/division-of-labor principle.*
 
 ---
 
@@ -27,15 +27,17 @@ reproducible commands, known failure cases, and V/C-vs-dynamics examples.
 
 ### Division of labor
 
-| Role | Who | Task |
-|---|---|---|
-| Chief architect / senior author | Simon Zhou | mission, paradigm shift, teaching philosophy |
-| CBI engineering line | David Hale / FHWA CBI community | CBI workflow, RITIS/CBI field experience, engineering language |
-| QVDF / FD / theory checking | Mohammad Abbasi | QVDF, FD, capacity, μ/C, D/C-hours, speed–volume conventions |
-| Benchmark reproduction lead | Henan Zhu | I-10 / I-405 / I-395 benchmarks, figures, gates, reproducibility |
-| Data & mapping | Yajun Liu / Jinxi Wu | PeMS, CV/GPS, corridor mapping, CBI index, sensor/link matching |
-| Tool engineering | Han Zheng / tool-oriented students | six contracts, input/output schemas, one-command reproduction |
-| Curriculum & dissemination | Ram Pendyala / Hua Wei | curriculum packaging, training, AI-native transportation education |
+| Role | Task |
+|---|---|
+| Chief architect / senior author | mission, paradigm shift, teaching philosophy |
+| CBI engineering line (with the FHWA CBI community) | CBI workflow, RITIS/CBI field experience, engineering language |
+| QVDF / FD / theory checking | QVDF, FD, capacity, μ/C, D/C-hours, speed–volume conventions |
+| Benchmark reproduction lead | I-10 / I-405 / I-395 benchmarks, figures, gates, reproducibility |
+| Data & mapping | PeMS, CV/GPS, corridor mapping, CBI index, sensor/link matching |
+| Tool engineering | six contracts, input/output schemas, one-command reproduction |
+| Curriculum & dissemination | curriculum packaging, training, AI-native transportation education |
+
+*(Named assignments are kept in an internal, untracked note.)*
 
 ---
 
@@ -160,11 +162,12 @@ Implemented in [INTRODUCTION.md](INTRODUCTION.md):
 > structure that upgrades "students writing code" into "a team building a
 > new traffic-engineering paradigm together."**
 
-Thought and Introduction: the architect leads. Theory checking: Mohammad +
-David Hale + senior traffic-flow friends. Benchmarks and figures: Henan /
-Jinxi / Yajun / the tool students. Curriculum and dissemination: Ram / Hua /
-the DOT workshop network. External intellectual allies: Berkeley / MIT /
-Georgia Tech / RITIS-CATT / the FHWA-DOT community.
+Thought and Introduction: the architect leads. Theory checking: the QVDF/FD
+line plus senior traffic-flow colleagues. Benchmarks and figures: the
+reproduction and data-mapping team with the tool students. Curriculum and
+dissemination: the education line and the DOT workshop network. External
+intellectual allies: Berkeley / MIT / Georgia Tech / RITIS-CATT / the
+FHWA-DOT community.
 
 ## References
 

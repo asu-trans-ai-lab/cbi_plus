@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/asu-trans-ai-lab/cbi_plus/schemas/issue_graph.schema.json",
+  "title": "Transportation Issue Graph — the Reader/Writer contract",
+  "description": "The ONLY channel between the Transportation Reader (CBI: observes, diagnoses, never edits) and the Transportation Writer (Token2Net: edits, never observes the world directly). Readers emit issue OBJECTS, not prose; the Planner (human + AI) flips status to approved; Writers act only on approved issues. Reader can never write. Writer can never read the world. The Planner stays in the loop — the AI never loops itself.",
+  "type": "object",
+  "required": ["graph_version", "generated_by", "reader_role", "issues"],
+  "properties": {
+    "graph_version": {"const": 1},
+    "generated_by": {"type": "string", "description": "reader tool + version"},
+    "reader_role": {"const": "transportation_reader",
+      "description": "asserts the emitter is a Reader — Writers must refuse graphs without this"},
+    "world_read": {"type": "array", "items": {"type": "string"},
+      "description": "what the reader observed: gmns_network, probe_speed, trajectory, counts, od, signals, osm, imagery, simulation_result"},
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["issue_id", "type", "location", "confidence", "evidence",
+                     "status"],
+        "properties": {
+          "issue_id": {"type": "string", "description": "e.g. I-101"},
+          "type": {"type": "string",
+            "description": "machine vocabulary, e.g. missing_turn, missing_ramp, disconnected_path, recurring_bottleneck, incident_pattern_day, capacity_drop, fd_fit_implausible, data_quality, model_misses_onset"},
+          "location": {
+            "type": "object",
+            "description": "the network/world objects involved — the graph edges",
+            "properties": {
+              "nodes": {"type": "array", "items": {}},
+              "links": {"type": "array", "items": {}},
+              "movements": {"type": "array", "items": {}},
+              "sensors": {"type": "array", "items": {"type": "string"}},
+              "zones": {"type": "array", "items": {}},
+              "corridor": {"type": "string"},
+              "time_window": {"type": "string"}
+            }
+          },
+          "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+          "severity": {"enum": ["critical", "high", "medium", "low", null]},
+          "evidence": {"type": "array", "items": {"type": "string"},
+            "description": "machine-checkable observations, e.g. 'movement missing', 'path disconnected', 'qc_pass_rate 0.94', 'episode P_min 125'"},
+          "recommended_token": {"type": "array", "items": {"type": "string"},
+            "description": "SUGGESTED writer actions (from the writer's token schema) — suggestions only; the Planner disposes"},
+          "status": {"enum": ["open", "approved", "rejected", "patched", "validated"],
+            "description": "lifecycle: only the Planner may set approved/rejected; only the Writer may set patched; only validation may set validated"},
+          "review": {
+            "type": "object",
+            "description": "the Planner gate — REQUIRED before any write",
+            "properties": {
+              "reviewer": {"type": "string"},
+              "decision_time": {"type": "string"},
+              "note": {"type": "string"}
+            }
+          },
+          "rendering": {
+            "type": "object",
+            "description": "OPTIONAL human-facing prose generated FROM the structure (planner_message, public_message). Never the contract — a Writer must ignore this field entirely.",
+            "additionalProperties": {"type": "string"}
+          }
+        }
+      }
+    }
+  }
+}

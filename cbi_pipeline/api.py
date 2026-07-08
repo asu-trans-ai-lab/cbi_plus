@@ -41,6 +41,8 @@ from .stage5_qvdf import (fit_qvdf_P, fit_qvdf_v_t2, fit_qvdf_v_avg,
 from .stage6_cbi_ranking import run_ranking
 from .cbi_tokens import (compile_tokens, compare_tokens, benefit_tokens,
                          write_tokens)
+from .issue_graph import (build_issue_graph, mismatch_issues,
+                          write_issue_graph, planner_review, approved_issues)
 from .corridor_workflow import run_corridor
 from . import fd_model_zoo
 
@@ -55,6 +57,10 @@ __all__ = [
     "run_ranking", "fd_model_zoo", "fd_models",
     # planner-facing token compiler (CBI state machine)
     "compile_tokens", "compare_tokens", "benefit_tokens", "write_tokens",
+    # Reader/Planner/Writer architecture: CBI is the READER — it emits an
+    # Issue Graph and never edits a network; Writers act on approved issues
+    "build_issue_graph", "mismatch_issues", "write_issue_graph",
+    "planner_review", "approved_issues",
     # one-call paths
     "run_corridor", "diagnose", "simulate_corridor", "verify_installation",
     "version",

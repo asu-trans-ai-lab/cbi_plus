@@ -156,6 +156,7 @@ and [reviews/SIMULATED_COMPETITION_USERS_2026-07-08.md](reviews/SIMULATED_COMPET
 |---|---|---|---|
 | DES-1 | — | **CBI token compiler**: planner-facing state machine (T0–T4, deficit area, confidence, cause diagnosis, planner_message), model-mismatch tokens incl. MODEL_RIGHT_AVERAGE_WRONG_SHAPE, scenario-benefit translation; scheme `cbi_compiler:` block; outputs cbi_tokens.jsonl / cbi_event_table.csv / cbi_calibration_memo.md | SHIPPED v2.5.0 — [CBI_TOKENS.md](CBI_TOKENS.md) |
 | DES-2 | MED | cause tokens for weather/work-zone/lane-drop need external feeds (incident/RCRS ingestion) | OPEN |
+| DES-4 | — | **Reader/Planner/Writer architecture** (owner memo): CBI = Transportation Reader emitting a machine-readable Issue Graph (never prose as contract, never writes); Token2Net = Writer consuming ONLY named-planner-approved issues; signed-approval gate; firewall enforced in code both sides | SHIPPED v2.7.0 — [READER_PLANNER_WRITER.md](READER_PLANNER_WRITER.md), schemas/issue_graph.schema.json, cbi_pipeline/issue_graph.py; writer side in GMNS-Token2Net repo (demo_reader_writer: broken diamond -> 3 issues -> approve -> patch -> 7/7 PASS) |
 | DES-3 | MED | MODEL_WRONG_BOTTLENECK_LOCATION + queue-extent error need simulated spatial fields (DTALite bridge) | OPEN |
 
 **Wave 5 (policy panel: FHWA analyst / MPO planner / BCA economist — report:

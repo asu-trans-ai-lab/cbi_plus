@@ -74,7 +74,7 @@ support**.
 | Question | Answer in the introduction |
 |---|---|
 | **Who are we training?** | A new generation of traffic engineers — students and practitioners |
-| **Who are the intellectual foundations?** | LWR, Newell, Daganzo — the Berkeley-school dynamic traffic-flow tradition (details: [teaching/THEORY_FOUNDATIONS.md](teaching/THEORY_FOUNDATIONS.md)) |
+| **Who are the intellectual foundations?** | LWR, Newell, Daganzo — the Berkeley-school dynamic traffic-flow tradition (physics: [teaching/THEORY_FOUNDATIONS.md](teaching/THEORY_FOUNDATIONS.md); people, allies & authorship: [INTELLECTUAL_LINEAGE.md](INTELLECTUAL_LINEAGE.md)) |
 | **What is wrong with the old teaching?** | Over-reliance on PHF, V/C, LOS, hourly averages |
 | **What is missing in students?** | Congestion mechanism, critical thinking, physical diagnosis |
 | **What is the tool?** | CBI/QVDF as a training + validation + engineering platform ([MISSION.md](MISSION.md), [CONTRACTS.md](CONTRACTS.md)) |

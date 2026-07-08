@@ -26,7 +26,7 @@ ADAPTER_JSON = OUT_RUN / "_inputs" / "tfb_I-210E_2026-06-01_2026-06-28.json"
 
 DAY_RECURRING = "2026-06-16"   # stable weekday, class=recurring (manifest)
 DAY_EVENT = "2026-06-19"       # highest pct_abnormal in June, class=event
-PERIOD_START = {"AM": 6, "MD": 10, "PM": 16}
+PERIOD_START = {"AM": 6, "MD": 10, "PM": 16, "MDPM": 10}
 
 DEFAULT_OUT = Path("C:/source_codes/0_source_code_new/dynamic_ODME/gui4gmns/"
                    "github_dev/docs/trafficflowbench/cbi_lab/data.json")
@@ -132,12 +132,13 @@ def main():
             "row": sensors.index(hero_sid) if hero_sid in sensors else None,
             "milepost": next((m["milepost"] for m in meta if m["sensor"] == hero_sid), None),
             "episodes": {
-                d: {p: qvdf_for(v5, d, hero, p) for p in ("AM", "MD", "PM")}
+                d: {p: qvdf_for(v5, d, hero, p) for p in ("AM", "MD", "PM", "MDPM")}
                 for d in (DAY_RECURRING, DAY_EVENT)
             },
         },
         "corridor_qvdf": agg.to_dict("records") if not agg.empty else [],
-        "gates": {k: v.get("status") for k, v in gates.items()},
+        "gates": {k: (v.get("status") if isinstance(v, dict) else v)
+                  for k, v in gates.items()},
         "stats": {
             "episodes_total": int(len(pd.read_csv(CORR_DIR / "stage2_episodes" / "episodes_per_link_day.csv"))),
             "episodes_valid": int(len(v4)),

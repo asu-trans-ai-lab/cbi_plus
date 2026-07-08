@@ -92,18 +92,26 @@ Use the `_shrunk` columns (bootstrap + prior-shrinkage protected), not `_median`
 
 ## 4. Reading per-period results (what AM vs MD vs PM tells you)
 
-Periods are not just time filters — they are different *demand regimes*:
+Periods are not just time filters — they are different *demand regimes*
+(final-run numbers, I-210E June 2026, 450 valid episodes, all 6 gates PASS):
 
-- **AM**: commute pulse, sharp onset, typically the *highest μ* (fresh drivers,
-  no heat, incident-light). On I-210E June: μ=1,902, P=120 min, v_t2=32 mph.
-- **MD**: background + discretionary demand. Lower μ (1,506) with *longer* P here
-  is the signature of slow midday churn rather than a hard bottleneck pulse.
-- **PM**: the structural peak — P=185 min, v_t2=21 mph, μ=1,680. This is where
-  chronic bottlenecks are ranked and where the QVDF elasticities matter most.
+- **AM**: commute pulse, sharp onset, the *highest* μ/C (≈0.97 at the hero
+  bottleneck — barely-degraded discharge on a short 1.3 h episode).
+- **MDPM (merged)**: the corridor's real story — **307 of 450** valid episodes are
+  queues that cross the 16:00 MD→PM boundary and are stitched by the stage-2
+  boundary-merge. Hero bottleneck (det 717625, MP 24.2): P=5.4 h, μ=1,744,
+  μ/C=0.87 on a recurring day.
+- **Residual pure-MD / pure-PM**: episodes fully contained in one period (16 and
+  48 of them) — short, self-clearing queues.
 
-Compare the *same sensor* across periods: a true structural bottleneck (lane drop,
-merge) appears in AM **and** PM; an incident-driven one appears once. That
-persistence test is the cheapest recurring-vs-non-recurring classifier you have.
+Two persistence tests worth teaching:
+1. *Same sensor across periods* — a structural bottleneck (lane drop, merge)
+   appears in AM **and** the MDPM block; an incident appears once.
+2. *Same sensor across days* — at the hero bottleneck, μ/C is **0.87 (recurring
+   day) vs 0.86 (event day)** while P doubles (5.4 → 8.4 h) and D/C jumps
+   (4.9 → 7.5 h). The capacity drop is a property of the BOTTLENECK; the event
+   multiplied the queue, not the loss. That single comparison is the cleanest
+   recurring-vs-non-recurring lesson in the dataset.
 
 ## 5. Pitfalls (each one bit us; all are in the Fixes log)
 

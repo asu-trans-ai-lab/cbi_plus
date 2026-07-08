@@ -120,6 +120,27 @@ def run_all(rerun: bool = False) -> pd.DataFrame:
                                  note=spec.get("note", "")))
     df = pd.DataFrame(rows)
     df.to_csv(BM / "repro_pass_fail.csv", index=False)
+
+    # Benchmark-contract file set (CONTRACTS.md section 6, memo naming):
+    # expected vs actual keyed statistics, side by side, repo-wide.
+    exp_rows = []
+    for spec in REGISTRY:
+        d2 = BM / spec["name"]
+        for csvf, col, sel, exp, tol in spec.get("checks", []):
+            row = dict(benchmark=spec["name"], statistic=col, selector=str(sel),
+                       expected=exp,
+                       tolerance=("floor" if tol is None else f"+/-{tol*100:.0f}%"))
+            p2 = d2 / csvf
+            if p2.exists():
+                try:
+                    row["actual"] = round(_value(pd.read_csv(p2), col, sel), 4)
+                except Exception:
+                    row["actual"] = None
+            exp_rows.append(row)
+    ea = pd.DataFrame(exp_rows)
+    ea[["benchmark", "statistic", "selector", "expected", "tolerance"]].to_csv(
+        BM / "benchmark_expected_statistics.csv", index=False)
+    ea.to_csv(BM / "benchmark_actual_statistics.csv", index=False)
     n = df["verdict"].value_counts().to_dict()
     print(f"[repro_gates] {n} -> benchmarks/repro_pass_fail.csv")
     for r in df[df["verdict"] == "FAIL"].itertuples(index=False):

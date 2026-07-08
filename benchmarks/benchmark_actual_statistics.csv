@@ -1,0 +1,15 @@
+benchmark,statistic,selector,expected,tolerance,actual
+qvdf_paper_i10,f_d,"('Detector', 139)",1.4307,+/-1%,1.4307
+qvdf_paper_i10,n,"('Detector', 139)",1.0566,+/-1%,1.0566
+qvdf_paper_i10,s,"('Detector', 78)",2.0995,+/-1%,2.0995
+qvdf_paper_casestudy2,n,None,1.0461,+/-0%,1.0461
+qvdf_paper_casestudy2,f_d,None,1.1238,+/-0%,1.1238
+qvdf_paper_casestudy2,P_fit_R2,None,0.977,+/-2%,0.977
+fd_16models,rmse_flow,"('model', 'S3')",173.2,+/-3%,173.2
+fd_16models,rmse_flow,"('model', 'Greenshields')",386.4,+/-5%,386.4
+paq_corridor,r2_trapezoid,median,0.603,+/-10%,0.6035
+paq_corridor,r2_quadratic,median,0.549,+/-10%,0.549
+engine_comparison,mae_congested_kmh,min,0.0,floor,11.01
+flow_tensor_demo,mae_kmh,min,0.0,floor,1.73
+cbi_arizona,P_corr,min,0.3,floor,0.39
+cbi_arizona,vt2_corr,min,0.5,floor,0.709

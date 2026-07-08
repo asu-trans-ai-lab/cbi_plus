@@ -1,0 +1,73 @@
+{
+  "graph_version": 1,
+  "generated_by": "cbi_plus evidence_compiler (transportation_reader)",
+  "reader_role": "transportation_reader",
+  "generated": "2026-07-08T07:03:05",
+  "world_read": [
+    "news_article",
+    "study",
+    "detector_diagnosis"
+  ],
+  "issues": [
+    {
+      "issue_id": "RAG-100",
+      "type": "bottleneck_location",
+      "location": {
+        "corridor": "I-10",
+        "sensors": []
+      },
+      "confidence": 0.95,
+      "severity": "medium",
+      "evidence": [
+        {
+          "source_type": "study",
+          "trust_level": "peer_reviewed",
+          "claim": "I-10 Santa Monica Fwy in downtown LA ranked #3 in US bottleneck severity; La Brea-National section #13",
+          "evidence_id": "EV-9550"
+        },
+        {
+          "source_type": "detector_diagnosis",
+          "trust_level": "measurement",
+          "claim": "corroborated by detector issue I-001 (recurring_bottleneck)",
+          "evidence_id": "I-001"
+        }
+      ],
+      "recommended_token": [
+        "COMPARE_WITH_BENCHMARK",
+        "GENERATE_CORRIDOR_DASHBOARD"
+      ],
+      "status": "needs_planner_review",
+      "claim_requirement": "detector diagnosis + location consistency"
+    },
+    {
+      "issue_id": "RAG-101",
+      "type": "corridor_context",
+      "location": {
+        "corridor": "I-10",
+        "sensors": []
+      },
+      "confidence": 0.95,
+      "severity": "medium",
+      "evidence": [
+        {
+          "source_type": "news_article",
+          "trust_level": "news_context",
+          "claim": "all three I-10 freeway-to-freeway interchanges notorious and routinely top-10 congested in the US; peak 6:30-9:30a and from 4p",
+          "evidence_id": "EV-2883"
+        },
+        {
+          "source_type": "detector_diagnosis",
+          "trust_level": "measurement",
+          "claim": "corroborated by detector issue I-001 (recurring_bottleneck)",
+          "evidence_id": "I-001"
+        }
+      ],
+      "recommended_token": [
+        "COMPARE_WITH_BENCHMARK",
+        "GENERATE_CORRIDOR_DASHBOARD"
+      ],
+      "status": "needs_planner_review",
+      "claim_requirement": "web/agency source acceptable (context only)"
+    }
+  ]
+}

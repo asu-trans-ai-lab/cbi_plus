@@ -198,6 +198,14 @@ and [reviews/SIMULATED_COMPETITION_USERS_2026-07-08.md](reviews/SIMULATED_COMPET
 | RAG-9 | MED | Q&A transcript template for expert dialogue | SHIPPED v2.10.0 — reviews/templates/expert_dialogue_transcript_template.md |
 | RAG-10 | MED | dashboard page: RAG claim -> evidence -> issue -> planner action trace | OPEN |
 
+**Wave 8 (RAG corridor knowledge runs — owner request):**
+
+| ID | sev | title | status |
+|---|---|---|---|
+| RAG-C1 | — | I-66 NoVA RAG run (no in-repo detectors): 3 text-derived issues, all capped + `needs_detector_check`; draft AMS scheme + data-acquisition list | DONE — docs/knowledge/I66_CORRIDOR_KNOWLEDGE.md, schemas/ams_scheme_i66_draft.yml |
+| RAG-C2 | — | I-10 & I-405 RAG runs (in-repo PeMS detectors): web claims CORROBORATED by detector diagnosis -> conf 0.93-0.95, `needs_planner_review`; demonstrates the full text->data->planner loop and the 0.95 benchmark+detector ceiling | DONE — docs/knowledge/I10_I405_RAG_CORROBORATION.md + fused issue graphs |
+| RAG-C3 | MED | acquire I-66 detector/probe data (VDOT/INRIX) to lift its issues from needs_detector_check | OPEN — data acquisition |
+
 ## 9. Enhancement backlog (not bugs — wanted capabilities)
 
 | ID | title | driver |

@@ -1,0 +1,103 @@
+{
+  "graph_version": 1,
+  "generated_by": "cbi_plus evidence_compiler (transportation_reader)",
+  "reader_role": "transportation_reader",
+  "generated": "2026-07-08T07:03:05",
+  "world_read": [
+    "agency_page",
+    "reference_page",
+    "detector_diagnosis"
+  ],
+  "issues": [
+    {
+      "issue_id": "RAG-100",
+      "type": "bottleneck_location",
+      "location": {
+        "corridor": "I-405",
+        "sensors": []
+      },
+      "confidence": 0.93,
+      "severity": "medium",
+      "evidence": [
+        {
+          "source_type": "reference_page",
+          "trust_level": "news_context",
+          "claim": "I-405 widely recognized as most congested highway in California; Sepulveda Pass among the country's most congested corridors",
+          "evidence_id": "EV-5748"
+        },
+        {
+          "source_type": "detector_diagnosis",
+          "trust_level": "measurement",
+          "claim": "corroborated by detector issue I-014 (recurring_bottleneck)",
+          "evidence_id": "I-014"
+        }
+      ],
+      "recommended_token": [
+        "COMPARE_WITH_BENCHMARK",
+        "GENERATE_CORRIDOR_DASHBOARD"
+      ],
+      "status": "needs_planner_review",
+      "claim_requirement": "detector diagnosis + location consistency"
+    },
+    {
+      "issue_id": "RAG-101",
+      "type": "corridor_context",
+      "location": {
+        "corridor": "I-405",
+        "sensors": []
+      },
+      "confidence": 0.93,
+      "severity": "medium",
+      "evidence": [
+        {
+          "source_type": "agency_page",
+          "trust_level": "agency_report",
+          "claim": "Sepulveda Pass is a major I-405 bottleneck; ExpressLanes + transit corridor proposed I-10 to US-101",
+          "evidence_id": "EV-0532"
+        },
+        {
+          "source_type": "detector_diagnosis",
+          "trust_level": "measurement",
+          "claim": "corroborated by detector issue I-014 (recurring_bottleneck)",
+          "evidence_id": "I-014"
+        }
+      ],
+      "recommended_token": [
+        "COMPARE_WITH_BENCHMARK",
+        "GENERATE_CORRIDOR_DASHBOARD"
+      ],
+      "status": "needs_planner_review",
+      "claim_requirement": "web/agency source acceptable (context only)"
+    },
+    {
+      "issue_id": "RAG-102",
+      "type": "work_zone_report",
+      "location": {
+        "corridor": "I-405",
+        "sensors": []
+      },
+      "confidence": 0.93,
+      "severity": "medium",
+      "evidence": [
+        {
+          "source_type": "agency_page",
+          "trust_level": "agency_report",
+          "claim": "recurring NB weekend lane reductions for pavement rehab through the Pass; peak 7-10a and 3-7p",
+          "evidence_id": "EV-8369"
+        },
+        {
+          "source_type": "detector_diagnosis",
+          "trust_level": "measurement",
+          "claim": "corroborated by detector issue I-014 (recurring_bottleneck)",
+          "evidence_id": "I-014"
+        }
+      ],
+      "recommended_token": [
+        "COMPARE_WITH_BENCHMARK",
+        "GENERATE_CORRIDOR_DASHBOARD"
+      ],
+      "status": "needs_planner_review",
+      "claim_requirement": "agency source acceptable; detector check for impact"
+    }
+  ]
+}

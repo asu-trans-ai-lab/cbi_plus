@@ -1,0 +1,103 @@
+{
+  "graph_version": 1,
+  "generated_by": "cbi_plus evidence_compiler (transportation_reader)",
+  "reader_role": "transportation_reader",
+  "generated": "2026-07-08T06:42:40",
+  "world_read": [
+    "agency_page",
+    "news_article",
+    "operator_page",
+    "paper"
+  ],
+  "issues": [
+    {
+      "issue_id": "RAG-600",
+      "type": "bottleneck_location",
+      "location": {
+        "corridor": "I-66",
+        "sensors": []
+      },
+      "confidence": 0.68,
+      "severity": "low",
+      "evidence": [
+        {
+          "source_type": "news_article",
+          "trust_level": "news_context",
+          "claim": "pre-project study: peak congestion between Nutley St and the Beltway projected to grow to 8-10 h/day; eastern corridor already 4-5 h congestion each direction",
+          "evidence_id": "EV-7705"
+        },
+        {
+          "source_type": "agency_page",
+          "trust_level": "agency_report",
+          "claim": "Nutley Street interchange (Vienna Metro access) overburdened; double-roundabout rebuilt 2023 to relieve merge pressure",
+          "evidence_id": "EV-3562"
+        },
+        {
+          "source_type": "agency_page",
+          "trust_level": "agency_report",
+          "claim": "Route 28 merge near Centreville a recurring congestion location; Route 28 corridor congested for years south of I-66",
+          "evidence_id": "EV-2604"
+        }
+      ],
+      "recommended_token": [
+        "CROSS_CHECK_WITH_DETECTOR_CBI"
+      ],
+      "status": "open",
+      "claim_requirement": "detector diagnosis + location consistency",
+      "needs_detector_check": true
+    },
+    {
+      "issue_id": "RAG-601",
+      "type": "corridor_context",
+      "location": {
+        "corridor": "I-66",
+        "sensors": []
+      },
+      "confidence": 0.68,
+      "severity": "low",
+      "evidence": [
+        {
+          "source_type": "agency_page",
+          "trust_level": "agency_report",
+          "claim": "22.5 miles of new express lanes alongside three GP lanes, I-495 to Route 29 Gainesville; phased opening fall 2022",
+          "evidence_id": "EV-2617"
+        },
+        {
+          "source_type": "operator_page",
+          "trust_level": "news_context",
+          "claim": "concessionaire claims express-lane travel times dropped 54% and GP lanes also improved vs pre-construction",
+          "evidence_id": "EV-8329"
+        }
+      ],
+      "recommended_token": [
+        "CROSS_CHECK_WITH_DETECTOR_CBI"
+      ],
+      "status": "open",
+      "claim_requirement": "web/agency source acceptable (context only)"
+    },
+    {
+      "issue_id": "RAG-602",
+      "type": "reliability_claim",
+      "location": {
+        "corridor": "I-66",
+        "sensors": []
+      },
+      "confidence": 0.77,
+      "severity": "low",
+      "evidence": [
+        {
+          "source_type": "paper",
+          "trust_level": "peer_reviewed",
+          "claim": "ITB converted to peak-direction HOT Dec 2018; dynamic tolls updated at 6-minute intervals; 8-9 a.m. priciest EB \u2014 toll profile is a demand-intensity signal",
+          "evidence_id": "EV-5020"
+        }
+      ],
+      "recommended_token": [
+        "CROSS_CHECK_WITH_DETECTOR_CBI"
+      ],
+      "status": "open",
+      "claim_requirement": "speed series + segment length + federal periods (PM3 layer)",
+      "needs_detector_check": true
+    }
+  ]
+}

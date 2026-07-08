@@ -162,6 +162,200 @@
       "status": "pending_transcript",
       "can_create_issue": true,
       "can_validate_issue": false
+    },
+    {
+      "source_id": "SRC-VDOT-T66-OUTSIDE",
+      "source_type": "agency_page",
+      "source_url_or_path": "https://www.vdot.virginia.gov/projects/major-projects/transform66/transform66-outside/",
+      "retrieval_date": "2026-07-08",
+      "owner": "VDOT",
+      "trust_level": "agency_report",
+      "coverage_period": "2022-2026",
+      "corridor": "I-66",
+      "can_support_claim_type": [
+        "corridor_context",
+        "work_zone_report"
+      ],
+      "limitations": "",
+      "status": "active",
+      "can_create_issue": true,
+      "can_validate_issue": false
+    },
+    {
+      "source_id": "SRC-VDOT-ITB-2022-PERF",
+      "source_type": "agency_report_pdf",
+      "source_url_or_path": "https://www.vdot.virginia.gov/media/vdotvirginiagov/projects/megaprojects/66expresslanes/documents/2022_annual_report_66_itb_expresslanes_acc03152024_PM.pdf",
+      "retrieval_date": "2026-07-08",
+      "owner": "VDOT",
+      "trust_level": "agency_report",
+      "coverage_period": "2022",
+      "corridor": "I-66",
+      "can_support_claim_type": [
+        "corridor_context",
+        "reliability_claim"
+      ],
+      "limitations": "annual performance report; ITB segment only",
+      "status": "active",
+      "can_create_issue": true,
+      "can_validate_issue": false
+    },
+    {
+      "source_id": "SRC-RIDE66-CONCESSION",
+      "source_type": "operator_page",
+      "source_url_or_path": "https://ride66express.com/news/revolutionizing-mobility-the-success-of-the-66-express-outside-the-beltway/",
+      "retrieval_date": "2026-07-08",
+      "owner": "I-66 Express Mobility Partners (concessionaire)",
+      "trust_level": "news_context",
+      "coverage_period": "",
+      "corridor": "I-66",
+      "can_support_claim_type": [
+        "corridor_context"
+      ],
+      "limitations": "CONCESSIONAIRE self-report (-54% travel time claim) \u2014 promotional; must be verified against detector/probe data before any use",
+      "status": "active",
+      "can_create_issue": true,
+      "can_validate_issue": false
+    },
+    {
+      "source_id": "SRC-TRIP-ITB-TOLLING",
+      "source_type": "paper",
+      "source_url_or_path": "https://www.sciencedirect.com/science/article/pii/S2666691X21000154",
+      "retrieval_date": "2026-07-08",
+      "owner": "Transp. Research Interdisciplinary Perspectives",
+      "trust_level": "peer_reviewed",
+      "coverage_period": "",
+      "corridor": "I-66",
+      "can_support_claim_type": [
+        "corridor_context",
+        "reliability_claim"
+      ],
+      "limitations": "",
+      "status": "active",
+      "can_create_issue": true,
+      "can_validate_issue": false
+    },
+    {
+      "source_id": "SRC-WAPO-I66-STUDY",
+      "source_type": "news_article",
+      "source_url_or_path": "https://www.washingtonpost.com/local/trafficandcommuting/i-66-study-shows-difficult-road-ahead-for-northern-virginia-commuters/2013/03/30/c5feaec0-933b-11e2-8ea1-956c94b6b5b9_story.html",
+      "retrieval_date": "2026-07-08",
+      "owner": "Washington Post",
+      "trust_level": "news_context",
+      "coverage_period": "2013 study",
+      "corridor": "I-66",
+      "can_support_claim_type": [
+        "corridor_context"
+      ],
+      "limitations": "PRE-express-lanes study (2013): useful as No-Build historical context only",
+      "status": "active",
+      "can_create_issue": true,
+      "can_validate_issue": false
+    },
+    {
+      "source_id": "SRC-VDOT-NUTLEY",
+      "source_type": "agency_page",
+      "source_url_or_path": "https://www.vdot.virginia.gov/news-events/news/northern-virginia-district/i-66nutley-street-roundabouts-to-open-on-or-about-feb-28.html",
+      "retrieval_date": "2026-07-08",
+      "owner": "VDOT NoVA District",
+      "trust_level": "agency_report",
+      "coverage_period": "",
+      "corridor": "I-66",
+      "can_support_claim_type": [
+        "corridor_context",
+        "work_zone_report"
+      ],
+      "limitations": "",
+      "status": "active",
+      "can_create_issue": true,
+      "can_validate_issue": false
+    },
+    {
+      "source_id": "SRC-AHUA-BOTTLENECK",
+      "source_type": "study",
+      "source_url_or_path": "American Highway Users Alliance bottleneck ranking (via LAist/press)",
+      "retrieval_date": "2026-07-08",
+      "owner": "American Highway Users Alliance",
+      "trust_level": "peer_reviewed",
+      "coverage_period": "",
+      "corridor": "",
+      "can_support_claim_type": [
+        "corridor_context",
+        "bottleneck_location"
+      ],
+      "limitations": "",
+      "status": "active",
+      "can_create_issue": true,
+      "can_validate_issue": false
+    },
+    {
+      "source_id": "SRC-LAIST-I10-BOTTLENECK",
+      "source_type": "news_article",
+      "source_url_or_path": "https://laist.com/news/kpcc-archive/the-worst-traffic-bottlenecks-in-los-angeles-count",
+      "retrieval_date": "2026-07-08",
+      "owner": "LAist",
+      "trust_level": "news_context",
+      "coverage_period": "",
+      "corridor": "I-10",
+      "can_support_claim_type": [
+        "corridor_context",
+        "bottleneck_location"
+      ],
+      "limitations": "",
+      "status": "active",
+      "can_create_issue": true,
+      "can_validate_issue": false
+    },
+    {
+      "source_id": "SRC-WIKI-I405",
+      "source_type": "reference_page",
+      "source_url_or_path": "https://en.wikipedia.org/wiki/Interstate_405_(California)",
+      "retrieval_date": "2026-07-08",
+      "owner": "Wikipedia",
+      "trust_level": "news_context",
+      "coverage_period": "",
+      "corridor": "I-405",
+      "can_support_claim_type": [
+        "corridor_context"
+      ],
+      "limitations": "tertiary source; corridor context only",
+      "status": "active",
+      "can_create_issue": true,
+      "can_validate_issue": false
+    },
+    {
+      "source_id": "SRC-METRO-405-SEPULVEDA",
+      "source_type": "agency_page",
+      "source_url_or_path": "https://www.metro.net/projects/i-405-expresslanes-project/",
+      "retrieval_date": "2026-07-08",
+      "owner": "LA Metro",
+      "trust_level": "agency_report",
+      "coverage_period": "",
+      "corridor": "I-405",
+      "can_support_claim_type": [
+        "corridor_context"
+      ],
+      "limitations": "",
+      "status": "active",
+      "can_create_issue": true,
+      "can_validate_issue": false
+    },
+    {
+      "source_id": "SRC-CALTRANS-405-SEPULVEDA",
+      "source_type": "agency_page",
+      "source_url_or_path": "https://dot.ca.gov/caltrans-near-me/district-7/district-7-projects/d7-i405-sepulveda-expresslanes",
+      "retrieval_date": "2026-07-08",
+      "owner": "Caltrans D7",
+      "trust_level": "agency_report",
+      "coverage_period": "",
+      "corridor": "I-405",
+      "can_support_claim_type": [
+        "corridor_context",
+        "work_zone_report"
+      ],
+      "limitations": "",
+      "status": "active",
+      "can_create_issue": true,
+      "can_validate_issue": false
     }
   ]
 }

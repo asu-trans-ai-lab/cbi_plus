@@ -1,0 +1,63 @@
+# ams_scheme_i66_draft.yml — DRAFT AMS scheme for the I-66 corridor study.
+# Status: DATA ACQUISITION PHASE — no I-66 detector data in-repo yet; every
+# bottleneck below is text-derived (needs_detector_check in
+# docs/knowledge/i66_issue_graph.json). This scheme declares the study so
+# the data hunt has a contract to fill.
+
+scheme_version: 0.1
+use_case: corridor_congestion_diagnosis_and_managed_lane_evaluation
+title: "I-66 NoVA — CBI diagnosis + express-lanes before/after (DRAFT)"
+status: draft_pending_detector_data
+
+network:
+  format: gmns
+  source: TO_ACQUIRE  # OSM extract I-495 <-> US-29 Gainesville
+  era_stamps:         # topology changes mid-history — networks per era
+    - pre_2022_11_otb_opening
+    - post_2022_11_otb_opening
+    - post_2023_02_nutley_roundabouts
+  managed_lanes: express_lanes_as_parallel_links   # 2 EL + 3 GP per direction (OTB)
+  direction_split: {ITB: peak_direction_HOT, OTB: bidirectional_EL}
+
+demand:
+  mode: observed_states_plus_toll_covariates
+  od_table: null                 # forward-only; no dynamic ODME
+  covariates:
+    - itb_dynamic_toll_profile   # 6-min updates; 8-9am EB peak = demand signal
+    - annual_toll_revenue_trend  # $22M'22 -> $34M'23 -> ~$40M'24
+  person_throughput_note: HOV2+ exempt + Vienna Metro at Nutley -> POL-2 corridor
+
+observations:
+  states: TO_ACQUIRE             # VDOT detectors and/or INRIX probe (RITIS export)
+  loader: inrix_folder | contract_csv
+  min_confidence: 30             # INRIX fill is a prior, not a measurement
+  eras_required: [pre_2022, post_2023]
+  dataset_meta: REQUIRED         # units sidecar per Contract 7
+
+candidate_bottlenecks:           # text-derived; detectors must confirm
+  - {name: nutley_st_interchange, evidence: i66_issue_graph RAG-600, status: needs_detector_check}
+  - {name: route_28_merge_centreville, evidence: i66_issue_graph RAG-600, status: needs_detector_check}
+  - {name: eastern_approach_to_I495, evidence: 2013 pre-project study (context only), status: needs_detector_check}
+
+calibration_targets:             # filled after CBI runs per era
+  cbi_tokens: [T1_ONSET, T2_WORST_STATE, T3_RECOVERY, CONGESTION_DURATION,
+               SPEED_DEFICIT_AREA, mu_over_C]
+  pm3: {lottr_periods: federal_4, tttr: all_vehicle_proxy_until_truck_probe}
+  before_after: concessionaire -54pct claim is the HYPOTHESIS TO TEST,
+    never the conclusion (promotional trust level; induced-demand caveat)
+
+quality_gates:
+  runner: cbi_pipeline.benchmark_gates
+  hard: {qvdf_speed_mae_mph: {max: 10}, v_t2_below_v_c: required}
+  evidence_rules: docs/RAG_EVIDENCE_COMPILER.md   # text suggests, data confirms
+
+review:
+  issue_graph: docs/knowledge/i66_issue_graph.json
+  planner_gate: api.planner_review (named reviewer required)
+  registers: docs/ISSUE_REGISTER.md
+
+reproducible_artifacts:
+  - this scheme
+  - per-era run folders + quality gates
+  - CBI token tables per era + before/after benefit tokens (with guardrails)
+  - fused issue graph (text + detector corroboration)

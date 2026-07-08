@@ -263,8 +263,13 @@ def run_mu(episodes_df: pd.DataFrame,
 def write_stage4(result: dict, out_dir: Path) -> None:
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
-    result["episodes_with_mu"].to_csv(out_dir / "episodes_with_mu.csv", index=False)
-    result["per_link"].to_csv(out_dir / "mu_per_link.csv", index=False)
+    # CONTRACTS.md section 3: every output declares its aggregation level
+    ep = result["episodes_with_mu"].copy()
+    ep["aggregation_level"] = "per_episode"
+    ep.to_csv(out_dir / "episodes_with_mu.csv", index=False)
+    pl = result["per_link"].copy()
+    pl["aggregation_level"] = "sensor_link_median_over_valid_episodes"
+    pl.to_csv(out_dir / "mu_per_link.csv", index=False)
     cmp = dict(
         all_days={k: v for k, v in result["compare_all_days"].items()
                   if k not in ("y_obs", "y_pred", "sensor_uids")},

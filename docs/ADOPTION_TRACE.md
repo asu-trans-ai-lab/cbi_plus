@@ -21,8 +21,8 @@ built — listed with effort).
 |---|---|---|---|
 | 1 | Input contract first | CONTRACTS.md §1–2; loaders emit TIMESERIES_COLUMNS; v4 adapter consumes shipped chain_fd | ENFORCED for units/order/lanes/is_observed; **GAP: facility type + merge/diverge annotation are documented but no loader requires them** (effort: schema column + loader warnings, ~half day) |
 | 2 | Benchmarks before all-data | repro_gates (25/25 PASS); benchmarks/ in-repo; MISSION principle 2 | ENFORCED |
-| 3 | Active vs passive bottleneck | stage6 classes (active_bottleneck / queued_passive / spillback_source / isolated_uncertain) in every ranking CSV | ENFORCED; **GAP: no explicit `incident` class** — event regime exists in stage 2 but is not fused into the stage-6 label (effort: join regime into classifier, ~1 h) |
-| 4 | Per-day vs average vs period labeling | PERIOD_SLICE_BOUNDS; MDPM merge; `aggregation_level` column | ENFORCED in stage-6 CSVs; **GAP: stage-4/5b CSVs don't carry the column yet** (effort: add column, ~1 h) |
+| 3 | Active vs passive bottleneck | stage6 classes (active_bottleneck / queued_passive / spillback_source / isolated_uncertain) in every ranking CSV | **ENFORCED** (closed 2026-07-08: stage-2 event-regime days surface as `incident_related` in stage-6 — I-210E: 9 of 68 sensor-periods, none polluting the top-5 infrastructure ranking) |
+| 4 | Per-day vs average vs period labeling | PERIOD_SLICE_BOUNDS; MDPM merge; `aggregation_level` column | **ENFORCED everywhere** (closed 2026-07-08: stage-4 episodes/per-link, stage-4/5 verification, stage-5b corridor CSVs all carry `aggregation_level`) |
 | 5 | Physics gates on everything | benchmark_gates: capacity band, μ/C band, v_t2<v_c, round-trip, **MAE ≤ 10 mph hard gate** | ENFORCED |
 | 6 | CBI ranking is the deliverable | stage6 emits benchmark_bottleneck_ranking.csv + corridor summary; wired into every workflow run | ENFORCED |
 | 7 | A new student can learn it | GLOSSARY, learning ladder in README, hello-world (paper reproduction), simulated-reader audits in docs/reviews/ | ENFORCED by process (audit repeats each doc change) |
@@ -51,8 +51,8 @@ built — listed with effort).
 
 ## Honest remainder (the to-build list, priority order)
 
-1. `aggregation_level` column on stage-4/5b outputs (~1 h)
-2. `incident` fused into stage-6 bottleneck_type from the stage-2 event regime (~1 h)
+1. ~~`aggregation_level` column on stage-4/5b outputs~~ **DONE 2026-07-08**
+2. ~~`incident` fused into stage-6 bottleneck_type~~ **DONE 2026-07-08**
 3. queue_length + wave_direction as per-episode columns (~half day)
 4. facility_type + merge/diverge annotation ingestion (~half day; v4 link.csv already carries is_ramp/is_merge/is_diverge)
 5. unified detector_status enum in stage-1 output (~2 h)

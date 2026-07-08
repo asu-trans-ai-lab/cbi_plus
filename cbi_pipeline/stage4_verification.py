@@ -378,6 +378,7 @@ def run_verification(episodes_df: pd.DataFrame,
         rows.append(v)
 
     df_out = pd.DataFrame(rows)
+    df_out["aggregation_level"] = "per_episode_audited"   # CONTRACTS.md section 3
     df_out.to_csv(out_dir / "stage4_verification.csv", index=False)
 
     # Summary statistics

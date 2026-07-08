@@ -598,6 +598,7 @@ def run_qvdf_verification(episodes_df: pd.DataFrame,
         rows.append(v)
 
     df_out = pd.DataFrame(rows)
+    df_out["aggregation_level"] = "per_episode_roundtrip"   # CONTRACTS.md section 3
     df_out.to_csv(out_dir / "stage5_qvdf_verification.csv", index=False)
 
     summary = dict(

@@ -32,6 +32,10 @@ Bottleneck class (per episode, majority-voted to the sensor-period):
   spillback_source  : active AND upstream neighbor congested (its queue reaches
                       the neighbor — highest-priority class)
   isolated_uncertain: no neighbor information (corridor edge / sparse)
+  incident_related  : stage-2 flagged this episode's day as an EVENT (per-
+                      (sensor, period) z-score outlier) — the day is anomalous,
+                      so the topology class is overridden: dispatch-type
+                      response, not infrastructure fix (CONTRACTS.md section 4)
 
 Outputs (per corridor run dir):
   stage6_cbi/benchmark_bottleneck_ranking.csv     one row per (sensor, period), ranked
@@ -107,6 +111,12 @@ def run_ranking(episodes_df: pd.DataFrame,
         nxt = (max(road_order.values()) + 1) if road_order else 0
         road_order = {**road_order, **{s: nxt + i for i, s in enumerate(missing)}}
     eps["bottleneck_class"] = _classify_episodes(eps, road_order)
+    # Fuse the stage-2 EVENT regime (per-(sensor, period) z-score outlier day)
+    # into the diagnosis: an anomalous day is incident_related regardless of
+    # its queue topology — a dispatch problem, not an infrastructure ranking
+    # signal. Recurring/severe/mild regimes keep their topology class.
+    if "regime" in eps.columns:
+        eps.loc[eps["regime"] == "event", "bottleneck_class"] = "incident_related"
 
     n_days = eps["date"].nunique()
     rows = []
@@ -142,7 +152,9 @@ def run_ranking(episodes_df: pd.DataFrame,
                      n_spillback=("bottleneck_class",
                                   lambda s: int((s == "spillback_source").sum())),
                      n_passive=("bottleneck_class",
-                                lambda s: int((s == "queued_passive").sum())))
+                                lambda s: int((s == "queued_passive").sum())),
+                     n_incident=("bottleneck_class",
+                                 lambda s: int((s == "incident_related").sum())))
                 .reset_index())
     summ["aggregation_level"] = "corridor_period_sum_over_sensor_periods"
     summ.to_csv(out_dir / "benchmark_CBI_corridor_summary.csv", index=False)

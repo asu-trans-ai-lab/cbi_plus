@@ -198,6 +198,8 @@ def write_stage5b(agg_df: pd.DataFrame, out_dir: Path,
                   also_emit_per_corridor_summary: bool = True) -> None:
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
+    agg_df = agg_df.copy()
+    agg_df["aggregation_level"] = "corridor_period_shrunk_aggregate"   # CONTRACTS.md section 3
     agg_df.to_csv(out_dir / "link_qvdf_corridor.csv", index=False)
 
     summary = dict(

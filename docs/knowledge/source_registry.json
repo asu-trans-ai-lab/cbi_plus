@@ -1,0 +1,167 @@
+{
+  "registry_version": 1,
+  "sources": [
+    {
+      "source_id": "SRC-INTERNAL-REGISTER",
+      "source_type": "project_docs",
+      "source_url_or_path": "docs/ISSUE_REGISTER.md",
+      "retrieval_date": "2026-07-08",
+      "owner": "cbi_plus",
+      "trust_level": "project_internal",
+      "coverage_period": "2026-07",
+      "corridor": "",
+      "can_support_claim_type": [
+        "software_bug",
+        "documentation_gap",
+        "teaching_misunderstanding"
+      ],
+      "limitations": "internal; highest-value RAG source (discovery->fix->verification rows)",
+      "status": "active",
+      "can_create_issue": true,
+      "can_validate_issue": false
+    },
+    {
+      "source_id": "SRC-DETECTOR-I405N-V4",
+      "source_type": "detector_dataset",
+      "source_url_or_path": "benchmarks/ieee_v4_samples/I405N",
+      "retrieval_date": "2026-07-08",
+      "owner": "IEEE TFB v4 (Caltrans PeMS derived)",
+      "trust_level": "measurement",
+      "coverage_period": "3-day sample",
+      "corridor": "I-405",
+      "can_support_claim_type": [
+        "bottleneck_location",
+        "capacity_claim",
+        "reliability_claim"
+      ],
+      "limitations": "3-day window: PM3 screening grade only",
+      "status": "active",
+      "can_create_issue": true,
+      "can_validate_issue": true
+    },
+    {
+      "source_id": "SRC-DETECTOR-AZ-INRIX",
+      "source_type": "detector_dataset",
+      "source_url_or_path": "benchmarks/cbi_arizona/data",
+      "retrieval_date": "2026-07-08",
+      "owner": "INRIX via RITIS (ADOT)",
+      "trust_level": "measurement",
+      "coverage_period": "",
+      "corridor": "I-17",
+      "can_support_claim_type": [
+        "bottleneck_location",
+        "reliability_claim"
+      ],
+      "limitations": "speed-only; volume synthesized -> VHD_claim NOT supported",
+      "status": "active",
+      "can_create_issue": true,
+      "can_validate_issue": true
+    },
+    {
+      "source_id": "SRC-ADOT-I17-FLEX",
+      "source_type": "agency_page",
+      "source_url_or_path": "https://azdot.gov/adot-blog/arizonas-first-flex-lanes-are-coming-take-look-how-they-will-operate",
+      "retrieval_date": "2026-07-08",
+      "owner": "ADOT",
+      "trust_level": "agency_report",
+      "coverage_period": "",
+      "corridor": "I-17",
+      "can_support_claim_type": [
+        "corridor_context",
+        "work_zone_report"
+      ],
+      "limitations": "",
+      "status": "active",
+      "can_create_issue": true,
+      "can_validate_issue": false
+    },
+    {
+      "source_id": "SRC-CALTRANS-D7-405",
+      "source_type": "agency_page",
+      "source_url_or_path": "https://dot.ca.gov/caltrans-near-me/district-7/district-7-projects/d7-i405-sepulveda-expresslanes",
+      "retrieval_date": "2026-07-08",
+      "owner": "Caltrans D7",
+      "trust_level": "agency_report",
+      "coverage_period": "",
+      "corridor": "I-405",
+      "can_support_claim_type": [
+        "corridor_context",
+        "work_zone_report"
+      ],
+      "limitations": "",
+      "status": "active",
+      "can_create_issue": true,
+      "can_validate_issue": false
+    },
+    {
+      "source_id": "SRC-LAWEEKLY-405",
+      "source_type": "news_article",
+      "source_url_or_path": "https://www.laweekly.com/1-1-billion-and-five-years-later-the-405-congestion-relief-project-is-a-fail/",
+      "retrieval_date": "2026-07-08",
+      "owner": "LA Weekly",
+      "trust_level": "news_context",
+      "coverage_period": "",
+      "corridor": "I-405",
+      "can_support_claim_type": [
+        "corridor_context"
+      ],
+      "limitations": "news framing; induced-demand storyline useful as public example",
+      "status": "active",
+      "can_create_issue": true,
+      "can_validate_issue": false
+    },
+    {
+      "source_id": "SRC-TFRESOURCE-DELAY",
+      "source_type": "reference_page",
+      "source_url_or_path": "https://tfresource.org/topics/Delay_Estimation_in_Trip_Based_Models.html",
+      "retrieval_date": "2026-07-08",
+      "owner": "TRB TF Resource",
+      "trust_level": "official_policy",
+      "coverage_period": "",
+      "corridor": "",
+      "can_support_claim_type": [
+        "corridor_context",
+        "teaching_misunderstanding"
+      ],
+      "limitations": "",
+      "status": "active",
+      "can_create_issue": true,
+      "can_validate_issue": false
+    },
+    {
+      "source_id": "SRC-ARXIV-RESIDUALQ",
+      "source_type": "paper",
+      "source_url_or_path": "https://arxiv.org/pdf/2501.06573",
+      "retrieval_date": "2026-07-08",
+      "owner": "arXiv",
+      "trust_level": "peer_reviewed",
+      "coverage_period": "",
+      "corridor": "",
+      "can_support_claim_type": [
+        "corridor_context"
+      ],
+      "limitations": "",
+      "status": "active",
+      "can_create_issue": true,
+      "can_validate_issue": false
+    },
+    {
+      "source_id": "SRC-GPT-TDM-DIALOG",
+      "source_type": "external_expert_dialogue",
+      "source_url_or_path": "https://chatgpt.com/g/g-6978d916e73881918d15639230fb4515-ask-me-about-travel-demand-modeling",
+      "retrieval_date": "2026-07-08",
+      "owner": "public custom GPT",
+      "trust_level": "expert_opinion",
+      "coverage_period": "",
+      "corridor": "",
+      "can_support_claim_type": [
+        "teaching_misunderstanding",
+        "documentation_gap"
+      ],
+      "limitations": "opinion context ONLY; can suggest issues, can never validate; Chrome channel optional \u2014 its failure never blocks a RAG run",
+      "status": "pending_transcript",
+      "can_create_issue": true,
+      "can_validate_issue": false
+    }
+  ]
+}

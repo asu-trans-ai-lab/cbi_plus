@@ -16,7 +16,8 @@ Same architecture rules as every Reader:
 
 Cross-corroboration (`corroborate`) is where text becomes valuable:
 a text-reported bottleneck that matches a detector-diagnosed one raises
-confidence on both; a text report with NO detector counterpart becomes a
+confidence (capped at 0.90 per the Contract-4 table — only benchmark
+reproduction + detector evidence reaches 0.95); a text report with NO detector counterpart becomes a
 question for the Planner, not a fact.
 """
 from __future__ import annotations
@@ -142,8 +143,8 @@ def corroborate(text_graph: dict, detector_graph: dict) -> dict:
     """Fuse text evidence with detector evidence.
 
     - text issue + matching detector issue (same corridor family, and
-      compatible time window when both state one) -> both gain confidence
-      (capped 0.98) and cross-reference each other;
+      compatible time window when both state one) -> confidence rises,
+      capped at 0.90 (Contract 4: text + detector), and cross-references;
     - text issue with NO detector counterpart -> flagged
       `needs_detector_check` (a question for the Planner, not a fact).
     """
@@ -166,7 +167,7 @@ def corroborate(text_graph: dict, detector_graph: dict) -> dict:
             # cross-reference, not corroboration of the recurring pattern
             if ti["type"] in ("recurring_congestion_report",
                               "capacity_event_report"):
-                ti["confidence"] = round(min(0.98, ti["confidence"] + 0.15), 2)
+                ti["confidence"] = round(min(0.90, ti["confidence"] + 0.15), 2)  # Contract-4 cap: text+detector <= 0.90
             ti["evidence"].append(f"corroborated by detector issue "
                                   f"{match['issue_id']} ({match['type']})")
             ti["corroborates"] = match["issue_id"]

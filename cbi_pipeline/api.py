@@ -46,6 +46,9 @@ from .issue_graph import (build_issue_graph, mismatch_issues,
 from .pm3_reliability import compute_pm3, pm3_issues
 from .vhd import compute_vhd
 from .text_reader import extract_issues_from_texts, corroborate
+from .evidence import (register_source, make_evidence_card, compile_evidence,
+                       write_source_registry, CONFIDENCE_CAPS, CLAIM_TYPES,
+                       TRUST_LEVELS)
 from .corridor_workflow import run_corridor
 from . import fd_model_zoo
 
@@ -68,6 +71,9 @@ __all__ = [
     "compute_pm3", "pm3_issues",
     # POL-6 honest VHD (measured volume only) + the text Reader
     "compute_vhd", "extract_issues_from_texts", "corroborate",
+    # RAG Evidence Compiler (source registry -> evidence cards -> issues)
+    "register_source", "make_evidence_card", "compile_evidence",
+    "write_source_registry", "CONFIDENCE_CAPS", "CLAIM_TYPES", "TRUST_LEVELS",
     # one-call paths
     "run_corridor", "diagnose", "simulate_corridor", "verify_installation",
     "version",

@@ -183,6 +183,21 @@ and [reviews/SIMULATED_COMPETITION_USERS_2026-07-08.md](reviews/SIMULATED_COMPET
 | KNW-4 | — | live dialogue with the "Ask Me About Travel Demand Modeling" GPT (Q3-Q5: trust evidence, reliability-vs-duration in funding, shared issue-object fields) | PENDING — Chrome extension not connected; script ready in reviews/EXTERNAL_GPT_DIALOG_2026-07-08.md |
 | KNW-5 | LOW | web-RAG knowledge notes with sources | SHIPPED v2.9.0 — docs/knowledge/WEB_RAG_BOTTLENECK_NOTES.md |
 
+**Wave 7 (RAG Evidence Compiler — owner design memo):**
+
+| ID | sev | title | status |
+|---|---|---|---|
+| RAG-1 | HIGH | Chrome connector failure must never block RAG | FIXED v2.10.0 — fallback workflow is the standard ([RAG_EVIDENCE_COMPILER.md](RAG_EVIDENCE_COMPILER.md)); GPT dialogue recorded as pending interview, not failed run |
+| RAG-2 | HIGH | source registry with trust-level and claim-type fields | SHIPPED v2.10.0 — `api.register_source`; live registry knowledge/source_registry.json (9 sources) |
+| RAG-3 | HIGH | text must not create bottleneck claims without detector corroboration | FIXED v2.10.0 — claim-type requirements + needs_detector_check + hard caps (social .40 / news .55 / agency .70 / peer .80) |
+| RAG-4 | MED | external GPT dialogue as structured source artifact | SHIPPED v2.10.0 — registry entry SRC-GPT-TDM-DIALOG (pending_transcript, can_validate_issue=false) |
+| RAG-5 | MED | Evidence Card schema for retrieved chunks | SHIPPED v2.10.0 — `api.make_evidence_card` (typed, prior + cap + corroboration requirement) |
+| RAG-6 | HIGH | RAG emits Issue Graph objects, not prose | SHIPPED v2.10.0 — `api.compile_evidence` (structured evidence arrays incl. source_type/trust_level per entry) |
+| RAG-7 | MED | confidence scoring by source type + corroboration | SHIPPED v2.10.0 — CONFIDENCE_CAPS enforced across evidence.py / text_reader (0.90) / issue_graph (0.85) |
+| RAG-8 | HIGH | HCM / PM3 / VHD claim gates before public benefit statements | PARTIAL — VHD gate (measured volume) + PM3 gate (window grade) shipped; HCM facility-claim gate OPEN |
+| RAG-9 | MED | Q&A transcript template for expert dialogue | SHIPPED v2.10.0 — reviews/templates/expert_dialogue_transcript_template.md |
+| RAG-10 | MED | dashboard page: RAG claim -> evidence -> issue -> planner action trace | OPEN |
+
 ## 9. Enhancement backlog (not bugs — wanted capabilities)
 
 | ID | title | driver |

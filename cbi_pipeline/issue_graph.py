@@ -58,7 +58,7 @@ def build_issue_graph(diagnose_out: dict,
         cls = ts[0]["bottleneck_class"]
         incident_days = [t for t in ts if "CAUSE_INCIDENT" in t["diagnosis"]["likely_cause"]]
         recurring = [t for t in ts if t not in incident_days]
-        conf_map = {"high": 0.9, "medium": 0.7, "low": 0.45}
+        conf_map = {"high": 0.85, "medium": 0.7, "low": 0.45}  # detector-only cap (Contract 4)
         if len(recurring) >= 2 and cls in ("active_bottleneck", "spillback_source"):
             dur = float(np.median([t["metrics"]["congestion_duration_min"] for t in recurring]))
             issues.append({

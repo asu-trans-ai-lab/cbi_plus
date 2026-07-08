@@ -1,0 +1,6 @@
+Detector,valid_days,days_P>0,ratio_congested,avg_duration_P>0
+139,300,239,80%,4.52 h
+84,325,255,78%,4.77 h
+78,325,263,81%,4.63 h
+137,325,235,72%,3.96 h
+Total,1275,992,78%,4.48 h

@@ -1,0 +1,15 @@
+# outputs & caches — the repo ships code + docs only, never data or run artifacts
+__pycache__/
+*.pyc
+outputs/
+*.png
+*.parquet
+*.zip
+_inputs/
+# large adapter intermediates
+tfb_*.json
+# local editor/OS noise
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store

@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cbi-plus"
+version = "2.1.0"
+description = "CBI+ — Congestion Bottleneck Identification / FD / QVDF per-corridor calibration pipeline (queue objects T0/T2/T3, discharge rate mu, capacity drop, QVDF elasticities) for PeMS and INRIX TMC data"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "ASU Trans+AI Lab" }]
+dependencies = [
+    "numpy",
+    "pandas",
+    "scikit-learn",
+    "matplotlib",
+    "pyarrow",
+]
+
+[project.urls]
+Companion-Visualization = "https://github.com/asu-trans-ai-lab/gui4gmns"
+
+[tool.setuptools]
+packages = ["cbi_pipeline"]

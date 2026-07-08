@@ -1,4 +1,7 @@
-# Teaching workbooks — the pipeline, by hand, in Excel
+# Teaching workbooks
+
+> Read [THEORY_FOUNDATIONS.md](THEORY_FOUNDATIONS.md) first — the V/C-vs-dynamics correction and the LWR→Newell→Daganzo lineage these workbooks implement.
+ — the pipeline, by hand, in Excel
 
 Two Excel workbooks that walk the SAME method the `cbi_pipeline` code runs,
 step by step, so a student can verify every stage against cells they can see.

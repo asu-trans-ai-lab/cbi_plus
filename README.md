@@ -6,7 +6,7 @@ traffic-engineering pipeline:
 **C**ongestion **B**ottleneck **I**dentification → **F**undamental **D**iagram →
 discharge-rate **μ** validation → **QVDF** (Queue Volume-Delay Function) forward model
 
-New here? Read **[docs/GLOSSARY.md](docs/GLOSSARY.md)** first (5 minutes - every symbol, and the paper-to-pipeline name map).
+Why this platform exists: **[docs/MISSION.md](docs/MISSION.md)** (the medical-school analogy and the seven operating principles) · theory foundations: **[docs/teaching/THEORY_FOUNDATIONS.md](docs/teaching/THEORY_FOUNDATIONS.md)** (why V/C is not congestion; LWR-Newell-Daganzo). New here? Read **[docs/GLOSSARY.md](docs/GLOSSARY.md)** first (5 minutes - every symbol, and the paper-to-pipeline name map).
 
 Given a corridor of detectors (speed + optional volume, 5-minute cadence), CBI+
 answers, per detector × day × period (AM / MD / PM):

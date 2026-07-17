@@ -41,9 +41,22 @@ After it succeeds: `pip install cbi-plus`.
 
 ## What the workflows do
 - **`.github/workflows/ci.yml`** — on every push/PR, builds the sdist+wheel on Python 3.10/3.11/3.12,
-  runs `twine check`, installs the wheel, and imports `cbi_pipeline` (+ `cbi-corridor --help`).
+  runs `twine check`, installs the wheel, imports `cbi_pipeline` + `qvdf_selfdemo`, and runs the
+  **self-demo** (`qvdf-selfdemo demo`).
+- **`.github/workflows/selfdemo.yml`** — runs the CBI/QVDF pipeline on the bundled ~1.2 MB
+  average-weekday testbed (`qvdf_selfdemo/data/`), regenerates the dashboards, and **self-validates**
+  the key identification parameters against `qvdf_selfdemo/data/golden_baseline.json` — **fails the
+  build on drift** and uploads the dashboards as artifacts. This is the release regression gate.
 - **`.github/workflows/publish-pypi.yml`** — on a published Release (or manual dispatch), builds and
   publishes to PyPI via the `pypi` environment with OIDC trusted publishing.
+
+## Self-demonstration (ships with the package)
+```
+pip install cbi-plus
+qvdf-selfdemo demo        # runs the pipeline from bundled data -> dashboards -> self-validation (7/7)
+```
+Updating the baseline after an intended calibration change: `qvdf-selfdemo record` (writes
+`qvdf_selfdemo/data/golden_baseline.json`), commit it with the change.
 
 ## Local build check
 ```bash

@@ -1,0 +1,42 @@
+name: Self-demo (CBI/QVDF)
+
+# Runs the bundled-data self-demonstration on every push / PR / release: it runs the full CBI/QVDF
+# pipeline on the ~1 MB average-weekday profiles, regenerates the dashboards, and self-validates the
+# key identification parameters against the recorded baseline. It FAILS the build on drift, and
+# uploads the dashboards as artifacts.
+
+on:
+  push:
+    branches: [master, main]
+  pull_request: {}
+  release:
+    types: [published]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  selfdemo:
+    runs-on: ubuntu-latest
+    env:
+      CBI_SELFDEMO_OUT: ${{ github.workspace }}/selfdemo_out
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install the package
+        run: python -m pip install .
+      - name: Self-demonstrate + self-validate
+        run: qvdf-selfdemo demo          # exits non-zero on drift -> fails the build
+      - name: Upload dashboards
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: selfdemo-dashboards
+          path: |
+            ${{ env.CBI_SELFDEMO_OUT }}/_QUALITY_DASHBOARD.png
+            ${{ env.CBI_SELFDEMO_OUT }}/_QUALITY_SUMMARY.csv
+            ${{ env.CBI_SELFDEMO_OUT }}/testbed_dashboard.png
+            ${{ env.CBI_SELFDEMO_OUT }}/validation_report.csv

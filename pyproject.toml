@@ -42,6 +42,7 @@ notebooks = ["jupyter", "ipykernel"]
 
 [project.scripts]
 cbi-corridor = "cbi_pipeline.corridor_workflow:main"
+qvdf-selfdemo = "qvdf_selfdemo.selftest:main"
 cbi-gates = "cbi_pipeline.benchmark_gates:main"
 cbi-repro = "cbi_pipeline.repro_gates:main"
 cbi-discover = "cbi_pipeline.discover:main"
@@ -52,7 +53,8 @@ Documentation = "https://github.com/asu-trans-ai-lab/cbi_plus/tree/master/docs"
 Companion-Visualization = "https://github.com/asu-trans-ai-lab/gui4gmns"
 
 [tool.setuptools]
-packages = ["cbi_pipeline"]
+packages = ["cbi_pipeline", "qvdf_selfdemo"]
 
 [tool.setuptools.package-data]
 cbi_pipeline = ["cbi_dashboard_template.html", "py.typed"]
+qvdf_selfdemo = ["data/*.csv", "data/*.json"]

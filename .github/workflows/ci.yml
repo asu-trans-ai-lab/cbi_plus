@@ -32,4 +32,9 @@ jobs:
         run: |
           python -m pip install dist/*.whl
           python -c "import cbi_pipeline; print('cbi_pipeline OK', getattr(cbi_pipeline,'__version__','?'))"
+          python -c "import qvdf_selfdemo, importlib.resources as r; print('qvdf_selfdemo data:', len(list((r.files('qvdf_selfdemo')/'data').iterdir())), 'files')"
           cbi-corridor --help || true
+      - name: Self-demo (bundled data) self-validates
+        env:
+          CBI_SELFDEMO_OUT: ${{ runner.temp }}/selfdemo_out
+        run: qvdf-selfdemo demo          # runs pipeline + dashboards + self-validation; non-zero on drift

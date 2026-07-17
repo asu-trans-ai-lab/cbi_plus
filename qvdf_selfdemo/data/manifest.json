@@ -1,0 +1,51 @@
+{
+  "AZ_I10": {
+    "free_flow": 70,
+    "capacity_prior": 1800,
+    "data_mode": "measured",
+    "wd_mode": "avg_weekday",
+    "source_note": "avg-weekday profile (derived, anonymized)"
+  },
+  "CA_I405": {
+    "free_flow": 65,
+    "capacity_prior": 2000,
+    "data_mode": "measured",
+    "wd_mode": "avg_weekday",
+    "source_note": "avg-weekday profile (derived, anonymized)"
+  },
+  "AZ_I17": {
+    "free_flow": 65,
+    "capacity_prior": 2000,
+    "data_mode": "speed_only",
+    "wd_mode": "avg_weekday",
+    "source_note": "avg-weekday profile (derived, anonymized)"
+  },
+  "CA_I5": {
+    "free_flow": 65,
+    "capacity_prior": 2000,
+    "data_mode": "measured",
+    "wd_mode": "avg_weekday",
+    "source_note": "avg-weekday profile (derived, anonymized)"
+  },
+  "VA_I395_NB": {
+    "free_flow": 70,
+    "capacity_prior": 2200,
+    "data_mode": "speed_only",
+    "wd_mode": "avg_weekday",
+    "source_note": "avg-weekday profile (derived, anonymized)"
+  },
+  "VA_I395_SB": {
+    "free_flow": 70,
+    "capacity_prior": 2200,
+    "data_mode": "speed_only",
+    "wd_mode": "avg_weekday",
+    "source_note": "avg-weekday profile (derived, anonymized)"
+  },
+  "FREEWAY_I66": {
+    "free_flow": 70,
+    "capacity_prior": 2200,
+    "data_mode": "speed_only",
+    "wd_mode": "avg_weekday",
+    "source_note": "avg-weekday profile (derived, anonymized)"
+  }
+}

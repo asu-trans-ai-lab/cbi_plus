@@ -32,3 +32,7 @@ docs/INTERNAL_TEAM_ROLES.md
 build/
 *.egg-info/
 dist/
+
+# self-demo run outputs
+cbi_selfdemo_outputs/
+qvdf_selfdemo/validation_report.csv

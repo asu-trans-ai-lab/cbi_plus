@@ -3,7 +3,7 @@ name: Publish cbi-plus to PyPI
 # Publishes to PyPI automatically when a GitHub Release is published.
 # Uses PyPI Trusted Publishing (OIDC) — no API token/secret to manage.
 # One-time PyPI setup (see docs/RELEASE.md): register the "cbi-plus" project and add a
-# Trusted Publisher pointing to  asu-trans-ai-lab/cbi_plus , workflow  publish-pypi.yml ,
+# Trusted Publisher pointing to  asu-trans-ai-lab/cbi_plus , workflow  workflow.yml ,
 # environment  pypi .
 
 on:

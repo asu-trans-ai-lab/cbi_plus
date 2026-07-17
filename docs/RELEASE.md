@@ -11,7 +11,7 @@ or secret is stored anywhere. A published GitHub Release builds and uploads the 
    - **PyPI Project Name:** `cbi-plus`
    - **Owner:** `asu-trans-ai-lab`
    - **Repository name:** `cbi_plus`
-   - **Workflow name:** `publish-pypi.yml`
+   - **Workflow name:** `workflow.yml`
    - **Environment name:** `pypi`
    (A "pending" publisher lets the very first upload create the project — no manual first upload.)
 
@@ -47,7 +47,7 @@ After it succeeds: `pip install cbi-plus`.
   average-weekday testbed (`qvdf_selfdemo/data/`), regenerates the dashboards, and **self-validates**
   the key identification parameters against `qvdf_selfdemo/data/golden_baseline.json` — **fails the
   build on drift** and uploads the dashboards as artifacts. This is the release regression gate.
-- **`.github/workflows/publish-pypi.yml`** — on a published Release (or manual dispatch), builds and
+- **`.github/workflows/workflow.yml`** — on a published Release (or manual dispatch), builds and
   publishes to PyPI via the `pypi` environment with OIDC trusted publishing.
 
 ## Self-demonstration (ships with the package)

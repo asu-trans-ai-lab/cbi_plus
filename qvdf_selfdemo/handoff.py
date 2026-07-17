@@ -100,6 +100,22 @@ def build_handoff(cfg, a, awk, epw, epw_params, fdp, mode, out):
     # sequential node ids per corridor (ordered by mean position == time-invariant link order)
     order = sorted([l for l in awk.link_id.unique() if l in fdp])
     node = {lid: i + 1 for i, lid in enumerate(order)}
+    # PER-PERIOD full-day model reconstruction (replaces the single wide-window episode, which merges
+    # AM+MD+PM into one trough on corridors that never recover above the cut-off). Gather each link's
+    # observed profile, calibrate f_p/s WITHIN each period across links -- with the corridor's
+    # facility-type x area-type default when a period is too thin -- then stitch a trough per period.
+    windows = Q.period_windows(ww[0], ww[1])
+    fa_default = C.facility_area_default(cfg.get("facility_type"), cfg.get("area_type"))
+    profiles = []; ff_by_link = {}
+    for lid in order:
+        g = awk[(awk.link_id == lid) & (awk.t_min >= ww[0]) & (awk.t_min < ww[1])].sort_values("t_min")
+        if len(g) < 8:
+            continue
+        raw = g.speed.to_numpy()
+        profiles.append((g.t_min.to_numpy(), Q.smooth_speed(raw), C.CUTOFF_RATIO * fdp[lid]["vf"]))
+        ff_by_link[lid] = float(np.nanpercentile(raw, 99))          # observed free-flow (99th pct)
+    pp = Q.calibrate_perperiod(profiles, windows, default=fa_default)
+
     rows = []; acc = {}                                    # acc = corridor delay accounting per period
     for lid in order:
         g = awk[(awk.link_id == lid) & (awk.t_min >= ww[0]) & (awk.t_min < ww[1])].sort_values("t_min")
@@ -109,23 +125,8 @@ def build_handoff(cfg, a, awk, epw, epw_params, fdp, mode, out):
         flow = g.flow_pl.to_numpy() if "flow_pl" in g.columns else np.full(len(g), np.nan)
         fd = fdp[lid]; vf = fd["vf"]; cut = C.CUTOFF_RATIO * vf; cap = fd["cap"]; uc = fd["uc"]
         L = float(g.length.iloc[0]); lanes = int(g.lanes.iloc[0]) if "lanes" in g.columns else 1
-        # full-day model speed: free-flow, then overwrite each congestion episode (AM + PM ...)
-        model = np.full(len(g), float(vf))
-        eps = epw[(epw.link_id == lid) & (epw.P > 0)] if len(epw) else epw
-        for _, r in eps.iterrows():
-            p = epw_params.get(r.period, {}).get(lid)
-            if p is None:
-                continue
-            lw = (int(max(ww[0], r.t0 * 60 - 60)), int(min(ww[1], r.t3 * 60 + 60)))
-            # QVDF queue shape: MODEL V_t2 = v_co/(1+f_p P^s) at the OBSERVED trough time t2.
-            vt2_pred = Q.predict_vt2(cut, p["f_p"], p["s"], r.t3 - r.t0)
-            ts, ve = Q.td_speed_shape(r.t0, r.t2, r.t3, vt2_pred, cut, vf, lw)
-            # interpolate the QVDF curve onto the actual 15-min grid (t0/t3 are interpolated, so the
-            # episode window is off-grid; an exact-minute match would silently miss every point).
-            tsm = ts * 60.0
-            inwin = (tm >= lw[0]) & (tm < lw[1])
-            if inwin.any() and len(tsm) >= 2:
-                model[inwin] = np.interp(tm[inwin], tsm, ve)
+        # full-day model speed: per-period QVDF troughs stitched (observed free-flow shoulders)
+        model = Q.stitch_fullday_model(tm, sm, cut, ff_by_link.get(lid, vf), pp, windows)
         for k, t in enumerate(tm):
             per = Q._assign_period(t / 60.0) or "NT"
             vpl = float(flow[k]) if flow[k] == flow[k] else np.nan

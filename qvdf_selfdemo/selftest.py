@@ -37,7 +37,8 @@ def register_demo():
                                 path=os.path.join(DATA, f"{pub}.csv"),
                                 free_flow=m["free_flow"], capacity_prior=m["capacity_prior"],
                                 wd_mode=m.get("wd_mode", "avg_weekday"),
-                                data_mode=m.get("data_mode", "measured"))
+                                data_mode=m.get("data_mode", "measured"),
+                                facility_type=m.get("facility_type"), area_type=m.get("area_type"))
     return list(MANIFEST)
 
 

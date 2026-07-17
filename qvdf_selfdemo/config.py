@@ -27,6 +27,23 @@ PARAM_BOUNDS = (0.0, 10.0)  # curve_fit bounds for f_d, n, f_p, s
 # transferred default used when a corridor/period has congestion but cannot self-calibrate
 # (e.g. a uniformly-gridlocked corridor with no D/C-P variation). Flagged reliability="default".
 DEFAULT_QVDF = dict(f_d=1.30, n=1.00, f_p=0.20, s=1.30)
+
+# ---- transferable QVDF defaults by FACILITY TYPE x AREA TYPE ----------------
+# The standard travel-demand practice for general cases: when a link/period is too thin to
+# self-calibrate, borrow (f_d, n, f_p, s) from its facility-type x area-type class instead of a single
+# global default. SEED values below (to be re-estimated from a facility/area-classified sample; align
+# with the region's VDF classes, e.g. the ARC model, in a later stage). Keys: (facility_type, area_type).
+FACILITY_AREA_QVDF = {
+    ("freeway", "urban"):            dict(f_d=1.15, n=1.05, f_p=0.15, s=1.25),
+    ("freeway", "suburban"):         dict(f_d=1.30, n=1.00, f_p=0.10, s=1.35),
+    ("freeway_managed", "urban"):    dict(f_d=1.00, n=1.00, f_p=0.08, s=1.30),
+    ("freeway_managed", "suburban"): dict(f_d=1.10, n=1.00, f_p=0.06, s=1.35),
+}
+
+
+def facility_area_default(facility_type=None, area_type=None):
+    """QVDF default for a (facility_type, area_type) class; falls back to DEFAULT_QVDF."""
+    return FACILITY_AREA_QVDF.get((facility_type, area_type), DEFAULT_QVDF)
 VT2_TOL_MPH = 10.0          # a link is "QVDF-modelable" if |model V_t2 - observed| <= this AND D/C
                             # not censored; else it is an all-day-saturated link the single-peak QVDF
                             # cannot fit -> flagged, not drawn with a misleading deep model trough.

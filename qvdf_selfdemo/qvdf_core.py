@@ -250,6 +250,101 @@ def td_speed_shape(t0, t2, t3, vt2, cutoff, vf, window):
     return ts, np.array(out)
 
 
+# ============================ per-period QVDF full-day reconstruction =======
+# On a corridor that stays below the cut-off all day, a SINGLE whole-day queue (td_speed_shape over one
+# wide episode) merges AM+MD+PM into one trough and misses the morning dip. These build the full-day
+# model PER PERIOD -- calibrate f_p/s within each period, place each period's trough at its observed
+# local-min time with the QVDF depth predict_vt2 (depth is model-predicted, NOT observed), and stitch
+# the periods, anchored at the boundaries to the observed shoulder (capped at observed free-flow).
+def period_windows(t0_min, t1_min):
+    """contiguous AM/MD/PM partition of [t0_min, t1_min] using the config.PERIODS boundaries (only the
+    outer edges are clipped to the analysis window)."""
+    pers = list(C.PERIODS.items())
+    out = []
+    for i, (per, (lo, hi)) in enumerate(pers):
+        ws = t0_min if i == 0 else lo
+        we = t1_min if i == len(pers) - 1 else hi
+        out.append((per, int(ws), int(we)))
+    return out
+
+
+def _smoothstep(x):
+    x = np.clip(x, 0.0, 1.0)
+    return x * x * (3.0 - 2.0 * x)
+
+
+def calibrate_perperiod(profiles, windows, default=None, min_links=4):
+    """Fit the QVDF Stage-2 relationship magnitude = f_p * P^s WITHIN each period across links -- the
+    same power-law form (_pw), bounds (PARAM_BOUNDS) and magnitude definition (cutoff/V_t2 - 1) as
+    calibrate_link, restricted to a single period window. `profiles` is a list of (tm, smoothed_speed,
+    cutoff) per link. A period with < min_links congested links falls back to `default` (a dict with
+    f_p, s; defaults to config.DEFAULT_QVDF -- pass the facility-type x area-type default for general
+    cases). Returns {per: (f_p, s)}."""
+    d = default or C.DEFAULT_QVDF
+    lb, ub = C.PARAM_BOUNDS
+    params = {}
+    for per, ws, we in windows:
+        Ps, mags = [], []
+        for tm, sm, cut in profiles:
+            m = (tm >= ws) & (tm < we)
+            v = np.asarray(sm, float)[m]
+            v = v[np.isfinite(v)]
+            if len(v) < 3 or not (v < cut).any():
+                continue
+            P = float((v < cut).sum()) * (C.DT_MIN / 60.0)
+            vt2 = float(v.min())
+            if vt2 <= 0 or P <= 0:
+                continue
+            Ps.append(P); mags.append(max(cut / vt2 - 1.0, 0.0))
+        if len(Ps) >= min_links:
+            try:
+                (fp, s), _ = curve_fit(_pw, np.array(Ps), np.array(mags),
+                                       bounds=([lb, lb], [ub, ub]), maxfev=8000)
+                params[per] = (float(fp), float(s)); continue
+            except Exception:
+                pass
+        params[per] = (float(d["f_p"]), float(d["s"]))
+    return params
+
+
+def stitch_fullday_model(tm, sm, cutoff, ff, params, windows):
+    """One link's full-day model: a QVDF trough per period (trough TIME = deepest within-window episode
+    from find_episodes; DEPTH = predict_vt2 with the within-period f_p/s and P), stitched with the
+    boundaries anchored to the observed shoulder speed (capped at observed free-flow ff). Returns a
+    model-speed array aligned to tm."""
+    tm = np.asarray(tm, float); sm = np.asarray(sm, float)
+    ff = float(ff) if np.isfinite(ff) else float(np.nanmax(sm))
+    anchors = [(float(tm[0]), min(float(sm[0]), ff))]
+    for per, ws, we in windows:
+        m = (tm >= ws) & (tm < we)
+        if not m.any():
+            continue
+        st, sv = tm[m], sm[m]
+        if float(np.nanmin(sv)) < cutoff:
+            eps = find_episodes(sv, st, np.zeros_like(sv), cutoff)
+            if eps:
+                imin = min(eps, key=lambda e: sv[e[2]])[2]      # deepest within-window episode
+            else:
+                imin = int(np.nanargmin(sv))
+            t2 = float(st[imin])
+            P = float((sv < cutoff).sum()) * (C.DT_MIN / 60.0)
+            fp, s = params.get(per, (C.DEFAULT_QVDF["f_p"], C.DEFAULT_QVDF["s"]))
+            anchors.append((t2, predict_vt2(cutoff, fp, s, P)))
+        anchors.append((min(float(we), float(tm[-1])), min(float(sv[-1]), ff)))
+    anchors.append((float(tm[-1]), min(float(sm[-1]), ff)))
+    seen, uni = set(), []
+    for t, v in sorted(anchors):
+        r = int(round(t))
+        if r not in seen:
+            seen.add(r); uni.append((float(r), v))
+    model = np.interp(tm, [a[0] for a in uni], [a[1] for a in uni])
+    for (ta, va), (tb, vb) in zip(uni[:-1], uni[1:]):
+        seg = (tm >= ta) & (tm <= tb)
+        if seg.any() and tb > ta:
+            model[seg] = va + (vb - va) * _smoothstep((tm[seg] - ta) / (tb - ta))
+    return np.clip(model, 1.0, ff)
+
+
 def td_speed_profile(t0, t3, dc, f_d, n, f_p, s, cutoff, uf, L, cap, window):
     """QVDF time-dependent speed v(t), ported from the original VDF.calculate_travel_time_based_on
     _QVDF so the modeled trough EQUALS the calibrated V_t2 (= cut-off/(1+f_p*P^s)) at the window

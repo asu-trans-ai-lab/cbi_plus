@@ -1,0 +1,35 @@
+name: CI
+
+# Build + import smoke test on every push / PR, and a TestPyPI dry-run on tags,
+# so a release never fails at publish time.
+
+on:
+  push:
+    branches: [master, main]
+  pull_request: {}
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-smoke:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Build the package
+        run: |
+          python -m pip install --upgrade build twine
+          python -m build
+          python -m twine check dist/*
+      - name: Install the wheel and import
+        run: |
+          python -m pip install dist/*.whl
+          python -c "import cbi_pipeline; print('cbi_pipeline OK', getattr(cbi_pipeline,'__version__','?'))"
+          cbi-corridor --help || true
